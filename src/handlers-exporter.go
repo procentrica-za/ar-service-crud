@@ -10,7 +10,7 @@ import (
 func (s *Server) handleexportasset() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Handle Export Asset Has Been Called...")
-		// retrieving the ID of the user that is requested.
+		// retrieving the ID of the asset that is requested.
 		exportAsset := ExportAsset{}
 		// convert received JSON payload into the declared struct.
 		err1 := json.NewDecoder(r.Body).Decode(&exportAsset)
