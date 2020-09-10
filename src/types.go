@@ -67,3 +67,11 @@ type AssetRegisterResponse struct {
 	Dimension6Val      string `json:"dimension6val"`
 	DeRecognitionvalue string `json:"derecognitionvalue"`
 }
+
+type AssetTypeID struct {
+	AssetTypeID string `json:"id"`
+}
+
+type AssetList struct {
+	Assets []AssetRegisterResponse `json:"assets"`
+}
