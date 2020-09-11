@@ -32,17 +32,17 @@ func (s *Server) handleextractassets() http.HandlerFunc {
 		assetsList := AssetList{}
 		assetsList.Assets = []AssetRegisterResponse{}
 
-		var name, description, serialno, size, atype, class, dimension1val, dimension2val, dimension3val, dimension4val, dimension5val, dimension6val, derecognitionvalue string
+		var name, description, serialno, size, atype, class, dimension1val, dimension2val, dimension3val, dimension4val, dimension5val, dimension6val, derecognitionvalue, extent, extentconfidence string
 
 		for rows.Next() {
-			err = rows.Scan(&name, &description, &serialno, &size, &atype, &class, &dimension1val, &dimension2val, &dimension3val, &dimension4val, &dimension5val, &dimension6val, &derecognitionvalue)
+			err = rows.Scan(&name, &description, &serialno, &size, &atype, &class, &dimension1val, &dimension2val, &dimension3val, &dimension4val, &dimension5val, &dimension6val, &extent, &extentconfidence, &derecognitionvalue)
 			if err != nil {
 				w.WriteHeader(500)
 				fmt.Fprintf(w, "Unable to read data from Assets List...")
 				fmt.Println(err.Error())
 				return
 			}
-			assetsList.Assets = append(assetsList.Assets, AssetRegisterResponse{name, description, serialno, size, atype, class, dimension1val, dimension2val, dimension3val, dimension4val, dimension5val, dimension6val, derecognitionvalue})
+			assetsList.Assets = append(assetsList.Assets, AssetRegisterResponse{name, description, serialno, size, atype, class, dimension1val, dimension2val, dimension3val, dimension4val, dimension5val, dimension6val, extent, extentconfidence, derecognitionvalue})
 		}
 
 		// get any error encountered during iteration
