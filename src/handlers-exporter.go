@@ -22,12 +22,12 @@ func (s *Server) handleexportasset() http.HandlerFunc {
 		}
 
 		// declare variables to catch response from database.
-		var code, name, description, sizeunit, typelookup, sizelookup, dimension1name, dimension1description, dimension1unit, dimension2name, dimension2description, extentformula, depreciationmodel, depreciationmethod string
+		var assettypelevelid, code, name, description, sizeunit, typelookup, sizelookup, dimension1name, dimension1description, dimension1unit, dimension2name, dimension2description, extentformula, depreciationmodel, depreciationmethod string
 		var isutc, isactive bool
 
 		// create query string.
 		querystring := "SELECT * FROM public.exportasset('" + exportAsset.AssetTypeID + "')"
-		err := s.dbAccess.QueryRow(querystring).Scan(&code, &name, &description, &isutc, &sizeunit, &typelookup, &sizelookup, &dimension1name, &dimension1description, &dimension1unit, &dimension2name, &dimension2description, &extentformula, &depreciationmodel, &depreciationmethod, &isactive)
+		err := s.dbAccess.QueryRow(querystring).Scan(&assettypelevelid, &code, &name, &description, &isutc, &sizeunit, &typelookup, &sizelookup, &dimension1name, &dimension1description, &dimension1unit, &dimension2name, &dimension2description, &extentformula, &depreciationmodel, &depreciationmethod, &isactive)
 		if err != nil {
 			w.WriteHeader(500)
 			fmt.Fprintf(w, err.Error())
@@ -37,6 +37,7 @@ func (s *Server) handleexportasset() http.HandlerFunc {
 
 		// instansiate response struct.
 		asset := ExportAssetResponse{}
+		asset.AssettypeLevelID = assettypelevelid
 		asset.Code = code
 		asset.Name = name
 		asset.Description = description
