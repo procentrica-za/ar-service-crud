@@ -11,22 +11,14 @@ func (s *Server) handleexportasset() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Handle Export Asset Has Been Called...")
 		// retrieving the ID of the asset that is requested.
-		exportAsset := ExportAsset{}
-		// convert received JSON payload into the declared struct.
-		err1 := json.NewDecoder(r.Body).Decode(&exportAsset)
-		//check for errors when converting JSON payload into struct.
-		if err1 != nil {
-			w.WriteHeader(500)
-			fmt.Fprintf(w, "Bad JSON provided to export asset")
-			return
-		}
+		assettypeid := r.URL.Query().Get("assettypeid")
 
 		// declare variables to catch response from database.
 		var assettypelevelid, code, name, description, sizeunit, typelookup, sizelookup, dimension1name, dimension1description, dimension1unit, dimension2name, dimension2description, extentformula, depreciationmodel, depreciationmethod string
 		var isutc, isactive bool
 
 		// create query string.
-		querystring := "SELECT * FROM public.exportasset('" + exportAsset.AssetTypeID + "')"
+		querystring := "SELECT * FROM public.exportasset('" + assettypeid + "')"
 		err := s.dbAccess.QueryRow(querystring).Scan(&assettypelevelid, &code, &name, &description, &isutc, &sizeunit, &typelookup, &sizelookup, &dimension1name, &dimension1description, &dimension1unit, &dimension2name, &dimension2description, &extentformula, &depreciationmodel, &depreciationmethod, &isactive)
 		if err != nil {
 			w.WriteHeader(500)

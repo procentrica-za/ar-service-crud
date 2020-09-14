@@ -11,21 +11,13 @@ func (s *Server) handlegetasset() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Handle Get Asset Has Been Called...")
 		// retrieving the ID of the asset that is requested.
-		getAsset := AssetID{}
-		// convert received JSON payload into the declared struct.
-		err1 := json.NewDecoder(r.Body).Decode(&getAsset)
-		//check for errors when converting JSON payload into struct.
-		if err1 != nil {
-			w.WriteHeader(500)
-			fmt.Fprintf(w, "Bad JSON provided to get asset")
-			return
-		}
+		assetid := r.URL.Query().Get("assetid")
 
 		// declare variables to catch response from database.
 		var name, description, serialno, size, atype, class, dimension1val, dimension2val, dimension3val, dimension4val, dimension5val, dimension6val, derecognitionvalue, extent, extentconfidence string
 
 		// create query string.
-		querystring := "SELECT * FROM public.retrieveasset('" + getAsset.AssetID + "')"
+		querystring := "SELECT * FROM public.retrieveasset('" + assetid + "')"
 		err := s.dbAccess.QueryRow(querystring).Scan(&name, &description, &serialno, &size, &atype, &class, &dimension1val, &dimension2val, &dimension3val, &dimension4val, &dimension5val, &dimension6val, &extent, &extentconfidence, &derecognitionvalue)
 		if err != nil {
 			w.WriteHeader(500)
@@ -72,18 +64,10 @@ func (s *Server) handlegetassets() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Handle Get Asset Has Been Called...")
 		// retrieving the ID of the assets that are requested.
-		getAsset := AssetTypeID{}
-		// convert received JSON payload into the declared struct.
-		err1 := json.NewDecoder(r.Body).Decode(&getAsset)
-		//check for errors when converting JSON payload into struct.
-		if err1 != nil {
-			w.WriteHeader(500)
-			fmt.Fprintf(w, "Bad JSON provided to get asset")
-			return
-		}
+		assettypeid := r.URL.Query().Get("assettypeid")
 
 		//set response variables
-		rows, err := s.dbAccess.Query("SELECT * FROM public.retrieveassets('" + getAsset.AssetTypeID + "')")
+		rows, err := s.dbAccess.Query("SELECT * FROM public.retrieveassets('" + assettypeid + "')")
 		if err != nil {
 			w.WriteHeader(500)
 			fmt.Fprintf(w, "Unable to process DB Function...")
