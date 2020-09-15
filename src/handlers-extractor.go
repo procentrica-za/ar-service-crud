@@ -21,8 +21,7 @@ func (s *Server) handleextractassets() http.HandlerFunc {
 		}
 		defer rows.Close()
 
-		assetsList := AssetList{}
-		assetsList.Assets = []AssetRegisterResponse{}
+		assetsList := []AssetRegisterResponse{}
 
 		var name, description, serialno, size, atype, class, dimension1val, dimension2val, dimension3val, dimension4val, dimension5val, dimension6val, derecognitionvalue, extent, extentconfidence string
 
@@ -34,7 +33,7 @@ func (s *Server) handleextractassets() http.HandlerFunc {
 				fmt.Println(err.Error())
 				return
 			}
-			assetsList.Assets = append(assetsList.Assets, AssetRegisterResponse{name, description, serialno, size, atype, class, dimension1val, dimension2val, dimension3val, dimension4val, dimension5val, dimension6val, extent, extentconfidence, derecognitionvalue})
+			assetsList = append(assetsList, AssetRegisterResponse{name, description, serialno, size, atype, class, dimension1val, dimension2val, dimension3val, dimension4val, dimension5val, dimension6val, extent, extentconfidence, derecognitionvalue})
 		}
 
 		// get any error encountered during iteration
