@@ -11,15 +11,14 @@ func (s *Server) handleexportasset() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Handle Export Asset Has Been Called...")
 		// retrieving the ID of the asset that is requested.
-		assettypeid := r.URL.Query().Get("assettypeid")
+		assetid := r.URL.Query().Get("assetid")
 
 		// declare variables to catch response from database.
-		var assettypelevelid, code, name, description, sizeunit, typelookup, sizelookup, dimension1name, dimension1description, dimension1unit, dimension2name, dimension2description, extentformula, depreciationmodel, depreciationmethod string
-		var isutc, isactive bool
+		var name, description, serialno, size, atype, class, dimension1val, dimension2val, dimension3val, dimension4val, dimension5val, dimension6val, derecognitionvalue, extent, extentconfidence string
 
 		// create query string.
-		querystring := "SELECT * FROM public.exportasset('" + assettypeid + "')"
-		err := s.dbAccess.QueryRow(querystring).Scan(&assettypelevelid, &code, &name, &description, &isutc, &sizeunit, &typelookup, &sizelookup, &dimension1name, &dimension1description, &dimension1unit, &dimension2name, &dimension2description, &extentformula, &depreciationmodel, &depreciationmethod, &isactive)
+		querystring := "SELECT * FROM public.exportasset('" + assetid + "')"
+		err := s.dbAccess.QueryRow(querystring).Scan(&name, &description, &serialno, &size, &atype, &class, &dimension1val, &dimension2val, &dimension3val, &dimension4val, &dimension5val, &dimension6val, &extent, &extentconfidence, &derecognitionvalue)
 		if err != nil {
 			w.WriteHeader(500)
 			fmt.Fprintf(w, err.Error())
@@ -28,24 +27,22 @@ func (s *Server) handleexportasset() http.HandlerFunc {
 		}
 
 		// instansiate response struct.
-		asset := ExportAssetResponse{}
-		asset.AssettypeLevelID = assettypelevelid
-		asset.Code = code
+		asset := AssetRegisterResponse{}
 		asset.Name = name
 		asset.Description = description
-		asset.IsUTC = isutc
-		asset.SizeUnit = sizeunit
-		asset.TypeLookup = typelookup
-		asset.SizeLookup = sizelookup
-		asset.Dimension1Name = dimension1name
-		asset.Dimension1Description = dimension1description
-		asset.Dimension1Unit = dimension1unit
-		asset.Dimension2Name = dimension2name
-		asset.Dimension2Description = dimension2description
-		asset.ExtentFormula = extentformula
-		asset.DepreciationModel = depreciationmodel
-		asset.DepreciationMethod = depreciationmethod
-		asset.ISActive = isactive
+		asset.SerialNo = serialno
+		asset.Size = size
+		asset.Type = atype
+		asset.Class = class
+		asset.Dimension1Val = dimension1val
+		asset.Dimension2Val = dimension2val
+		asset.Dimension3Val = dimension3val
+		asset.Dimension4Val = dimension4val
+		asset.Dimension5Val = dimension5val
+		asset.Dimension6Val = dimension6val
+		asset.Extent = extent
+		asset.ExtentConfidence = extentconfidence
+		asset.DeRecognitionvalue = derecognitionvalue
 
 		// convert struct into JSON payload to send to service that called this function.
 		js, jserr := json.Marshal(asset)
