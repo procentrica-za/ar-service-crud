@@ -14,11 +14,11 @@ func (s *Server) handleexportasset() http.HandlerFunc {
 		assetid := r.URL.Query().Get("assetid")
 
 		// declare variables to catch response from database.
-		var name, description, serialno, size, atype, class, dimension1val, dimension2val, dimension3val, dimension4val, dimension5val, dimension6val, derecognitionvalue, extent, extentconfidence string
+		var name, description, serialno, size, atype, class, dimension1val, dimension2val, dimension3val, dimension4val, dimension5val, dimension6val, derecognitionvalue, extent, extentconfidence, takeondate string
 
 		// create query string.
 		querystring := "SELECT * FROM public.exportasset('" + assetid + "')"
-		err := s.dbAccess.QueryRow(querystring).Scan(&name, &description, &serialno, &size, &atype, &class, &dimension1val, &dimension2val, &dimension3val, &dimension4val, &dimension5val, &dimension6val, &extent, &extentconfidence, &derecognitionvalue)
+		err := s.dbAccess.QueryRow(querystring).Scan(&name, &description, &serialno, &size, &atype, &class, &dimension1val, &dimension2val, &dimension3val, &dimension4val, &dimension5val, &dimension6val, &extent, &extentconfidence, &takeondate, &derecognitionvalue)
 		if err != nil {
 			w.WriteHeader(500)
 			fmt.Fprintf(w, err.Error())
@@ -26,8 +26,8 @@ func (s *Server) handleexportasset() http.HandlerFunc {
 			return
 		}
 
-		// instansiate response struct.
 		asset := AssetRegisterResponse{}
+
 		asset.Name = name
 		asset.Description = description
 		asset.SerialNo = serialno
@@ -42,6 +42,7 @@ func (s *Server) handleexportasset() http.HandlerFunc {
 		asset.Dimension6Val = dimension6val
 		asset.Extent = extent
 		asset.ExtentConfidence = extentconfidence
+		asset.TakeOnDate = takeondate
 		asset.DeRecognitionvalue = derecognitionvalue
 
 		// convert struct into JSON payload to send to service that called this function.

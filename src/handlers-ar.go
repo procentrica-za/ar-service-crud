@@ -14,11 +14,11 @@ func (s *Server) handlegetasset() http.HandlerFunc {
 		assetid := r.URL.Query().Get("assetid")
 
 		// declare variables to catch response from database.
-		var name, description, serialno, size, atype, class, dimension1val, dimension2val, dimension3val, dimension4val, dimension5val, dimension6val, derecognitionvalue, extent, extentconfidence string
+		var name, description, serialno, size, atype, class, dimension1val, dimension2val, dimension3val, dimension4val, dimension5val, dimension6val, derecognitionvalue, extent, takeondate, extentconfidence string
 
 		// create query string.
 		querystring := "SELECT * FROM public.retrieveasset('" + assetid + "')"
-		err := s.dbAccess.QueryRow(querystring).Scan(&name, &description, &serialno, &size, &atype, &class, &dimension1val, &dimension2val, &dimension3val, &dimension4val, &dimension5val, &dimension6val, &extent, &extentconfidence, &derecognitionvalue)
+		err := s.dbAccess.QueryRow(querystring).Scan(&name, &description, &serialno, &size, &atype, &class, &dimension1val, &dimension2val, &dimension3val, &dimension4val, &dimension5val, &dimension6val, &extent, &extentconfidence, &takeondate, &derecognitionvalue)
 		if err != nil {
 			w.WriteHeader(500)
 			fmt.Fprintf(w, err.Error())
@@ -42,6 +42,7 @@ func (s *Server) handlegetasset() http.HandlerFunc {
 		asset.Dimension6Val = dimension6val
 		asset.Extent = extent
 		asset.ExtentConfidence = extentconfidence
+		asset.TakeOnDate = takeondate
 		asset.DeRecognitionvalue = derecognitionvalue
 
 		// convert struct into JSON payload to send to service that called this function.
@@ -78,17 +79,17 @@ func (s *Server) handlegetassets() http.HandlerFunc {
 		assetsList := AssetList{}
 		assetsList.Assets = []AssetRegisterResponse{}
 
-		var name, description, serialno, size, atype, class, dimension1val, dimension2val, dimension3val, dimension4val, dimension5val, dimension6val, derecognitionvalue, extent, extentconfidence string
+		var name, description, serialno, size, atype, class, dimension1val, dimension2val, dimension3val, dimension4val, dimension5val, dimension6val, derecognitionvalue, extent, takeondate, extentconfidence string
 
 		for rows.Next() {
-			err = rows.Scan(&name, &description, &serialno, &size, &atype, &class, &dimension1val, &dimension2val, &dimension3val, &dimension4val, &dimension5val, &dimension6val, &extent, &extentconfidence, &derecognitionvalue)
+			err = rows.Scan(&name, &description, &serialno, &size, &atype, &class, &dimension1val, &dimension2val, &dimension3val, &dimension4val, &dimension5val, &dimension6val, &extent, &extentconfidence, &takeondate, &derecognitionvalue)
 			if err != nil {
 				w.WriteHeader(500)
 				fmt.Fprintf(w, "Unable to read data from Assets List...")
 				fmt.Println(err.Error())
 				return
 			}
-			assetsList.Assets = append(assetsList.Assets, AssetRegisterResponse{name, description, serialno, size, atype, class, dimension1val, dimension2val, dimension3val, dimension4val, dimension5val, dimension6val, extent, extentconfidence, derecognitionvalue})
+			assetsList.Assets = append(assetsList.Assets, AssetRegisterResponse{name, description, serialno, size, atype, class, dimension1val, dimension2val, dimension3val, dimension4val, dimension5val, dimension6val, extent, extentconfidence, takeondate, derecognitionvalue})
 		}
 
 		// get any error encountered during iteration
