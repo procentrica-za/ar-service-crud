@@ -18,7 +18,13 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 			fmt.Fprintf(w, "Bad JSON provided to post funcloc")
 			return
 		}
-
+		var success bool
+		var message string
+		querystring := "SELECT * FROM public.postfuncloc('" + funclocList.Flist[0].FunclocID + "', '" + funclocList.Flist[0].Name + "', '" + funclocList.Flist[0].Description + "')"
+		//retrieve result message from database set to response JSON object
+		err = s.dbAccess.QueryRow(querystring).Scan(&success, &message)
+		fmt.Println(success)
+		fmt.Println(message)
 		assets := toAssetRegsiterList{}
 		// Obtain all the fields in the asset struct
 		err = json.Unmarshal(body, &assets)
@@ -63,11 +69,9 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 			fmt.Fprintf(w, "Unable to create JSON result object from DB result to post Asset.")
 			return
 		}
-		var success bool
-		var message string
 
 		jsonString := string(js)
-		querystring := "SELECT * FROM public.postassets('" + jsonString + "')"
+		querystring = "SELECT * FROM public.postassets('" + jsonString + "')"
 		//retrieve result message from database set to response JSON object
 		err = s.dbAccess.QueryRow(querystring).Scan(&success, &message)
 		//check for response error of 500
