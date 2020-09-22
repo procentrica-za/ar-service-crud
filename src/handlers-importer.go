@@ -7,6 +7,7 @@ import (
 	"net/http"
 )
 
+// TODO: Comment code and remove comments where not needed!
 func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -20,7 +21,7 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 		}
 		var success bool
 		var message string
-		querystring := "SELECT * FROM public.postfuncloc('" + funclocList.Flist[0].FunclocID + "', '" + funclocList.Flist[0].Name + "', '" + funclocList.Flist[0].Description + "')"
+		querystring := "SELECT * FROM public.postfuncloc('" + funclocList.Flist[0].FunclocID + "', '" + funclocList.Flist[0].Name + "', '" + funclocList.Flist[0].Description + "', '" + funclocList.Flist[0].Latitude + "' , '" + funclocList.Flist[0].Longitude + "')"
 		//retrieve result message from database set to response JSON object
 		err = s.dbAccess.QueryRow(querystring).Scan(&success, &message)
 		fmt.Println(success)

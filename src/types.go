@@ -56,6 +56,8 @@ type Funcloc struct {
 	FunclocID   string `json:"funclocid"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
+	Latitude    string `json:"latitude"`
+	Longitude   string `json:"longitude"`
 }
 
 type FunclocList struct {
