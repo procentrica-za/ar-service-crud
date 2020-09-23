@@ -115,7 +115,7 @@ type AssetRegisterResponse struct {
 	TakeOnDate         string `json:"takeondate"`
 	DeRecognitionvalue string `json:"derecognitionvalue"`
 	Latitude           string `json:"latitude"`
-	Longtitude         string `json:"longtitude"`
+	Longitude          string `json:"longitude"`
 }
 
 type AssetTypeID struct {
