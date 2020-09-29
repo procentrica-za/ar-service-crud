@@ -36,7 +36,7 @@ func (s *Server) handleanalyseassets() http.HandlerFunc {
 			assetsList = append(assetsList, AssetRegisterResponse{name, description, serialno, size, atype, class, dimension1val, dimension2val, dimension3val, dimension4val, dimension5val, dimension6val, extent, extentconfidence, takeondate, derecognitionvalue, latitude, longitude})
 		}
 
-		// get any error encountered during iteration
+		// get any error encountered during iteration.
 		err = rows.Err()
 		if err != nil {
 			w.WriteHeader(500)
