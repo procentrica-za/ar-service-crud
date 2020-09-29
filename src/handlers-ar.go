@@ -44,6 +44,8 @@ func (s *Server) handlegetasset() http.HandlerFunc {
 		asset.ExtentConfidence = extentconfidence
 		asset.TakeOnDate = takeondate
 		asset.DeRecognitionvalue = derecognitionvalue
+		asset.Latitude = latitude
+		asset.Longitude = longitude
 
 		// convert struct into JSON payload to send to service that called this function.
 		js, jserr := json.Marshal(asset)

@@ -14,11 +14,11 @@ func (s *Server) handleexportasset() http.HandlerFunc {
 		assetid := r.URL.Query().Get("assetid")
 
 		// declare variables to catch response from database.
-		var name, description, serialno, size, atype, class, dimension1val, dimension2val, dimension3val, dimension4val, dimension5val, dimension6val, derecognitionvalue, extent, extentconfidence, takeondate string
+		var name, description, serialno, size, atype, class, dimension1val, dimension2val, dimension3val, dimension4val, dimension5val, dimension6val, derecognitionvalue, extent, extentconfidence, takeondate, latitude, longitude string
 
 		// create query string.
 		querystring := "SELECT * FROM public.exportasset('" + assetid + "')"
-		err := s.dbAccess.QueryRow(querystring).Scan(&name, &description, &serialno, &size, &atype, &class, &dimension1val, &dimension2val, &dimension3val, &dimension4val, &dimension5val, &dimension6val, &extent, &extentconfidence, &takeondate, &derecognitionvalue)
+		err := s.dbAccess.QueryRow(querystring).Scan(&name, &description, &serialno, &size, &atype, &class, &dimension1val, &dimension2val, &dimension3val, &dimension4val, &dimension5val, &dimension6val, &extent, &extentconfidence, &takeondate, &derecognitionvalue, &latitude, &longitude)
 		if err != nil {
 			w.WriteHeader(500)
 			fmt.Fprintf(w, err.Error())
@@ -44,6 +44,8 @@ func (s *Server) handleexportasset() http.HandlerFunc {
 		asset.ExtentConfidence = extentconfidence
 		asset.TakeOnDate = takeondate
 		asset.DeRecognitionvalue = derecognitionvalue
+		asset.Latitude = latitude
+		asset.Longitude = longitude
 
 		// convert struct into JSON payload to send to service that called this function.
 		js, jserr := json.Marshal(asset)
