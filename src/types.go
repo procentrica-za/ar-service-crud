@@ -29,24 +29,24 @@ type toAssetRegister struct {
 	ID                 string `json:"id"`
 	FunclocID          string `json:"funclocid"`
 	Name               string `json:"name"`
-	Description        string `json:"description"`
-	SerialNo           string `json:"serialno"`
-	Size               string `json:"size"`
-	SizeUnit           string `json:"sizeunit"`
+	Description        string `json:"description,omitempty"`
+	SerialNo           string `json:"serialno,omitempty"`
+	Size               string `json:"size,omitempty"`
+	SizeUnit           string `json:"sizeunit,omitempty"`
 	Type               string `json:"type"`
 	Class              string `json:"class"`
-	Dimension1Val      string `json:"dimension1val"`
-	Dimension2Val      string `json:"dimension2val"`
-	Dimension3Val      string `json:"dimension3val"`
-	Dimension4Val      string `json:"dimension4val"`
-	Dimension5Val      string `json:"dimension5val"`
-	Dimension6Val      string `json:"dimension6val"`
-	Extent             string `json:"extent"`
-	ExtentConfidence   string `json:"extentconfidence"`
-	TakeOnDate         string `json:"takeondate"`
-	ManufactureDate    string `json:"manufacturedate"`
-	DerecognitionDate  string `json:"derecognitiondate"`
-	DerecognitionValue string `json:"derecognitionvalue"`
+	Dimension1Val      string `json:"dimension1val,omitempty"`
+	Dimension2Val      string `json:"dimension2val,omitempty"`
+	Dimension3Val      string `json:"dimension3val,omitempty"`
+	Dimension4Val      string `json:"dimension4val,omitempty"`
+	Dimension5Val      string `json:"dimension5val,omitempty"`
+	Dimension6Val      string `json:"dimension6val,omitempty"`
+	Extent             string `json:"extent,omitempty"`
+	ExtentConfidence   string `json:"extentconfidence,omitempty"`
+	TakeOnDate         string `json:"takeondate,omitempty"`
+	ManufactureDate    string `json:"manufacturedate,omitempty"`
+	DerecognitionDate  string `json:"derecognitiondate,omitempty"`
+	DerecognitionValue string `json:"derecognitionvalue,omitempty"`
 }
 
 type toAssetRegsiterList struct {
