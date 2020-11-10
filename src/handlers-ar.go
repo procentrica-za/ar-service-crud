@@ -116,3 +116,102 @@ func (s *Server) handlegetassets() http.HandlerFunc {
 		w.Write(js)
 	}
 }
+
+// The function handling the request to get funcloc details
+func (s *Server) handlegetfunclocDetails() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println("Handle Get Func Loc Details Has Been Called...")
+		// retrieving the ID of the asset that is requested.
+		funclocid := r.URL.Query().Get("funclocid")
+
+		// declare variables to catch response from database.
+		var description, name, lat, long, geom string
+
+		// create query string.
+		querystring := "SELECT * FROM public.funclocdetails('" + funclocid + "')"
+		err := s.dbAccess.QueryRow(querystring).Scan(&description, &name, &lat, &long, &geom)
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, err.Error())
+			fmt.Println("Error in communicating with database to get funcloc details")
+			return
+		}
+
+		// instansiate response struct.
+		funcdetails := FunclocDetails{}
+		funcdetails.Description = description
+		funcdetails.Name = name
+		funcdetails.Latitude = lat
+		funcdetails.Longitude = long
+		funcdetails.Geom = geom
+
+		// convert struct into JSON payload to send to service that called this function.
+		js, jserr := json.Marshal(funcdetails)
+
+		// check for errors when converting struct into JSON payload.
+		if jserr != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to create JSON object from DB result to get user")
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(200)
+		w.Write(js)
+	}
+}
+
+// The function handling the request to get funcloc assets
+func (s *Server) handlegetfunclocAssets() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println("Handle Get Asset Has Been Called...")
+		// retrieving the ID of the asset that is requested.
+		funclocid := r.URL.Query().Get("funclocid")
+
+		//set response variables
+		rows, err := s.dbAccess.Query("SELECT * FROM public.funclocassets('" + funclocid + "')")
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to process DB Function...")
+			return
+		}
+		defer rows.Close()
+
+		assetsList := FuncLocAssetList{}
+		assetsList.Assets = []FunclocAssets{}
+
+		var assetid, name, derecognitiondate, derecognitionvalue, description, dimension1value, dimension2value, dimension3value, dimension4value, dimension5value, extent, extentconfidence, manufacturedate, manufacturedateconfidence, takeondate, serialno, lat, lon, cuname, cudescription, eulyears, residualvalfactor, size, sizeunit, atype, class, isactive string
+
+		for rows.Next() {
+			err = rows.Scan(&assetid, &name, &derecognitiondate, &derecognitionvalue, &description, &dimension1value, &dimension2value, &dimension3value, &dimension4value, &dimension5value, &extent, &extentconfidence, &manufacturedate, &manufacturedateconfidence, &takeondate, &serialno, &lat, &lon, &cuname, &cudescription, &eulyears, &residualvalfactor, &size, &sizeunit, &atype, &class, &isactive)
+			if err != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to read data from Assets List...")
+				fmt.Println(err.Error())
+				return
+			}
+			assetsList.Assets = append(assetsList.Assets, FunclocAssets{assetid, name, derecognitiondate, derecognitionvalue, description, dimension1value, dimension2value, dimension3value, dimension4value, dimension5value, extent, extentconfidence, manufacturedate, manufacturedateconfidence, takeondate, serialno, lat, lon, cuname, cudescription, eulyears, residualvalfactor, size, sizeunit, atype, class, isactive})
+		}
+
+		// get any error encountered during iteration
+		err = rows.Err()
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to read data from Advertisement List...")
+			return
+		}
+
+		js, jserr := json.Marshal(assetsList)
+
+		//If Queryrow returns error, provide error to caller and exit
+		if jserr != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to create JSON from DB result...")
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(200)
+		w.Write(js)
+	}
+}
