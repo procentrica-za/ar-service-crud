@@ -12,4 +12,8 @@ func (s *Server) routes() {
 	//Demo Routes ar info
 	s.router.HandleFunc("/funclocassets", s.handlegetfunclocAssets()).Methods("GET")
 	s.router.HandleFunc("/funclocdetails", s.handlegetfunclocDetails()).Methods("GET")
+	//Demo Routes ar shadow info
+	s.router.HandleFunc("/funclocshadowassets", s.handlegetfunclocShadowAssets()).Methods("GET")
+	s.router.HandleFunc("/funclocshadowdetails", s.handlegetfunclocShadowDetails()).Methods("GET")
+	s.router.HandleFunc("/funclocs", s.handlegetfunclocs()).Methods("GET")
 }

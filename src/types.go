@@ -167,3 +167,15 @@ type FunclocAssets struct {
 type FuncLocAssetList struct {
 	Assets []FunclocAssets `json:"funclocassets"`
 }
+
+type ShadowLocation struct {
+	ID          string `json:"id"`
+	Description string `json:"description"`
+	Name        string `json:"name"`
+	Latitude    string `json:"latitude"`
+	Longitude   string `json:"longitude"`
+}
+
+type FuncLocsList struct {
+	Locations []ShadowLocation `json:"funclocs"`
+}
