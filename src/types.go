@@ -165,5 +165,5 @@ type FunclocAssets struct {
 }
 
 type FuncLocAssetList struct {
-	Assets []FunclocAssets `json:"funclocassetsassets"`
+	Assets []FunclocAssets `json:"funclocassets"`
 }

@@ -164,7 +164,7 @@ func (s *Server) handlegetfunclocDetails() http.HandlerFunc {
 // The function handling the request to get funcloc assets
 func (s *Server) handlegetfunclocAssets() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("Handle Get Asset Has Been Called...")
+		fmt.Println("Handle Get func loc assets Has Been Called...")
 		// retrieving the ID of the asset that is requested.
 		funclocid := r.URL.Query().Get("funclocid")
 
