@@ -146,6 +146,7 @@ type AssetList struct {
 }
 
 type FunclocDetails struct {
+	ID          string `json:"id"`
 	Description string `json:"description"`
 	Name        string `json:"name"`
 	Latitude    string `json:"latitude"`
@@ -154,33 +155,47 @@ type FunclocDetails struct {
 }
 
 type FunclocAssets struct {
-	AssetID                   string `json:"assetid"`
-	Name                      string `json:"name"`
-	DerecognitionDate         string `json:"derecognitiondate"`
-	Derecognitionvalue        string `json:"derecognitionvalue"`
-	Description               string `json:"description"`
-	Dimension1Value           string `json:"dimension1value"`
-	Dimension2Value           string `json:"dimension2value"`
-	Dimension3Value           string `json:"dimension3value`
-	Dimension4Value           string `json:"dimension4value"`
-	Dimension5Value           string `json:"dimension5value"`
-	Extent                    string `json:"extent"`
-	ExtentConfidence          string `json:"extentconfidence"`
-	ManufactureDate           string `json:"manufacturedate"`
-	ManufactureDateConfidence string `json:"manufacturedateconfidence"`
-	Takeondate                string `json:"takeondate"`
-	SerialNo                  string `json:"serialno"`
-	Lat                       string `json:"lat"`
-	Lon                       string `json:"lon"`
-	CuName                    string `json:"cuname"`
-	CuDescription             string `json:"cudescription"`
-	EulYears                  string `json:"eulyears"`
-	ResidualValFactor         string `json:"residualvalfactor"`
-	Size                      string `json:"size"`
-	SizeUnit                  string `json:"sizeunit"`
-	Type                      string `json:"type"`
-	Class                     string `json:"class"`
-	IsActive                  string `json:"isactive"`
+	AssetID                     string `json:"assetid"`
+	Name                        string `json:"name"`
+	DerecognitionDate           string `json:"derecognitiondate"`
+	Derecognitionvalue          string `json:"derecognitionvalue"`
+	Description                 string `json:"description"`
+	Dimension1Value             string `json:"dimension1value"`
+	Dimension2Value             string `json:"dimension2value"`
+	Dimension3Value             string `json:"dimension3value`
+	Dimension4Value             string `json:"dimension4value"`
+	Dimension5Value             string `json:"dimension5value"`
+	Extent                      string `json:"extent"`
+	ExtentConfidence            string `json:"extentconfidence"`
+	ManufactureDate             string `json:"manufacturedate"`
+	ManufactureDateConfidence   string `json:"manufacturedateconfidence"`
+	Takeondate                  string `json:"takeondate"`
+	SerialNo                    string `json:"serialno"`
+	Lat                         string `json:"lat"`
+	Lon                         string `json:"lon"`
+	CuName                      string `json:"cuname"`
+	CuDescription               string `json:"cudescription"`
+	EulYears                    string `json:"eulyears"`
+	ResidualValFactor           string `json:"residualvalfactor"`
+	Size                        string `json:"size"`
+	SizeUnit                    string `json:"sizeunit"`
+	Type                        string `json:"type"`
+	Class                       string `json:"class"`
+	IsActive                    string `json:"isactive"`
+	Age                         string `json:"age"`
+	CarryingValueClosingBalance string `json:"carryingvalueclosingbalance"`
+	CarryingValueOpeningBalance string `json:"carryingvalueopeningbalance"`
+	CostClosingBalance          string `json:"costclosingbalance"`
+	CostOpeningBalance          string `json:"costopeningbalance"`
+	CRC                         string `json:"crc"`
+	DepreciationClosingBalance  string `json:"depreciationclosingbalance"`
+	DepreciationOpeningBalance  string `json:"depreciationopeningbalance"`
+	ImpairmentClosingBalance    string `json:"impairmentclosingbalance"`
+	ImpairmentOpeningBalance    string `json:"impairmentopeningbalance"`
+	ResidualValue               string `json:"residualvalue"`
+	RulYears                    string `json:"rulyears"`
+	DRC                         string `json:"drc"`
+	FY                          string `json:"fy"`
 }
 
 type FuncLocAssetList struct {
