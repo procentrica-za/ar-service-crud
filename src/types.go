@@ -125,3 +125,57 @@ type AssetTypeID struct {
 type AssetList struct {
 	Assets []AssetRegisterResponse `json:"assets"`
 }
+
+type FunclocDetails struct {
+	Description string `json:"description"`
+	Name        string `json:"name"`
+	Latitude    string `json:"latitude"`
+	Longitude   string `json:"longitude"`
+	Geom        string `json:"geom"`
+}
+
+type FunclocAssets struct {
+	AssetID                   string `json:"assetid"`
+	Name                      string `json:"name"`
+	DerecognitionDate         string `json:"derecognitiondate"`
+	Derecognitionvalue        string `json:"derecognitionvalue"`
+	Description               string `json:"description"`
+	Dimension1Value           string `json:"dimension1value"`
+	Dimension2Value           string `json:"dimension2value"`
+	Dimension3Value           string `json:"dimension3value`
+	Dimension4Value           string `json:"dimension4value"`
+	Dimension5Value           string `json:"dimension5value"`
+	Extent                    string `json:"extent"`
+	ExtentConfidence          string `json:"extentconfidence"`
+	ManufactureDate           string `json:"manufacturedate"`
+	ManufactureDateConfidence string `json:"manufacturedateconfidence"`
+	Takeondate                string `json:"takeondate"`
+	SerialNo                  string `json:"serialno"`
+	Lat                       string `json:"lat"`
+	Lon                       string `json:"lon"`
+	CuName                    string `json:"cuname"`
+	CuDescription             string `json:"cudescription"`
+	EulYears                  string `json:"eulyears"`
+	ResidualValFactor         string `json:"residualvalfactor"`
+	Size                      string `json:"size"`
+	SizeUnit                  string `json:"sizeunit"`
+	Type                      string `json:"type"`
+	Class                     string `json:"class"`
+	IsActive                  string `json:"isactive"`
+}
+
+type FuncLocAssetList struct {
+	Assets []FunclocAssets `json:"funclocassets"`
+}
+
+type ShadowLocation struct {
+	ID          string `json:"id"`
+	Description string `json:"description"`
+	Name        string `json:"name"`
+	Latitude    string `json:"latitude"`
+	Longitude   string `json:"longitude"`
+}
+
+type FuncLocsList struct {
+	Locations []ShadowLocation `json:"funclocs"`
+}

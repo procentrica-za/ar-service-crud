@@ -8,4 +8,12 @@ func (s *Server) routes() {
 	s.router.HandleFunc("/assets", s.handlegetassets()).Methods("GET")
 	s.router.HandleFunc("/extract", s.handleextractassets()).Methods("GET")
 	s.router.HandleFunc("/analyseassets", s.handleanalyseassets()).Methods("GET")
+
+	//Demo Routes ar info
+	s.router.HandleFunc("/funclocassets", s.handlegetfunclocAssets()).Methods("GET")
+	s.router.HandleFunc("/funclocdetails", s.handlegetfunclocDetails()).Methods("GET")
+	//Demo Routes ar shadow info
+	s.router.HandleFunc("/funclocshadowassets", s.handlegetfunclocShadowAssets()).Methods("GET")
+	s.router.HandleFunc("/funclocshadowdetails", s.handlegetfunclocShadowDetails()).Methods("GET")
+	s.router.HandleFunc("/funclocs", s.handlegetfunclocs()).Methods("GET")
 }
