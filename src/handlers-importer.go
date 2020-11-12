@@ -169,10 +169,75 @@ func (s *Server) handlePostToShadowTables() http.HandlerFunc {
 	}
 }
 
-func (s *Server) handleShadowTable() http.HandlerFunc {
+func (s *Server) handleShadowTableFuncloc() http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
+		//retrieve ID from advert service
+		getFunclocid := r.URL.Query().Get("id")
+		var FunclocDeleted string
+		querystring := "SELECT * FROM public.handleshadowtablefuncloc('" + getFunclocid + "')"
+		err := s.dbAccess.QueryRow(querystring).Scan(&FunclocDeleted)
 
+		//handle for bad JSON provided
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to process DB Function to delete Funcloc")
+			fmt.Println("Error in communicating with database to delete Funcloc")
+			return
+		}
+
+		//set response variables
+
+		//convert struct back to JSON
+		js, jserr := json.Marshal(FunclocDeleted)
+
+		//error occured when trying to convert struct to a JSON object
+		if jserr != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to create JSON object from DB result to delete Funcloc")
+			return
+		}
+
+		//return back to advert service
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(200)
+		w.Write(js)
+	}
+}
+
+func (s *Server) handleShadowTableAsset() http.HandlerFunc {
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		//retrieve ID from advert service
+		getAssetid := r.URL.Query().Get("id")
+		var AssetDeleted string
+		querystring := "SELECT * FROM public.handleshadowtableasset('" + getAssetid + "')"
+		err := s.dbAccess.QueryRow(querystring).Scan(&AssetDeleted)
+
+		//handle for bad JSON provided
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to process DB Function to delete Asset")
+			fmt.Println("Error in communicating with database to delete Asset")
+			return
+		}
+
+		//set response variables
+
+		//convert struct back to JSON
+		js, jserr := json.Marshal(AssetDeleted)
+
+		//error occured when trying to convert struct to a JSON object
+		if jserr != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to create JSON object from DB result to delete Asset")
+			return
+		}
+
+		//return back to advert service
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(200)
+		w.Write(js)
 	}
 }
 
