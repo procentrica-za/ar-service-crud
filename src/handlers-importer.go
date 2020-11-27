@@ -174,9 +174,10 @@ func (s *Server) handleShadowTableFuncloc() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		//retrieve ID from advert service
 		getFunclocid := r.URL.Query().Get("id")
-		var FunclocDeleted string
+		var FunclocDeleted bool
+		var message string
 		querystring := "SELECT * FROM public.handleshadowtablefuncloc('" + getFunclocid + "')"
-		err := s.dbAccess.QueryRow(querystring).Scan(&FunclocDeleted)
+		err := s.dbAccess.QueryRow(querystring).Scan(&message, &FunclocDeleted)
 
 		//handle for bad JSON provided
 		if err != nil {
@@ -187,9 +188,11 @@ func (s *Server) handleShadowTableFuncloc() http.HandlerFunc {
 		}
 
 		//set response variables
-
+		response := toAssetRegisterResult{}
+		response.Message = message
+		response.Success = FunclocDeleted
 		//convert struct back to JSON
-		js, jserr := json.Marshal(FunclocDeleted)
+		js, jserr := json.Marshal(response)
 
 		//error occured when trying to convert struct to a JSON object
 		if jserr != nil {
@@ -210,9 +213,10 @@ func (s *Server) handleShadowTableAsset() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		//retrieve ID from advert service
 		getAssetid := r.URL.Query().Get("id")
-		var AssetDeleted string
+		var AssetDeleted bool
+		var message string
 		querystring := "SELECT * FROM public.handleshadowtableasset('" + getAssetid + "')"
-		err := s.dbAccess.QueryRow(querystring).Scan(&AssetDeleted)
+		err := s.dbAccess.QueryRow(querystring).Scan(&message, &AssetDeleted)
 
 		//handle for bad JSON provided
 		if err != nil {
@@ -223,9 +227,11 @@ func (s *Server) handleShadowTableAsset() http.HandlerFunc {
 		}
 
 		//set response variables
-
+		response := toAssetRegisterResult{}
+		response.Message = message
+		response.Success = AssetDeleted
 		//convert struct back to JSON
-		js, jserr := json.Marshal(AssetDeleted)
+		js, jserr := json.Marshal(response)
 
 		//error occured when trying to convert struct to a JSON object
 		if jserr != nil {
