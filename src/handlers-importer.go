@@ -327,6 +327,5 @@ func (s *Server) handleUpdateFuncloc() http.HandlerFunc {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(200)
 		w.Write(js)
-
 	}
 }
