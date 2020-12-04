@@ -227,3 +227,17 @@ type NodeFuncLocs struct {
 type NodeFuncLocsList struct {
 	NodeFuncLocs []NodeFuncLocs `json:"nodefunclocs"`
 }
+
+type NodeAssets struct {
+	FuncLocNodeId string `json:"funclocnodeid"`
+	Id            string `json:"id"`
+	Description   string `json:"description"`
+	Name          string `json:"name"`
+	Lat           string `json:"lat"`
+	Lon           string `json:"lon"`
+	FuncLocID     string `json:"funclocid"`
+}
+
+type NodeAssetsList struct {
+	NodeAssets []NodeAssets `json:"nodeassets"`
+}

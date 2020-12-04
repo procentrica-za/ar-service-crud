@@ -434,3 +434,66 @@ func (s *Server) handleGetNodeFuncLocs() http.HandlerFunc {
 		w.Write(js)
 	}
 }
+
+// The function handling the request to get node assets
+func (s *Server) handleGetNodeAssets() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println(" Handle Get Node Assets Has Been Called...")
+		// retrieving the ID of node assets that are requested.
+		nodeid := r.URL.Query().Get("nodeid")
+
+		//set response variables
+		rows, err := s.dbAccess.Query("SELECT * FROM public.GetNodeAssetsRecurse('" + nodeid + "')")
+
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to process DB Function...")
+			return
+		}
+		defer rows.Close()
+
+		assetsList := NodeAssetsList{}
+		assetsList.NodeAssets = []NodeAssets{}
+
+		var Id,
+			FuncLocId,
+			FuncLocNodeId,
+			Name,
+			Description,
+			Type,
+			Lat,
+			Lon string
+
+		for rows.Next() {
+			err = rows.Scan(&Id, &FuncLocId, &FuncLocNodeId, &Name, &Description, &Type, &Lat, &Lon)
+			if err != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to read data from assets List...")
+				fmt.Println(err.Error())
+				return
+			}
+			assetsList.NodeAssets = append(assetsList.NodeAssets, NodeAssets{FuncLocNodeId, Id, Description, Name, Lat, Lon, FuncLocId})
+		}
+
+		// get any error encountered during iteration
+		err = rows.Err()
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to read data from assets List...")
+			return
+		}
+
+		js, jserr := json.Marshal(assetsList)
+
+		//If Queryrow returns error, provide error to caller and exit
+		if jserr != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to create JSON from DB result...")
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(200)
+		w.Write(js)
+	}
+}
