@@ -370,3 +370,67 @@ func (s *Server) handlegetfunclocs() http.HandlerFunc {
 		w.Write(js)
 	}
 }
+
+// The function handling the request to get funcloc assets
+func (s *Server) handleGetNodeFuncLocs() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println(" Handle Get Node FuncLocs Has Been Called...")
+		// retrieving the ID of node that is requested.
+		nodeid := r.URL.Query().Get("nodeid")
+
+		//set response variables
+		rows, err := s.dbAccess.Query("SELECT * FROM public.GetNodeFuncLocRecurse('" + nodeid + "')")
+
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to process DB Function...")
+			return
+		}
+		defer rows.Close()
+
+		nodesList := NodeFuncLocsList{}
+		nodesList.NodeFuncLocs = []NodeFuncLocs{}
+
+		var Id,
+			FuncLocNodeId,
+			Name,
+			Description,
+			Lat,
+			Lon,
+			InstallDate,
+			Status,
+			FuncLocNodeName string
+
+		for rows.Next() {
+			err = rows.Scan(&Id, &FuncLocNodeId, &Name, &Description, &Lat, &Lon, &InstallDate, &Status, &FuncLocNodeName)
+			if err != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to read data from Nodes List...")
+				fmt.Println(err.Error())
+				return
+			}
+			nodesList.NodeFuncLocs = append(nodesList.NodeFuncLocs, NodeFuncLocs{FuncLocNodeId, Id, Description, Name, InstallDate, Status, FuncLocNodeName})
+		}
+
+		// get any error encountered during iteration
+		err = rows.Err()
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to read data from Nodes List...")
+			return
+		}
+
+		js, jserr := json.Marshal(nodesList)
+
+		//If Queryrow returns error, provide error to caller and exit
+		if jserr != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to create JSON from DB result...")
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(200)
+		w.Write(js)
+	}
+}
