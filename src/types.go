@@ -84,7 +84,7 @@ type FunclocList struct {
 }
 
 type FunclocNode struct {
-	FunclocNodeID string `json:"funclocid"`
+	FunclocNodeID string `json:"funclocnodeid"`
 	Name          string `json:"name"`
 	AliasName     string `json:"aliasname"`
 	Latitude      string `json:"latitude"`
