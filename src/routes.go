@@ -20,4 +20,8 @@ func (s *Server) routes() {
 	s.router.HandleFunc("/funclocshadowassets", s.handlegetfunclocShadowAssets()).Methods("GET")
 	s.router.HandleFunc("/funclocshadowdetails", s.handlegetfunclocShadowDetails()).Methods("GET")
 	s.router.HandleFunc("/funclocs", s.handlegetfunclocs()).Methods("GET")
+	//Get Node func locs
+	s.router.HandleFunc("/nodefunclocs", s.handleGetNodeFuncLocs()).Methods("GET")
+	//Get Node assetlocs
+	s.router.HandleFunc("/nodeassets", s.handleGetNodeAssets()).Methods("GET")
 }

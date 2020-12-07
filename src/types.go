@@ -213,3 +213,31 @@ type ShadowLocation struct {
 type FuncLocsList struct {
 	Locations []ShadowLocation `json:"funclocs"`
 }
+
+type NodeFuncLocs struct {
+	FuncLocNodeId   string `json:"funclocnodeid"`
+	Id              string `json:"id"`
+	Description     string `json:"description"`
+	Name            string `json:"name"`
+	InstallDate     string `json:"installdate"`
+	Status          string `json:"status"`
+	FuncLocNodeName string `json:"funclocnodename"`
+}
+
+type NodeFuncLocsList struct {
+	NodeFuncLocs []NodeFuncLocs `json:"nodefunclocs"`
+}
+
+type NodeAssets struct {
+	FuncLocNodeId string `json:"funclocnodeid"`
+	Id            string `json:"id"`
+	Description   string `json:"description"`
+	Name          string `json:"name"`
+	Lat           string `json:"lat"`
+	Lon           string `json:"lon"`
+	FuncLocID     string `json:"funclocid"`
+}
+
+type NodeAssetsList struct {
+	NodeAssets []NodeAssets `json:"nodeassets"`
+}
