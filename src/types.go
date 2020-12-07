@@ -83,6 +83,21 @@ type FunclocList struct {
 	Flist []Funcloc `json:"funcloc"`
 }
 
+type FunclocNode struct {
+	FunclocNodeID string `json:"funclocid"`
+	Name          string `json:"name"`
+	AliasName     string `json:"aliasname"`
+	Latitude      string `json:"latitude"`
+	Longitude     string `json:"longitude"`
+	Geom          string `json:"geom"`
+	NodeType      string `json:"nodetype"`
+	ParentID      string `json:"parentid"`
+}
+
+type FunclocNodeList struct {
+	Fnodelist []FunclocNode `json:"funclocnode"`
+}
+
 type toAssetRegisterResult struct {
 	Success bool   `json:"success"`
 	Message string `json:"message"`
