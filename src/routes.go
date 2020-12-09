@@ -14,7 +14,6 @@ func (s *Server) routes() {
 	s.router.HandleFunc("/analyseassets", s.handleanalyseassets()).Methods("GET")
 
 	//Demo Routes ar info
-	s.router.HandleFunc("/funclocassets", s.handlegetfunclocAssets()).Methods("GET")
 	s.router.HandleFunc("/funclocdetails", s.handlegetfunclocDetails()).Methods("GET")
 	//Demo Routes ar shadow info
 	s.router.HandleFunc("/funclocshadowassets", s.handlegetfunclocShadowAssets()).Methods("GET")
@@ -24,4 +23,10 @@ func (s *Server) routes() {
 	s.router.HandleFunc("/nodefunclocs", s.handleGetNodeFuncLocs()).Methods("GET")
 	//Get Node assetlocs
 	s.router.HandleFunc("/nodeassets", s.handleGetNodeAssets()).Methods("GET")
+	//Get Asset detail
+	s.router.HandleFunc("/assetdetails", s.handleGetAssetDetail()).Methods("GET")
+	//Get Asset flex vals
+	s.router.HandleFunc("/assetflexval", s.handleGetAssetFlexval()).Methods("GET")
+	//Get Func Loc Assets
+	s.router.HandleFunc("/funclocassets", s.handlegetFuncLocAssets()).Methods("GET")
 }

@@ -120,7 +120,7 @@ func (s *Server) handlegetassets() http.HandlerFunc {
 // The function handling the request to get funcloc details
 func (s *Server) handlegetfunclocDetails() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("Handle Get Func Loc Details Has Been Called...")
+		fmt.Println("Handle Get Asset Details Has Been Called...")
 		// retrieving the ID of the asset that is requested.
 		funclocid := r.URL.Query().Get("funclocid")
 
@@ -153,61 +153,6 @@ func (s *Server) handlegetfunclocDetails() http.HandlerFunc {
 		if jserr != nil {
 			w.WriteHeader(500)
 			fmt.Fprintf(w, "Unable to create JSON object from DB result to get user")
-			return
-		}
-
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(200)
-		w.Write(js)
-	}
-}
-
-// The function handling the request to get funcloc assets
-func (s *Server) handlegetfunclocAssets() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("Handle Get func loc assets Has Been Called...")
-		// retrieving the ID of the asset that is requested.
-		funclocid := r.URL.Query().Get("funclocid")
-
-		//set response variables
-		rows, err := s.dbAccess.Query("SELECT * FROM public.funclocassets('" + funclocid + "')")
-		if err != nil {
-			w.WriteHeader(500)
-			fmt.Fprintf(w, "Unable to process DB Function...")
-			return
-		}
-		defer rows.Close()
-
-		assetsList := FuncLocAssetList{}
-		assetsList.Assets = []FunclocAssets{}
-
-		var assetid, name, derecognitiondate, derecognitionvalue, description, dimension1value, dimension2value, dimension3value, dimension4value, dimension5value, extent, extentconfidence, manufacturedate, manufacturedateconfidence, takeondate, serialno, lat, lon, cuname, cudescription, eulyears, residualvalfactor, size, sizeunit, atype, class, isactive, assetage, carryingvalueclosingbalance, carryingvalueopeningbalance, costclosingbalance, costopeningbalance, crc, depreciationclosingbalance, depreciationopeningbalance, impairmentclosingbalance, impairmentopeningbalance, residualvalue, rulyears, drc, fy string
-
-		for rows.Next() {
-			err = rows.Scan(&assetid, &name, &derecognitiondate, &derecognitionvalue, &description, &dimension1value, &dimension2value, &dimension3value, &dimension4value, &dimension5value, &extent, &extentconfidence, &manufacturedate, &manufacturedateconfidence, &takeondate, &serialno, &lat, &lon, &cuname, &cudescription, &eulyears, &residualvalfactor, &size, &sizeunit, &atype, &class, &isactive, &assetage, &carryingvalueclosingbalance, &carryingvalueopeningbalance, &costclosingbalance, &costopeningbalance, &crc, &depreciationclosingbalance, &depreciationopeningbalance, &impairmentclosingbalance, &impairmentopeningbalance, &residualvalue, &rulyears, &drc, &fy)
-			if err != nil {
-				w.WriteHeader(500)
-				fmt.Fprintf(w, "Unable to read data from Assets List...")
-				fmt.Println(err.Error())
-				return
-			}
-			assetsList.Assets = append(assetsList.Assets, FunclocAssets{assetid, name, derecognitiondate, derecognitionvalue, description, dimension1value, dimension2value, dimension3value, dimension4value, dimension5value, extent, extentconfidence, manufacturedate, manufacturedateconfidence, takeondate, serialno, lat, lon, cuname, cudescription, eulyears, residualvalfactor, size, sizeunit, atype, class, isactive, assetage, carryingvalueclosingbalance, carryingvalueopeningbalance, costclosingbalance, costopeningbalance, crc, depreciationclosingbalance, depreciationopeningbalance, impairmentclosingbalance, impairmentopeningbalance, residualvalue, rulyears, drc, fy})
-		}
-
-		// get any error encountered during iteration
-		err = rows.Err()
-		if err != nil {
-			w.WriteHeader(500)
-			fmt.Fprintf(w, "Unable to read data from Advertisement List...")
-			return
-		}
-
-		js, jserr := json.Marshal(assetsList)
-
-		//If Queryrow returns error, provide error to caller and exit
-		if jserr != nil {
-			w.WriteHeader(500)
-			fmt.Fprintf(w, "Unable to create JSON from DB result...")
 			return
 		}
 
@@ -480,6 +425,167 @@ func (s *Server) handleGetNodeAssets() http.HandlerFunc {
 		if err != nil {
 			w.WriteHeader(500)
 			fmt.Fprintf(w, "Unable to read data from assets List...")
+			return
+		}
+
+		js, jserr := json.Marshal(assetsList)
+
+		//If Queryrow returns error, provide error to caller and exit
+		if jserr != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to create JSON from DB result...")
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(200)
+		w.Write(js)
+	}
+}
+
+// The function handling the request to get funcloc details
+func (s *Server) handleGetAssetDetail() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println("Handle Get Asset Details Has Been Called...")
+		// retrieving the ID of the asset that is requested.
+		id := r.URL.Query().Get("id")
+
+		// declare variables to catch response from database.
+		var assetid,
+			atype,
+			description,
+			manufacturedate,
+			takeondate,
+			serialno string
+
+		// create query string.
+		querystring := "SELECT * FROM public.getassetdetail('" + id + "')"
+		err := s.dbAccess.QueryRow(querystring).Scan(&assetid, &atype, &description, &manufacturedate, &takeondate, &serialno)
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, err.Error())
+			fmt.Println("Error in communicating with database to get asset details")
+			return
+		}
+
+		// instansiate response struct.
+		assetdetails := Assetdetails{}
+		assetdetails.ID = assetid
+		assetdetails.Type = atype
+		assetdetails.Description = description
+		assetdetails.ManufactureDate = manufacturedate
+		assetdetails.TakeOnDate = takeondate
+		assetdetails.SerialNo = serialno
+
+		// convert struct into JSON payload to send to service that called this function.
+		js, jserr := json.Marshal(assetdetails)
+
+		// check for errors when converting struct into JSON payload.
+		if jserr != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to create JSON object from DB result to get user")
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(200)
+		w.Write(js)
+	}
+}
+
+// The function handling the request to get funcloc assets
+func (s *Server) handleGetAssetFlexval() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println(" Handle Get flex vals Has Been Called...")
+		// retrieving the ID of node that is requested.
+		id := r.URL.Query().Get("id")
+
+		//set response variables
+		rows, err := s.dbAccess.Query("SELECT * FROM public.getassetdetailflexval('" + id + "')")
+
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to process DB Function...")
+			return
+		}
+		defer rows.Close()
+
+		flexvalList := AssetDetail{}
+		flexvalList.Flexvals = []FlexVals{}
+
+		var name, value string
+
+		for rows.Next() {
+			err = rows.Scan(&name, &value)
+			if err != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to read data from FlexVal List...")
+				fmt.Println(err.Error())
+				return
+			}
+			flexvalList.Flexvals = append(flexvalList.Flexvals, FlexVals{name, value})
+		}
+
+		// get any error encountered during iteration
+		err = rows.Err()
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to read data from FlexVal List...")
+			return
+		}
+
+		js, jserr := json.Marshal(flexvalList)
+
+		//If Queryrow returns error, provide error to caller and exit
+		if jserr != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to create JSON from DB result...")
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(200)
+		w.Write(js)
+	}
+}
+
+// The function handling the request to get funcloc assets
+func (s *Server) handlegetFuncLocAssets() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println("Handle Get func loc assets Has Been Called...")
+		// retrieving the ID of the asset that is requested.
+		funclocid := r.URL.Query().Get("funclocid")
+
+		//set response variables
+		rows, err := s.dbAccess.Query("SELECT * FROM public.getfunclocassets('" + funclocid + "')")
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to process DB Function...")
+			return
+		}
+		defer rows.Close()
+
+		assetsList := FunclocationAssetsList{}
+		assetsList.Funclocassets = []FunclocationAssets{}
+
+		var id, funclocationid, name, description, lat, lon string
+
+		for rows.Next() {
+			err = rows.Scan(&id, &funclocationid, &name, &description, &lat, &lon)
+			if err != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to read data from Assets List...")
+				fmt.Println(err.Error())
+				return
+			}
+			assetsList.Funclocassets = append(assetsList.Funclocassets, FunclocationAssets{id, funclocationid, name, description, lat, lon})
+		}
+
+		// get any error encountered during iteration
+		err = rows.Err()
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to read data from Asset List...")
 			return
 		}
 
