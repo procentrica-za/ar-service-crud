@@ -256,3 +256,34 @@ type NodeAssets struct {
 type NodeAssetsList struct {
 	NodeAssets []NodeAssets `json:"nodeassets"`
 }
+
+type Assetdetails struct {
+	ID              string `json:"id"`
+	Type            string `json:"type"`
+	Description     string `json:"description"`
+	ManufactureDate string `json:"manufacturedate"`
+	TakeOnDate      string `json:"takeondate"`
+	SerialNo        string `json:"serialno"`
+}
+
+type FlexVals struct {
+	Name  string `json:"name"`
+	Value string `json:"value"`
+}
+
+type AssetDetail struct {
+	Flexvals []FlexVals `json:"flexvalues"`
+}
+
+type FunclocationAssets struct {
+	ID          string `json:"id"`
+	FuncLocId   string `json:"funclocId"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	Lat         string `json:"lat"`
+	Lon         string `json:"lon"`
+}
+
+type FunclocationAssetsList struct {
+	Funclocassets []FunclocationAssets `json:"funclocassets"`
+}
