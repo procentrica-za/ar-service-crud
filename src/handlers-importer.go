@@ -12,11 +12,13 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		body, err := ioutil.ReadAll(r.Body)
+		//Unmarshal for funcloc
 		funclocList := FunclocList{}
 		err = json.Unmarshal(body, &funclocList)
+
 		if err != nil {
 			w.WriteHeader(500)
-			fmt.Fprintf(w, "Bad JSON provided to post funcloc")
+			fmt.Fprintf(w, "Bad JSON provided to post funcloc and funcloc")
 			return
 		}
 		var success bool
@@ -28,6 +30,31 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 		err = s.dbAccess.QueryRow(querystring).Scan(&success, &message)
 		fmt.Println(success)
 		fmt.Println(message)
+
+		//Unmarshal for funclocnode
+		funclocnodeList := FunclocNodeList{}
+		err = json.Unmarshal(body, &funclocnodeList)
+
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Bad JSON provided to post funcloc and funclocnode")
+			return
+		}
+
+		querystring1 := "SELECT * FROM public.postfunclocnode('" + funclocnodeList.Fnodelist[0].FunclocNodeID + "', '" + funclocnodeList.Fnodelist[0].Name + "', '" +
+			funclocnodeList.Fnodelist[0].AliasName + "', '" + funclocnodeList.Fnodelist[0].Latitude + "' , '" + funclocnodeList.Fnodelist[0].Longitude +
+			"', '" + funclocnodeList.Fnodelist[0].Geom + "' , '" + funclocnodeList.Fnodelist[0].NodeType + "' , '" + funclocnodeList.Fnodelist[0].ParentID + "')"
+		//retrieve result message from database set to response JSON object
+		err = s.dbAccess.QueryRow(querystring1).Scan(&success, &message)
+		fmt.Println(success)
+		fmt.Println(message)
+
+		querystring2 := "SELECT * FROM public.postfuncloclink('" + funclocList.Flist[0].FunclocID + "', '" + funclocnodeList.Fnodelist[0].FunclocNodeID + "')"
+		//retrieve result message from database set to response JSON object
+		err = s.dbAccess.QueryRow(querystring2).Scan(&success, &message)
+		fmt.Println(success)
+		fmt.Println(message)
+
 		assets := toAssetRegsiterList{}
 		// Obtain all the fields in the asset struct
 		err = json.Unmarshal(body, &assets)
