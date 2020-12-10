@@ -333,8 +333,7 @@ func (s *Server) handleGetNodeFuncLocs() http.HandlerFunc {
 		}
 		defer rows.Close()
 
-		nodesList := NodeFuncLocsList{}
-		nodesList.NodeFuncLocs = []NodeFuncLocs{}
+		nodesList := []NodeFuncLocs{}
 
 		var Id,
 			FuncLocNodeId,
@@ -354,7 +353,7 @@ func (s *Server) handleGetNodeFuncLocs() http.HandlerFunc {
 				fmt.Println(err.Error())
 				return
 			}
-			nodesList.NodeFuncLocs = append(nodesList.NodeFuncLocs, NodeFuncLocs{FuncLocNodeId, Id, Description, Name, InstallDate, Status, FuncLocNodeName})
+			nodesList = append(nodesList, NodeFuncLocs{FuncLocNodeId, Id, Description, Name, InstallDate, Status, FuncLocNodeName})
 		}
 
 		// get any error encountered during iteration
@@ -397,8 +396,7 @@ func (s *Server) handleGetNodeAssets() http.HandlerFunc {
 		}
 		defer rows.Close()
 
-		assetsList := NodeAssetsList{}
-		assetsList.NodeAssets = []NodeAssets{}
+		assetsList := []NodeAssets{}
 
 		var Id,
 			FuncLocId,
@@ -417,7 +415,7 @@ func (s *Server) handleGetNodeAssets() http.HandlerFunc {
 				fmt.Println(err.Error())
 				return
 			}
-			assetsList.NodeAssets = append(assetsList.NodeAssets, NodeAssets{FuncLocNodeId, Id, Description, Name, Lat, Lon, FuncLocId})
+			assetsList = append(assetsList, NodeAssets{FuncLocNodeId, Id, Description, Name, Lat, Lon, FuncLocId})
 		}
 
 		// get any error encountered during iteration
@@ -525,7 +523,6 @@ func (s *Server) handleGetAssetFlexval() http.HandlerFunc {
 			}
 			flexvalList.Flexvals = append(flexvalList.Flexvals, FlexVals{name, value})
 		}
-
 		// get any error encountered during iteration
 		err = rows.Err()
 		if err != nil {
@@ -565,8 +562,7 @@ func (s *Server) handlegetFuncLocAssets() http.HandlerFunc {
 		}
 		defer rows.Close()
 
-		assetsList := FunclocationAssetsList{}
-		assetsList.Funclocassets = []FunclocationAssets{}
+		assetsList := []FunclocationAssets{}
 
 		var id, funclocationid, name, description, lat, lon string
 
@@ -578,7 +574,7 @@ func (s *Server) handlegetFuncLocAssets() http.HandlerFunc {
 				fmt.Println(err.Error())
 				return
 			}
-			assetsList.Funclocassets = append(assetsList.Funclocassets, FunclocationAssets{id, funclocationid, name, description, lat, lon})
+			assetsList = append(assetsList, FunclocationAssets{id, funclocationid, name, description, lat, lon})
 		}
 
 		// get any error encountered during iteration
@@ -590,6 +586,68 @@ func (s *Server) handlegetFuncLocAssets() http.HandlerFunc {
 		}
 
 		js, jserr := json.Marshal(assetsList)
+
+		//If Queryrow returns error, provide error to caller and exit
+		if jserr != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to create JSON from DB result...")
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(200)
+		w.Write(js)
+	}
+}
+
+// The function handling the request to get funcloc
+func (s *Server) handleGetFuncLoc() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println(" Handle Get funcloc Has Been Called...")
+		// retrieving the ID of funcloc that are requested.
+		funclocnodeid := r.URL.Query().Get("funclocnodeid")
+		id := r.URL.Query().Get("id")
+
+		//set response variables
+		rows, err := s.dbAccess.Query("SELECT * FROM public.getfuncloc('" + funclocnodeid + "', '" + id + "')")
+
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to process DB Function...")
+			return
+		}
+		defer rows.Close()
+
+		funcslist := []FuncLoc{}
+
+		var Id,
+			FuncLocNodeId,
+			Name,
+			Description,
+			Installdate,
+			Status,
+			Funclocnodename string
+
+		for rows.Next() {
+			err = rows.Scan(&Id, &FuncLocNodeId, &Name, &Description, &Installdate, &Status, &Funclocnodename)
+			if err != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to read data from assets List...")
+				fmt.Println(err.Error())
+				return
+			}
+			funcslist = append(funcslist, FuncLoc{Id, FuncLocNodeId, Name, Description, Installdate, Status, Funclocnodename})
+		}
+
+		// get any error encountered during iteration
+		err = rows.Err()
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to read data from locations List...")
+			return
+		}
+
+		js, jserr := json.Marshal(funcslist)
 
 		//If Queryrow returns error, provide error to caller and exit
 		if jserr != nil {

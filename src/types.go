@@ -287,3 +287,13 @@ type FunclocationAssets struct {
 type FunclocationAssetsList struct {
 	Funclocassets []FunclocationAssets `json:"funclocassets"`
 }
+
+type FuncLoc struct {
+	Id              string `json:"id"`
+	FuncLocNodeId   string `json:"funclocnodeid"`
+	Name            string `json:"name"`
+	Description     string `json:"description"`
+	InstallDate     string `json:"installdate"`
+	Status          string `json:"status"`
+	FuncLocNodeName string `json:"funclocnodename"`
+}

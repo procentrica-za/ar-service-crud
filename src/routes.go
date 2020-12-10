@@ -29,4 +29,6 @@ func (s *Server) routes() {
 	s.router.HandleFunc("/assetflexval", s.handleGetAssetFlexval()).Methods("GET")
 	//Get Func Loc Assets
 	s.router.HandleFunc("/funclocassets", s.handlegetFuncLocAssets()).Methods("GET")
+	//Get Func Loc
+	s.router.HandleFunc("/funcloc", s.handleGetFuncLoc()).Methods("GET")
 }
