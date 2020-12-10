@@ -31,4 +31,10 @@ func (s *Server) routes() {
 	s.router.HandleFunc("/funclocassets", s.handlegetFuncLocAssets()).Methods("GET")
 	//Get Func Loc
 	s.router.HandleFunc("/funcloc", s.handleGetFuncLoc()).Methods("GET")
+	//Get Func Loc Detail
+	s.router.HandleFunc("/funclocdetail", s.handleGetFuncLocDetail()).Methods("GET")
+	//Get Func Loc Spatial
+	s.router.HandleFunc("/funclocspatial", s.handleGetFuncLocSpatial()).Methods("GET")
+	//Get Node Func Locs Spatial
+	s.router.HandleFunc("/nodefunclocspatial", s.handleGetNodeFuncLocSpatial()).Methods("GET")
 }

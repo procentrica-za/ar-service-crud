@@ -297,3 +297,24 @@ type FuncLoc struct {
 	Status          string `json:"status"`
 	FuncLocNodeName string `json:"funclocnodename"`
 }
+
+type FuncLocDetail struct {
+	ID          string     `json:"id"`
+	Name        string     `json:"name"`
+	Description string     `json:"description"`
+	Flexvalues  []FlexVals `json:"flexvalues"`
+}
+
+type FuncLocSpatial struct {
+	Name string `json:"name"`
+	Lat  string `json:"lat"`
+	Lon  string `json:"lon"`
+	Id   string `json:"id"`
+}
+
+type NodeFuncLocsSpatial struct {
+	Name string `json:"name"`
+	Lat  string `json:"lat"`
+	Lon  string `json:"lon"`
+	Id   string `json:"id"`
+}
