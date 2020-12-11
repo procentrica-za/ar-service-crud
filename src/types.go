@@ -287,3 +287,34 @@ type FunclocationAssets struct {
 type FunclocationAssetsList struct {
 	Funclocassets []FunclocationAssets `json:"funclocassets"`
 }
+
+type FuncLoc struct {
+	Id              string `json:"id"`
+	FuncLocNodeId   string `json:"funclocnodeid"`
+	Name            string `json:"name"`
+	Description     string `json:"description"`
+	InstallDate     string `json:"installdate"`
+	Status          string `json:"status"`
+	FuncLocNodeName string `json:"funclocnodename"`
+}
+
+type FuncLocDetail struct {
+	ID          string     `json:"id"`
+	Name        string     `json:"name"`
+	Description string     `json:"description"`
+	Flexvalues  []FlexVals `json:"flexvalues"`
+}
+
+type FuncLocSpatial struct {
+	Name string `json:"name"`
+	Lat  string `json:"lat"`
+	Lon  string `json:"lon"`
+	Id   string `json:"id"`
+}
+
+type NodeFuncLocsSpatial struct {
+	Name string `json:"name"`
+	Lat  string `json:"lat"`
+	Lon  string `json:"lon"`
+	Id   string `json:"id"`
+}

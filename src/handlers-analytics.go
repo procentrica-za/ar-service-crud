@@ -20,7 +20,7 @@ func (s *Server) handleanalyseassets() http.HandlerFunc {
 			return
 		}
 		defer rows.Close()
-
+ 
 		assetsList := []AssetRegisterResponse{}
 
 		var name, description, serialno, size, atype, class, dimension1val, dimension2val, dimension3val, dimension4val, dimension5val, dimension6val, derecognitionvalue, extent, extentconfidence, takeondate, latitude, longitude string
