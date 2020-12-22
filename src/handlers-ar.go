@@ -336,8 +336,9 @@ func (s *Server) handleGetNodeFuncLocs() http.HandlerFunc {
 		nodesList := []NodeFuncLocs{}
 
 		var Id,
-			FuncLocNodeId,
-			Name,
+			FuncLocNodeId int
+
+		var Name,
 			Description,
 			Lat,
 			Lon,
@@ -353,7 +354,7 @@ func (s *Server) handleGetNodeFuncLocs() http.HandlerFunc {
 				fmt.Println(err.Error())
 				return
 			}
-			nodesList = append(nodesList, NodeFuncLocs{FuncLocNodeId, Id, Description, Name, InstallDate, Status, FuncLocNodeName})
+			nodesList = append(nodesList, NodeFuncLocs{Id, FuncLocNodeId, Name, Description, InstallDate, Status, FuncLocNodeName})
 		}
 
 		// get any error encountered during iteration
@@ -731,9 +732,8 @@ func (s *Server) handleGetFuncLocSpatial() http.HandlerFunc {
 
 		var Name,
 			Lat,
-			Lon,
-			Id string
-
+			Lon string
+		var Id int
 		for rows.Next() {
 			err = rows.Scan(&Name, &Lat, &Lon, &Id)
 			if err != nil {
@@ -788,8 +788,8 @@ func (s *Server) handleGetNodeFuncLocSpatial() http.HandlerFunc {
 		nodesList := []NodeFuncLocsSpatial{}
 
 		var Id,
-			FuncLocNodeId,
-			Name,
+			FuncLocNodeId int
+		var Name,
 			Description,
 			Lat,
 			Lon,
@@ -850,9 +850,9 @@ func (s *Server) handleGetNodeHierarchyFlattened() http.HandlerFunc {
 		nodesList := FlattenedHierarchyList{}
 		nodesList.FlattenedHierarchy = []FlattenedHierarchy{}
 
-		var ParentId,
-			Id,
-			Name,
+		var Id int
+		var Name,
+			ParentId,
 			NodeType string
 
 		for rows.Next() {

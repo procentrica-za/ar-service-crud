@@ -230,10 +230,10 @@ type FuncLocsList struct {
 }
 
 type NodeFuncLocs struct {
-	FuncLocNodeId   string `json:"funclocnodeid"`
-	Id              string `json:"id"`
-	Description     string `json:"description"`
+	Id              int    `json:"id"`
+	FuncLocNodeId   int    `json:"funclocnodeid"`
 	Name            string `json:"name"`
+	Description     string `json:"description"`
 	InstallDate     string `json:"installdate"`
 	Status          string `json:"status"`
 	FuncLocNodeName string `json:"funclocnodename"`
@@ -308,19 +308,19 @@ type FuncLocSpatial struct {
 	Name string `json:"name"`
 	Lat  string `json:"lat"`
 	Lon  string `json:"lon"`
-	Id   string `json:"id"`
+	Id   int    `json:"id"`
 }
 
 type NodeFuncLocsSpatial struct {
 	Name string `json:"name"`
 	Lat  string `json:"lat"`
 	Lon  string `json:"lon"`
-	Id   string `json:"id"`
+	Id   int    `json:"id"`
 }
 
 type FlattenedHierarchy struct {
 	ParentId string `json:"parentid"`
-	Id       string `json:"Id"`
+	Id       int    `json:"Id"`
 	Name     string `json:"name"`
 	Nodetype string `json:"nodetype"`
 	IsLeaf   bool   `json:"isleaf"`
