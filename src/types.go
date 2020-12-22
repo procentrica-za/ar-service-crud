@@ -318,3 +318,15 @@ type NodeFuncLocsSpatial struct {
 	Lon  string `json:"lon"`
 	Id   string `json:"id"`
 }
+
+type FlattenedHierarchy struct {
+	ParentId string `json:"parentid"`
+	Id       string `json:"Id"`
+	Name     string `json:"name"`
+	Nodetype string `json:"nodetype"`
+	IsLeaf   bool   `json:"isleaf"`
+}
+
+type FlattenedHierarchyList struct {
+	FlattenedHierarchy []FlattenedHierarchy `json:"nodehierarchyflattened"`
+}

@@ -826,3 +826,95 @@ func (s *Server) handleGetNodeFuncLocSpatial() http.HandlerFunc {
 		w.Write(js)
 	}
 }
+
+// The function handling the request to get funcloc assets
+func (s *Server) handleGetNodeHierarchyFlattened() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println(" Handle Get Node Hierarchy Flattened Has Been Called...")
+		// retrieving the ID of node that is requested.
+
+		//set response variables
+		rows, err := s.dbAccess.Query("SELECT * FROM public.getallfunclocnodes()")
+
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to process DB Function...")
+			return
+		}
+		defer rows.Close()
+
+		nodesList := FlattenedHierarchyList{}
+		nodesList.FlattenedHierarchy = []FlattenedHierarchy{}
+
+		var ParentId,
+			Id,
+			Name,
+			NodeType string
+
+		for rows.Next() {
+			err = rows.Scan(&ParentId, &Id, &Name, &NodeType)
+			if err != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to read data from GetNodeHierarchyFlattened List...")
+				fmt.Println(err.Error())
+				return
+			}
+			nodesList.FlattenedHierarchy = append(nodesList.FlattenedHierarchy, FlattenedHierarchy{ParentId, Id, Name, NodeType, false})
+		}
+
+		// get any error encountered during iteration
+		err = rows.Err()
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to read data from GetNodeHierarchyFlattened List...")
+			return
+		}
+
+		//set response variables
+		rows1, err := s.dbAccess.Query("SELECT * FROM public.getallfunclocs()")
+
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to process DB Function...")
+			return
+		}
+		defer rows1.Close()
+
+		for rows1.Next() {
+			err = rows1.Scan(&ParentId, &Id, &Name, &NodeType)
+			if err != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to read data from GetNodeHierarchyFlattened List...")
+				fmt.Println(err.Error())
+				return
+			}
+			nodesList.FlattenedHierarchy = append(nodesList.FlattenedHierarchy, FlattenedHierarchy{ParentId, Id, Name, NodeType, true})
+		}
+
+		// get any error encountered during iteration
+		err = rows1.Err()
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to read data from GetNodeHierarchyFlattened List...")
+			return
+		}
+
+		NewNodeList := []FlattenedHierarchy{}
+		for _, element := range nodesList.FlattenedHierarchy {
+			NewNodeList = append(NewNodeList, element)
+		}
+
+		js, jserr := json.Marshal(NewNodeList)
+
+		//If Queryrow returns error, provide error to caller and exit
+		if jserr != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to create JSON from DB result...")
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(200)
+		w.Write(js)
+	}
+}
