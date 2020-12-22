@@ -415,7 +415,7 @@ func (s *Server) handleGetNodeAssets() http.HandlerFunc {
 				fmt.Println(err.Error())
 				return
 			}
-			assetsList = append(assetsList, NodeAssets{FuncLocNodeId, Id, Description, Name, Lat, Lon, FuncLocId})
+			assetsList = append(assetsList, NodeAssets{Id, FuncLocNodeId, FuncLocId, Name, Description, Lat, Lon})
 		}
 
 		// get any error encountered during iteration
@@ -449,8 +449,8 @@ func (s *Server) handleGetAssetDetail() http.HandlerFunc {
 		id := r.URL.Query().Get("id")
 
 		// declare variables to catch response from database.
-		var assetid,
-			atype,
+		var assetid int
+		var atype,
 			description,
 			manufacturedate,
 			takeondate,
