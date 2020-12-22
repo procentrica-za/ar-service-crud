@@ -71,27 +71,27 @@ type toAssetRegsiterList struct {
 	Alist []toAssetRegister `json:"assets"`
 }
 type Funcloc struct {
-	FunclocID   string `json:"funclocid"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	Latitude    string `json:"latitude"`
-	Longitude   string `json:"longitude"`
-	Geom        string `json:"geom"`
+	FunclocID   string            `json:"funclocid"`
+	Name        string            `json:"name"`
+	Description string            `json:"description"`
+	Latitude    string            `json:"latitude"`
+	Longitude   string            `json:"longitude"`
+	Geom        string            `json:"geom"`
+	FLNlist     []FunclocNode     `json:"funclocnodes"`
+	Alist       []toAssetRegister `json:"assets"`
 }
 
 type FunclocList struct {
 	Flist []Funcloc `json:"funcloc"`
 }
-
 type FunclocNode struct {
-	FunclocNodeID string `json:"funclocnodeid"`
-	Name          string `json:"name"`
-	AliasName     string `json:"aliasname"`
-	Latitude      string `json:"latitude"`
-	Longitude     string `json:"longitude"`
-	Geom          string `json:"geom"`
-	NodeType      string `json:"nodetype"`
-	ParentID      string `json:"parentid"`
+	Name      string `json:"name"`
+	AliasName string `json:"aliasname"`
+	Latitude  string `json:"latitude"`
+	Longitude string `json:"longitude"`
+	Geom      string `json:"geom"`
+	NodeType  string `json:"nodetype"`
+	ParentID  string `json:"parentid"`
 }
 
 type FunclocNodeList struct {

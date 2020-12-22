@@ -4,8 +4,15 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"math/rand"
 	"net/http"
+	"strconv"
+	"time"
 )
+
+func randInt(min int, max int) int {
+	return min + rand.Intn(max-min)
+}
 
 // TODO: Comment code and remove comments where not needed!
 func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
@@ -15,7 +22,14 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 		//Unmarshal for funcloc
 		funclocList := FunclocList{}
 		err = json.Unmarshal(body, &funclocList)
-
+		/*fmt.Println("Location Name: ")
+		fmt.Println(funclocList.Flist[0].Name)
+		fmt.Println("Asset 1 Name: ")
+		fmt.Println(funclocList.Flist[0].Alist[0].Name)
+		fmt.Println("Asset 2 Name: ")
+		fmt.Println(funclocList.Flist[0].Alist[1].Name)
+		fmt.Println("FunclocNode Name: ")
+		fmt.Println(funclocList.Flist[0].FLNlist[0].Name)*/
 		if err != nil {
 			w.WriteHeader(500)
 			fmt.Fprintf(w, "Bad JSON provided to post funcloc and funcloc")
@@ -23,13 +37,15 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 		}
 		var success bool
 		var message string
-		querystring := "SELECT * FROM public.postfuncloc('" + funclocList.Flist[0].FunclocID + "', '" + funclocList.Flist[0].Name + "', '" +
+		var FunclocID string
+		querystring := "SELECT * FROM public.postfuncloc('" + funclocList.Flist[0].Name + "', '" +
 			funclocList.Flist[0].Description + "', '" + funclocList.Flist[0].Latitude + "' , '" + funclocList.Flist[0].Longitude +
 			"', '" + funclocList.Flist[0].Geom + "')"
 		//retrieve result message from database set to response JSON object
-		err = s.dbAccess.QueryRow(querystring).Scan(&success, &message)
+		err = s.dbAccess.QueryRow(querystring).Scan(&success, &message, &FunclocID)
 		fmt.Println(success)
 		fmt.Println(message)
+		//fmt.Println(FunclocID)
 
 		//Unmarshal for funclocnode
 		funclocnodeList := FunclocNodeList{}
@@ -40,24 +56,25 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 			fmt.Fprintf(w, "Bad JSON provided to post funcloc and funclocnode")
 			return
 		}
-
-		querystring1 := "SELECT * FROM public.postfunclocnode('" + funclocnodeList.Fnodelist[0].FunclocNodeID + "', '" + funclocnodeList.Fnodelist[0].Name + "', '" +
-			funclocnodeList.Fnodelist[0].AliasName + "', '" + funclocnodeList.Fnodelist[0].Latitude + "' , '" + funclocnodeList.Fnodelist[0].Longitude +
-			"', '" + funclocnodeList.Fnodelist[0].Geom + "' , '" + funclocnodeList.Fnodelist[0].NodeType + "' , '" + funclocnodeList.Fnodelist[0].ParentID + "')"
+		querystring1 := "SELECT * FROM public.postfunclocnode('" + funclocList.Flist[0].FLNlist[0].Name + "', '" +
+			funclocList.Flist[0].FLNlist[0].AliasName + "', '" + funclocList.Flist[0].FLNlist[0].Latitude + "' , '" + funclocList.Flist[0].FLNlist[0].Longitude +
+			"', '" + funclocList.Flist[0].FLNlist[0].Geom + "' , '" + funclocList.Flist[0].FLNlist[0].NodeType + "' , '" + funclocList.Flist[0].FLNlist[0].ParentID + "')"
 		//retrieve result message from database set to response JSON object
-		err = s.dbAccess.QueryRow(querystring1).Scan(&success, &message)
+		var FunclocNodeID string
+		err = s.dbAccess.QueryRow(querystring1).Scan(&success, &message, &FunclocNodeID)
 		fmt.Println(success)
 		fmt.Println(message)
+		//fmt.Println(FunclocNodeID)
 
-		querystring2 := "SELECT * FROM public.postfuncloclink('" + funclocList.Flist[0].FunclocID + "', '" + funclocnodeList.Fnodelist[0].FunclocNodeID + "')"
+		querystring2 := "SELECT * FROM public.postfuncloclink('" + FunclocID + "', '" + FunclocNodeID + "')"
 		//retrieve result message from database set to response JSON object
 		err = s.dbAccess.QueryRow(querystring2).Scan(&success, &message)
 		fmt.Println(success)
 		fmt.Println(message)
 
-		assets := toAssetRegsiterList{}
+		/*assets := toAssetRegsiterList{}
 		// Obtain all the fields in the asset struct
-		err = json.Unmarshal(body, &assets)
+		err = json.Unmarshal(body, &assets)*/
 
 		if err != nil {
 			w.WriteHeader(500)
@@ -67,7 +84,14 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 
 		jsonToPostgres := []toAssetRegister{}
 
-		for _, element := range assets.Alist {
+		for _, element := range funclocList.Flist[0].Alist {
+			rand.Seed(time.Now().UTC().UnixNano())
+			randomID := randInt(100000, 999999999)
+			rand.Seed(time.Now().UTC().UnixNano())
+			randomAssetValID := randInt(100000, 999999999)
+			element.ID = strconv.Itoa(randomID)
+			element.AssetValID = strconv.Itoa(randomAssetValID)
+			element.FunclocID = FunclocID
 			jsonToPostgres = append(jsonToPostgres, element)
 		}
 
