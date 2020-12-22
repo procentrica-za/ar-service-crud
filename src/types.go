@@ -244,9 +244,9 @@ type NodeFuncLocsList struct {
 }
 
 type NodeAssets struct {
-	Id            string `json:"id"`
-	FuncLocNodeId string `json:"funclocnodeid"`
-	FuncLocID     string `json:"funclocid"`
+	Id            int    `json:"id"`
+	FuncLocNodeId int    `json:"funclocnodeid"`
+	FuncLocID     int    `json:"funclocid"`
 	Name          string `json:"name"`
 	Description   string `json:"description"`
 	Lat           string `json:"lat"`
@@ -276,8 +276,8 @@ type AssetDetail struct {
 }
 
 type FunclocationAssets struct {
-	ID          string `json:"id"`
-	FuncLocId   string `json:"funclocId"`
+	ID          int    `json:"id"`
+	FuncLocId   int    `json:"funclocId"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
 	Lat         string `json:"lat"`
@@ -289,8 +289,8 @@ type FunclocationAssetsList struct {
 }
 
 type FuncLoc struct {
-	Id              string `json:"id"`
-	FuncLocNodeId   string `json:"funclocnodeid"`
+	Id              int    `json:"id"`
+	FuncLocNodeId   int    `json:"funclocnodeid"`
 	Name            string `json:"name"`
 	Description     string `json:"description"`
 	InstallDate     string `json:"installdate"`
@@ -299,10 +299,9 @@ type FuncLoc struct {
 }
 
 type FuncLocDetail struct {
-	ID          string     `json:"id"`
-	Name        string     `json:"name"`
-	Description string     `json:"description"`
-	Flexvalues  []FlexVals `json:"flexvalues"`
+	ID          int    `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
 }
 
 type FuncLocSpatial struct {

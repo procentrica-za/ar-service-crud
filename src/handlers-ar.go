@@ -400,8 +400,9 @@ func (s *Server) handleGetNodeAssets() http.HandlerFunc {
 
 		var Id,
 			FuncLocId,
-			FuncLocNodeId,
-			Name,
+			FuncLocNodeId int
+
+		var Name,
 			Description,
 			Type,
 			Lat,
@@ -564,7 +565,8 @@ func (s *Server) handlegetFuncLocAssets() http.HandlerFunc {
 
 		assetsList := []FunclocationAssets{}
 
-		var id, funclocationid, name, description, lat, lon string
+		var id, funclocationid int
+		var name, description, lat, lon string
 
 		for rows.Next() {
 			err = rows.Scan(&id, &funclocationid, &name, &description, &lat, &lon)
@@ -621,8 +623,9 @@ func (s *Server) handleGetFuncLoc() http.HandlerFunc {
 		funcslist := []FuncLoc{}
 
 		var Id,
-			FuncLocNodeId,
-			Name,
+			FuncLocNodeId int
+
+		var Name,
 			Description,
 			Installdate,
 			Status,
@@ -670,8 +673,9 @@ func (s *Server) handleGetFuncLocDetail() http.HandlerFunc {
 		id := r.URL.Query().Get("id")
 
 		// declare variables to catch response from database.
-		var Id,
-			Name,
+		var Id int
+
+		var Name,
 			Description string
 
 		// create query string.
