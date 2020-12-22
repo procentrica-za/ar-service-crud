@@ -899,12 +899,7 @@ func (s *Server) handleGetNodeHierarchyFlattened() http.HandlerFunc {
 			return
 		}
 
-		NewNodeList := []FlattenedHierarchy{}
-		for _, element := range nodesList.FlattenedHierarchy {
-			NewNodeList = append(NewNodeList, element)
-		}
-
-		js, jserr := json.Marshal(NewNodeList)
+		js, jserr := json.Marshal(nodesList)
 
 		//If Queryrow returns error, provide error to caller and exit
 		if jserr != nil {
