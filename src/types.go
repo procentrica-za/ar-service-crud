@@ -71,27 +71,27 @@ type toAssetRegsiterList struct {
 	Alist []toAssetRegister `json:"assets"`
 }
 type Funcloc struct {
-	FunclocID   string            `json:"funclocid"`
-	Name        string            `json:"name"`
-	Description string            `json:"description"`
-	Latitude    string            `json:"latitude"`
-	Longitude   string            `json:"longitude"`
-	Geom        string            `json:"geom"`
-	FLNlist     []FunclocNode     `json:"funclocnodes"`
-	Alist       []toAssetRegister `json:"assets"`
+	FunclocID   string            `json:"funclocid,omitempty"`
+	Name        string            `json:"name,omitempty"`
+	Description string            `json:"description,omitempty"`
+	Latitude    string            `json:"latitude,omitempty"`
+	Longitude   string            `json:"longitude,omitempty"`
+	Geom        string            `json:"geom,omitempty"`
+	FLNlist     []FunclocNode     `json:"funclocnodes,omitempty"`
+	Alist       []toAssetRegister `json:"assets,omitempty"`
 }
 
 type FunclocList struct {
 	Flist []Funcloc `json:"funcloc"`
 }
 type FunclocNode struct {
-	Name      string `json:"name"`
-	AliasName string `json:"aliasname"`
-	Latitude  string `json:"latitude"`
-	Longitude string `json:"longitude"`
-	Geom      string `json:"geom"`
-	NodeType  string `json:"nodetype"`
-	ParentID  string `json:"parentid"`
+	Name      string `json:"name,omitempty"`
+	AliasName string `json:"aliasname,omitempty"`
+	Latitude  string `json:"latitude,omitempty"`
+	Longitude string `json:"longitude,omitempty"`
+	Geom      string `json:"geom,omitempty"`
+	NodeType  string `json:"nodetype,omitempty"`
+	ParentID  string `json:"parentid,omitempty"`
 }
 
 type FunclocNodeList struct {
@@ -230,13 +230,13 @@ type FuncLocsList struct {
 }
 
 type NodeFuncLocs struct {
-	Id              int    `json:"id"`
-	FuncLocNodeId   int    `json:"funclocnodeid"`
-	Name            string `json:"name"`
-	Description     string `json:"description"`
-	InstallDate     string `json:"installdate"`
-	Status          string `json:"status"`
-	FuncLocNodeName string `json:"funclocnodename"`
+	Id              int    `json:"id,omitempty"`
+	FuncLocNodeId   int    `json:"funclocnodeid,omitempty"`
+	Name            string `json:"name,omitempty"`
+	Description     string `json:"description,omitempty"`
+	InstallDate     string `json:"installdate,omitempty"`
+	Status          string `json:"status,omitempty"`
+	FuncLocNodeName string `json:"funclocnodename,omitempty"`
 }
 
 type NodeFuncLocsList struct {
@@ -244,13 +244,13 @@ type NodeFuncLocsList struct {
 }
 
 type NodeAssets struct {
-	Id            int    `json:"id"`
-	FuncLocNodeId int    `json:"funclocnodeid"`
-	FuncLocID     int    `json:"funclocid"`
-	Name          string `json:"name"`
-	Description   string `json:"description"`
-	Lat           string `json:"lat"`
-	Lon           string `json:"lon"`
+	Id            int    `json:"id,omitempty"`
+	FuncLocNodeId int    `json:"funclocnodeid,omitempty"`
+	FuncLocID     int    `json:"funclocid,omitempty"`
+	Name          string `json:"name,omitempty"`
+	Description   string `json:"description,omitempty"`
+	Lat           string `json:"lat,omitempty"`
+	Lon           string `json:"lon,omitempty"`
 }
 
 type NodeAssetsList struct {
@@ -258,17 +258,17 @@ type NodeAssetsList struct {
 }
 
 type Assetdetails struct {
-	ID              int    `json:"id"`
-	Type            string `json:"type"`
-	Description     string `json:"description"`
-	ManufactureDate string `json:"manufacturedate"`
-	TakeOnDate      string `json:"takeondate"`
-	SerialNo        string `json:"serialno"`
+	ID              int    `json:"id,omitempty"`
+	Type            string `json:"type,omitempty"`
+	Description     string `json:"description,omitempty"`
+	ManufactureDate string `json:"manufacturedate,omitempty"`
+	TakeOnDate      string `json:"takeondate,omitempty"`
+	SerialNo        string `json:"serialno,omitempty"`
 }
 
 type FlexVals struct {
-	Name  string `json:"name"`
-	Value string `json:"value"`
+	Name  string `json:"name,omitempty"`
+	Value string `json:"value,omitempty"`
 }
 
 type AssetDetail struct {
@@ -276,12 +276,12 @@ type AssetDetail struct {
 }
 
 type FunclocationAssets struct {
-	ID          int    `json:"id"`
-	FuncLocId   int    `json:"funclocId"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	Lat         string `json:"lat"`
-	Lon         string `json:"lon"`
+	ID          int    `json:"id,omitempty"`
+	FuncLocId   int    `json:"funclocId,omitempty"`
+	Name        string `json:"name,omitempty"`
+	Description string `json:"description,omitempty"`
+	Lat         string `json:"lat,omitempty"`
+	Lon         string `json:"lon,omitempty"`
 }
 
 type FunclocationAssetsList struct {
@@ -289,41 +289,52 @@ type FunclocationAssetsList struct {
 }
 
 type FuncLoc struct {
-	Id              int    `json:"id"`
-	FuncLocNodeId   int    `json:"funclocnodeid"`
-	Name            string `json:"name"`
-	Description     string `json:"description"`
-	InstallDate     string `json:"installdate"`
-	Status          string `json:"status"`
-	FuncLocNodeName string `json:"funclocnodename"`
+	Id              int    `json:"id,omitempty"`
+	FuncLocNodeId   int    `json:"funclocnodeid,omitempty"`
+	Name            string `json:"name,omitempty"`
+	Description     string `json:"description,omitempty"`
+	InstallDate     string `json:"installdate,omitempty"`
+	Status          string `json:"status,omitempty"`
+	FuncLocNodeName string `json:"funclocnodename,omitempty"`
+}
+type FuncLocList struct {
+	Funclocs []FuncLoc `json:"funcloc"`
 }
 
 type FuncLocDetail struct {
-	ID          int    `json:"id"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
+	ID          int    `json:"id,omitempty"`
+	Name        string `json:"name,omitempty"`
+	Description string `json:"description,omitempty"`
 }
 
 type FuncLocSpatial struct {
-	Name string `json:"name"`
-	Lat  string `json:"lat"`
-	Lon  string `json:"lon"`
-	Id   int    `json:"id"`
+	Name string `json:"name,omitempty"`
+	Lat  string `json:"lat,omitempty"`
+	Lon  string `json:"lon,omitempty"`
+	Id   int    `json:"id,omitempty"`
+}
+
+type FuncLocSpatialList struct {
+	FuncLocSpatial []FuncLocSpatial `json:"funclocspatial"`
 }
 
 type NodeFuncLocsSpatial struct {
-	Name string `json:"name"`
-	Lat  string `json:"lat"`
-	Lon  string `json:"lon"`
-	Id   int    `json:"id"`
+	Name string `json:"name,omitempty"`
+	Lat  string `json:"lat,omitempty"`
+	Lon  string `json:"lon,omitempty"`
+	Id   int    `json:"id,omitempty"`
+}
+
+type NodeFuncLocsSpatialList struct {
+	NodeFuncLocsSpatial []NodeFuncLocsSpatial `json:"nodefunclocspatial"`
 }
 
 type FlattenedHierarchy struct {
-	ParentId string `json:"parentid"`
-	Id       int    `json:"Id"`
-	Name     string `json:"name"`
-	Nodetype string `json:"nodetype"`
-	IsLeaf   bool   `json:"isleaf"`
+	ParentId string `json:"parentid,omitempty"`
+	Id       int    `json:"Id,omitempty"`
+	Name     string `json:"name,omitempty"`
+	Nodetype string `json:"nodetype,omitempty"`
+	IsLeaf   bool   `json:"isleaf,omitempty"`
 }
 
 type FlattenedHierarchyList struct {

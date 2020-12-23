@@ -333,7 +333,8 @@ func (s *Server) handleGetNodeFuncLocs() http.HandlerFunc {
 		}
 		defer rows.Close()
 
-		nodesList := []NodeFuncLocs{}
+		nodesList := NodeFuncLocsList{}
+		nodesList.NodeFuncLocs = []NodeFuncLocs{}
 
 		var Id,
 			FuncLocNodeId int
@@ -354,7 +355,7 @@ func (s *Server) handleGetNodeFuncLocs() http.HandlerFunc {
 				fmt.Println(err.Error())
 				return
 			}
-			nodesList = append(nodesList, NodeFuncLocs{Id, FuncLocNodeId, Name, Description, InstallDate, Status, FuncLocNodeName})
+			nodesList.NodeFuncLocs = append(nodesList.NodeFuncLocs, NodeFuncLocs{Id, FuncLocNodeId, Name, Description, InstallDate, Status, FuncLocNodeName})
 		}
 
 		// get any error encountered during iteration
@@ -397,7 +398,8 @@ func (s *Server) handleGetNodeAssets() http.HandlerFunc {
 		}
 		defer rows.Close()
 
-		assetsList := []NodeAssets{}
+		assetsList := NodeAssetsList{}
+		assetsList.NodeAssets = []NodeAssets{}
 
 		var Id,
 			FuncLocId,
@@ -417,7 +419,7 @@ func (s *Server) handleGetNodeAssets() http.HandlerFunc {
 				fmt.Println(err.Error())
 				return
 			}
-			assetsList = append(assetsList, NodeAssets{Id, FuncLocNodeId, FuncLocId, Name, Description, Lat, Lon})
+			assetsList.NodeAssets = append(assetsList.NodeAssets, NodeAssets{Id, FuncLocNodeId, FuncLocId, Name, Description, Lat, Lon})
 		}
 
 		// get any error encountered during iteration
@@ -564,7 +566,8 @@ func (s *Server) handlegetFuncLocAssets() http.HandlerFunc {
 		}
 		defer rows.Close()
 
-		assetsList := []FunclocationAssets{}
+		assetsList := FunclocationAssetsList{}
+		assetsList.Funclocassets = []FunclocationAssets{}
 
 		var id, funclocationid int
 		var name, description, lat, lon string
@@ -577,7 +580,7 @@ func (s *Server) handlegetFuncLocAssets() http.HandlerFunc {
 				fmt.Println(err.Error())
 				return
 			}
-			assetsList = append(assetsList, FunclocationAssets{id, funclocationid, name, description, lat, lon})
+			assetsList.Funclocassets = append(assetsList.Funclocassets, FunclocationAssets{id, funclocationid, name, description, lat, lon})
 		}
 
 		// get any error encountered during iteration
@@ -621,7 +624,8 @@ func (s *Server) handleGetFuncLoc() http.HandlerFunc {
 		}
 		defer rows.Close()
 
-		funcslist := []FuncLoc{}
+		funcslist := FuncLocList{}
+		funcslist.Funclocs = []FuncLoc{}
 
 		var Id,
 			FuncLocNodeId int
@@ -640,7 +644,7 @@ func (s *Server) handleGetFuncLoc() http.HandlerFunc {
 				fmt.Println(err.Error())
 				return
 			}
-			funcslist = append(funcslist, FuncLoc{Id, FuncLocNodeId, Name, Description, Installdate, Status, Funclocnodename})
+			funcslist.Funclocs = append(funcslist.Funclocs, FuncLoc{Id, FuncLocNodeId, Name, Description, Installdate, Status, Funclocnodename})
 		}
 
 		// get any error encountered during iteration
@@ -728,7 +732,8 @@ func (s *Server) handleGetFuncLocSpatial() http.HandlerFunc {
 		}
 		defer rows.Close()
 
-		funcslist := []FuncLocSpatial{}
+		funcslist := FuncLocSpatialList{}
+		funcslist.FuncLocSpatial = []FuncLocSpatial{}
 
 		var Name,
 			Lat,
@@ -742,7 +747,7 @@ func (s *Server) handleGetFuncLocSpatial() http.HandlerFunc {
 				fmt.Println(err.Error())
 				return
 			}
-			funcslist = append(funcslist, FuncLocSpatial{Name, Lat, Lon, Id})
+			funcslist.FuncLocSpatial = append(funcslist.FuncLocSpatial, FuncLocSpatial{Name, Lat, Lon, Id})
 		}
 
 		// get any error encountered during iteration
@@ -785,7 +790,8 @@ func (s *Server) handleGetNodeFuncLocSpatial() http.HandlerFunc {
 		}
 		defer rows.Close()
 
-		nodesList := []NodeFuncLocsSpatial{}
+		nodesList := NodeFuncLocsSpatialList{}
+		nodesList.NodeFuncLocsSpatial = []NodeFuncLocsSpatial{}
 
 		var Id,
 			FuncLocNodeId int
@@ -805,7 +811,7 @@ func (s *Server) handleGetNodeFuncLocSpatial() http.HandlerFunc {
 				fmt.Println(err.Error())
 				return
 			}
-			nodesList = append(nodesList, NodeFuncLocsSpatial{Name, Lat, Lon, Id})
+			nodesList.NodeFuncLocsSpatial = append(nodesList.NodeFuncLocsSpatial, NodeFuncLocsSpatial{Name, Lat, Lon, Id})
 		}
 
 		// get any error encountered during iteration
