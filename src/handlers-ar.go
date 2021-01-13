@@ -337,9 +337,8 @@ func (s *Server) handleGetNodeFuncLocs() http.HandlerFunc {
 		nodesList.NodeFuncLocs = []NodeFuncLocs{}
 
 		var Id,
-			FuncLocNodeId int
-
-		var Name,
+			FuncLocNodeId,
+			Name,
 			Description,
 			Lat,
 			Lon,
@@ -403,9 +402,7 @@ func (s *Server) handleGetNodeAssets() http.HandlerFunc {
 
 		var Id,
 			FuncLocId,
-			FuncLocNodeId int
-
-		var Name,
+			FuncLocNodeId, Name,
 			Description,
 			Type,
 			Lat,
@@ -453,8 +450,8 @@ func (s *Server) handleGetAssetDetail() http.HandlerFunc {
 		id := r.URL.Query().Get("id")
 
 		// declare variables to catch response from database.
-		var assetid int
-		var atype,
+		var assetid,
+			atype,
 			description,
 			manufacturedate,
 			takeondate,
@@ -569,8 +566,8 @@ func (s *Server) handlegetFuncLocAssets() http.HandlerFunc {
 		assetsList := FunclocationAssetsList{}
 		assetsList.Funclocassets = []FunclocationAssets{}
 
-		var id, funclocationid int
-		var name, description, lat, lon string
+		var id, funclocationid,
+			name, description, lat, lon string
 
 		for rows.Next() {
 			err = rows.Scan(&id, &funclocationid, &name, &description, &lat, &lon)
@@ -628,9 +625,8 @@ func (s *Server) handleGetFuncLoc() http.HandlerFunc {
 		funcslist.Funclocs = []FuncLoc{}
 
 		var Id,
-			FuncLocNodeId int
-
-		var Name,
+			FuncLocNodeId,
+			Name,
 			Description,
 			Installdate,
 			Status,
@@ -678,9 +674,8 @@ func (s *Server) handleGetFuncLocDetail() http.HandlerFunc {
 		id := r.URL.Query().Get("id")
 
 		// declare variables to catch response from database.
-		var Id int
-
-		var Name,
+		var Id,
+			Name,
 			Description string
 
 		// create query string.
@@ -737,8 +732,8 @@ func (s *Server) handleGetFuncLocSpatial() http.HandlerFunc {
 
 		var Name,
 			Lat,
-			Lon string
-		var Id int
+			Lon,
+			Id string
 		for rows.Next() {
 			err = rows.Scan(&Name, &Lat, &Lon, &Id)
 			if err != nil {
@@ -794,8 +789,8 @@ func (s *Server) handleGetNodeFuncLocSpatial() http.HandlerFunc {
 		nodesList.NodeFuncLocsSpatial = []NodeFuncLocsSpatial{}
 
 		var Id,
-			FuncLocNodeId int
-		var Name,
+			FuncLocNodeId,
+			Name,
 			Description,
 			Lat,
 			Lon,
@@ -856,8 +851,8 @@ func (s *Server) handleGetNodeHierarchyFlattened() http.HandlerFunc {
 		nodesList := FlattenedHierarchyList{}
 		nodesList.FlattenedHierarchy = []FlattenedHierarchy{}
 
-		var Id int
-		var Name,
+		var Id,
+			Name,
 			ParentId,
 			NodeType string
 
