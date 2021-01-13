@@ -230,8 +230,8 @@ type FuncLocsList struct {
 }
 
 type NodeFuncLocs struct {
-	Id              int    `json:"id,omitempty"`
-	FuncLocNodeId   int    `json:"funclocnodeid,omitempty"`
+	Id              string    `json:"id,omitempty"`
+	FuncLocNodeId   string    `json:"funclocnodeid,omitempty"`
 	Name            string `json:"name,omitempty"`
 	Description     string `json:"description,omitempty"`
 	InstallDate     string `json:"installdate,omitempty"`
@@ -244,9 +244,9 @@ type NodeFuncLocsList struct {
 }
 
 type NodeAssets struct {
-	Id            int    `json:"id,omitempty"`
-	FuncLocNodeId int    `json:"funclocnodeid,omitempty"`
-	FuncLocID     int    `json:"funclocid,omitempty"`
+	Id            string    `json:"id,omitempty"`
+	FuncLocNodeId string    `json:"funclocnodeid,omitempty"`
+	FuncLocID     string    `json:"funclocid,omitempty"`
 	Name          string `json:"name,omitempty"`
 	Description   string `json:"description,omitempty"`
 	Lat           string `json:"lat,omitempty"`
@@ -258,7 +258,7 @@ type NodeAssetsList struct {
 }
 
 type Assetdetails struct {
-	ID              int    `json:"id,omitempty"`
+	ID              string    `json:"id,omitempty"`
 	Type            string `json:"type,omitempty"`
 	Description     string `json:"description,omitempty"`
 	ManufactureDate string `json:"manufacturedate,omitempty"`
@@ -276,8 +276,8 @@ type AssetDetail struct {
 }
 
 type FunclocationAssets struct {
-	ID          int    `json:"id,omitempty"`
-	FuncLocId   int    `json:"funclocId,omitempty"`
+	ID          string    `json:"id,omitempty"`
+	FuncLocId   string    `json:"funclocId,omitempty"`
 	Name        string `json:"name,omitempty"`
 	Description string `json:"description,omitempty"`
 	Lat         string `json:"lat,omitempty"`
@@ -289,8 +289,8 @@ type FunclocationAssetsList struct {
 }
 
 type FuncLoc struct {
-	Id              int    `json:"id,omitempty"`
-	FuncLocNodeId   int    `json:"funclocnodeid,omitempty"`
+	Id              string    `json:"id,omitempty"`
+	FuncLocNodeId   string    `json:"funclocnodeid,omitempty"`
 	Name            string `json:"name,omitempty"`
 	Description     string `json:"description,omitempty"`
 	InstallDate     string `json:"installdate,omitempty"`
@@ -302,7 +302,7 @@ type FuncLocList struct {
 }
 
 type FuncLocDetail struct {
-	ID          int    `json:"id,omitempty"`
+	ID          string    `json:"id,omitempty"`
 	Name        string `json:"name,omitempty"`
 	Description string `json:"description,omitempty"`
 }
@@ -311,7 +311,7 @@ type FuncLocSpatial struct {
 	Name string `json:"name,omitempty"`
 	Lat  string `json:"lat,omitempty"`
 	Lon  string `json:"lon,omitempty"`
-	Id   int    `json:"id,omitempty"`
+	Id   string    `json:"id,omitempty"`
 }
 
 type FuncLocSpatialList struct {
@@ -322,7 +322,7 @@ type NodeFuncLocsSpatial struct {
 	Name string `json:"name,omitempty"`
 	Lat  string `json:"lat,omitempty"`
 	Lon  string `json:"lon,omitempty"`
-	Id   int    `json:"id,omitempty"`
+	Id   string    `json:"id,omitempty"`
 }
 
 type NodeFuncLocsSpatialList struct {
@@ -331,7 +331,7 @@ type NodeFuncLocsSpatialList struct {
 
 type FlattenedHierarchy struct {
 	ParentId string `json:"parentid,omitempty"`
-	Id       int    `json:"Id,omitempty"`
+	Id       string    `json:"Id,omitempty"`
 	Name     string `json:"name,omitempty"`
 	Nodetype string `json:"nodetype,omitempty"`
 	IsLeaf   bool   `json:"isleaf,omitempty"`
