@@ -6,8 +6,6 @@ import (
 	"io/ioutil"
 	"math/rand"
 	"net/http"
-	"strconv"
-	"time"
 )
 
 func randInt(min int, max int) int {
@@ -85,12 +83,10 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 		jsonToPostgres := []toAssetRegister{}
 
 		for _, element := range funclocList.Flist[0].Alist {
-			rand.Seed(time.Now().UTC().UnixNano())
-			randomID := randInt(100000, 999999999)
-			rand.Seed(time.Now().UTC().UnixNano())
-			randomAssetValID := randInt(100000, 999999999)
-			element.ID = strconv.Itoa(randomID)
-			element.AssetValID = strconv.Itoa(randomAssetValID)
+			randomID, _ := newUUID()
+			randomAssetValID, _ := newUUID()
+			element.ID = randomID
+			element.AssetValID = randomAssetValID
 			element.FunclocID = FunclocID
 			jsonToPostgres = append(jsonToPostgres, element)
 		}
