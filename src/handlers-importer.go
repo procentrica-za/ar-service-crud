@@ -45,6 +45,40 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 		fmt.Println(message)
 		//fmt.Println(FunclocID)
 
+		funclocflexval := []FunclocFlexVal{}
+
+		for _, element := range funclocList.Flist[0].FLFVlist {
+			randomID, _ := newUUID()
+			element.ID = randomID
+			element.FunclocID = FunclocID
+			funclocflexval = append(funclocflexval, element)
+		}
+
+		//convert struct back to JSON
+		js, jserr1 := json.Marshal(funclocflexval)
+
+		if jserr1 != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to create JSON result object from DB result to post Funcloc flex value.")
+			return
+		}
+
+		jsonStringflfv := string(js)
+		querystring = "SELECT * FROM public.postfunclocflexval('" + jsonStringflfv + "')"
+		//retrieve result message from database set to response JSON object
+		err = s.dbAccess.QueryRow(querystring).Scan(&success, &message)
+		//check for response error of 500
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to process DB Function to post a Funcloc flex value\n")
+			fmt.Println(err.Error() + "\n")
+			fmt.Println("Error in communicating with database to add Funcloc flex value")
+			return
+		}
+		//print success message for flex val
+		fmt.Println(success)
+		fmt.Println(message)
+
 		//Unmarshal for funclocnode
 		funclocnodeList := FunclocNodeList{}
 		err = json.Unmarshal(body, &funclocnodeList)
@@ -79,6 +113,40 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 			fmt.Fprintf(w, "Bad JSON provided to post asset")
 			return
 		}
+
+		funclocnodeflexval := []FunclocNodeFlexVal{}
+
+		for _, element := range funclocList.Flist[0].FLNlist[0].FLNFVlist {
+			randomID, _ := newUUID()
+			element.ID = randomID
+			element.FunclocNodeID = FunclocNodeID
+			funclocnodeflexval = append(funclocnodeflexval, element)
+		}
+
+		//convert struct back to JSON
+		js, jserr2 := json.Marshal(funclocnodeflexval)
+
+		if jserr2 != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to create JSON result object from DB result to post Funcloc flex value.")
+			return
+		}
+
+		jsonStringflnfv := string(js)
+		querystring = "SELECT * FROM public.postfunclocnodeflexval('" + jsonStringflnfv + "')"
+		//retrieve result message from database set to response JSON object
+		err = s.dbAccess.QueryRow(querystring).Scan(&success, &message)
+		//check for response error of 500
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to process DB Function to post a Funcloc flex value\n")
+			fmt.Println(err.Error() + "\n")
+			fmt.Println("Error in communicating with database to add Funcloc flex value")
+			return
+		}
+		//print success message for flex val
+		fmt.Println(success)
+		fmt.Println(message)
 
 		jsonToPostgres := []toAssetRegister{}
 
