@@ -149,6 +149,8 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 		fmt.Println(message)
 
 		jsonToPostgres := []toAssetRegister{}
+		jsonToPostgres2 := []AssetFlexVal{}
+		jsonToPostgres3 := []ObservationFlexVal{}
 
 		for _, element := range funclocList.Flist[0].Alist {
 			randomID, _ := newUUID()
@@ -156,6 +158,18 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 			element.ID = randomID
 			element.AssetValID = randomAssetValID
 			element.FunclocID = FunclocID
+			for _, assetelement := range element.FlvList {
+				randomfvID, _ := newUUID()
+				assetelement.ID = randomfvID
+				assetelement.AssetID = randomID
+				jsonToPostgres2 = append(jsonToPostgres2, assetelement)
+			}
+			for _, observationelement := range element.OFlvList {
+				randomofvID, _ := newUUID()
+				observationelement.ID = randomofvID
+				observationelement.AssetID = randomID
+				jsonToPostgres3 = append(jsonToPostgres3, observationelement)
+			}
 			jsonToPostgres = append(jsonToPostgres, element)
 		}
 
@@ -180,6 +194,7 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 			fmt.Println("Error in communicating with database to add advertisement")
 			return
 		}
+
 		//set JSON object variables for response
 		postAssetResult := toAssetRegisterResult{}
 		postAssetResult.Success = success
@@ -194,6 +209,52 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 			fmt.Fprintf(w, "Unable to create JSON result object from DB result to post Asset.")
 			return
 		}
+
+		js1, jserr1 := json.Marshal(jsonToPostgres2)
+
+		if jserr1 != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to create JSON result object from DB result to post Asset Flex Value")
+			return
+		}
+
+		assetflex := string(js1)
+		querystring = "SELECT * FROM public.postassetflexval('" + assetflex + "')"
+		//retrieve result message from database set to response JSON object
+		err = s.dbAccess.QueryRow(querystring).Scan(&success, &message)
+		//check for response error of 500
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to process DB Function to post an Asset Flex Val\n")
+			fmt.Println(err.Error() + "\n")
+			fmt.Println("Error in communicating with database to asset flex val")
+			return
+		}
+		fmt.Println(success)
+		fmt.Println(message)
+
+		js2, jserr2 := json.Marshal(jsonToPostgres3)
+
+		if jserr1 != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to create JSON result object from DB result to post ObservationFlex Value")
+			return
+		}
+
+		observationflex := string(js2)
+		querystring = "SELECT * FROM public.postobservationflexval('" + observationflex + "')"
+		//retrieve result message from database set to response JSON object
+		err = s.dbAccess.QueryRow(querystring).Scan(&success, &message)
+		//check for response error of 500
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to process DB Function to post an Observation Flex Val\n")
+			fmt.Println(err.Error() + "\n")
+			fmt.Println("Error in communicating with database to observation flex val")
+			return
+		}
+		fmt.Println(success)
+		fmt.Println(message)
 
 		//return back to advert service
 		w.Header().Set("Content-Type", "application/json")
