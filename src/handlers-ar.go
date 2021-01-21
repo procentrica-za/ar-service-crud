@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 )
 
 // The function handling the request to export asset details based on an ID
@@ -383,6 +384,7 @@ func (s *Server) handleGetNodeFuncLocs() http.HandlerFunc {
 // The function handling the request to get node assets
 func (s *Server) handleGetNodeAssets() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+
 		fmt.Println(" Handle Get Node Assets Has Been Called...")
 		// retrieving the ID of node assets that are requested.
 		nodeid := r.URL.Query().Get("nodeid")
@@ -489,6 +491,25 @@ func (s *Server) handleGetAssetDetail() http.HandlerFunc {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(200)
 		w.Write(js)
+
+		for true {
+
+			fmt.Println("Handle Update hierarchy Has Been Called...")
+
+			var success string
+			// create query string.
+			querystring := "SELECT * FROM public.populatehierarchy()"
+			err := s.dbAccess.QueryRow(querystring).Scan(&success)
+			if err != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, err.Error())
+				fmt.Println("Error in communicating with database to get asset based on ID")
+				return
+			}
+
+			fmt.Println("The result of the scheduled reloading was " + success)
+			time.Sleep(604800 * time.Second)
+		}
 	}
 }
 
