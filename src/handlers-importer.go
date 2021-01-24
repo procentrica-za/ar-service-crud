@@ -274,7 +274,7 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 
 		js2, jserr2 := json.Marshal(jsonToPostgres3)
 
-		if jserr1 != nil {
+		if jserr2 != nil {
 			w.WriteHeader(500)
 			fmt.Fprintf(w, "Unable to create JSON result object from DB result to post ObservationFlex Value")
 			return
@@ -299,32 +299,25 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 		fmt.Println(ofvsuccess)
 		fmt.Println(ofvmessage)
 
-		posttoARResult := ARPostResult{}
-		posttoARResult.FunclocSuccess = successfuncloc
-		posttoARResult.FunclocMessage = flmessage
-		posttoARResult.FunclocflexvalSuccess = flfvsuccess
-		posttoARResult.FunclocflexvalMessage = flfvmessage
-		posttoARResult.FunclocnodeSuccess = flnsuccess
-		posttoARResult.FunclocnodeMessage = flnmessage
-		posttoARResult.FuncloclinkSuccess = fllsuccess
-		posttoARResult.FuncloclinkMessage = fllmessage
-		posttoARResult.FunclocnodeflexvalSuccess = flnfvsuccess
-		posttoARResult.FunclocnodeflexvalMessage = flnfvmessage
-		posttoARResult.AssetSuccess = asuccess
-		posttoARResult.AssetMessage = amessage
-		posttoARResult.PostedAssetList = assetresponse
-		posttoARResult.AssetflexvalSuccess = afvsuccess
-		posttoARResult.AssetflexvalMessage = afvmessage
-		posttoARResult.ObservationflexvalSuccess = ofvsuccess
-		posttoARResult.ObservationflexvalMessage = ofvmessage
+		postResult := toAssetRegisterResult{}
+		postResult.Success = successfuncloc
+		postResult.Message = flmessage + " " + flfvmessage + " " + flnmessage + " " + fllmessage + " " + flnfvmessage + " " + amessage + " " + afvmessage + " " + ofvmessage
 
 		//convert struct back to JSON
-		js, jserr = json.Marshal(posttoARResult)
+		js4, jserr4 := json.Marshal(postResult)
+
+		if jserr4 != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to create JSON result object from DB result to update Asset.")
+			return
+		}
+
+		fmt.Println(postResult)
 
 		//return back to advert service
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(200)
-		w.Write(js)
+		w.Write(js4)
 
 	}
 }
