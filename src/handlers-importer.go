@@ -101,8 +101,6 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 			return
 		}
 
-		fmt.Println(funclocList.Flist[0].FLNlist[0].ID)
-
 		var flnsuccess bool
 		var flnmessage string
 
@@ -117,28 +115,9 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 
 		fmt.Println(flnsuccess)
 		fmt.Println(flnmessage)
-		fmt.Println(FunclocNodeID)
 
 		var fllsuccess bool
 		var fllmessage string
-
-		querystring2 := "SELECT * FROM public.postfuncloclink('" + FunclocID + "', '" + FunclocNodeID + "')"
-		//retrieve result message from database set to response JSON object
-		err = s.dbAccess.QueryRow(querystring2).Scan(&fllsuccess, &fllmessage)
-
-		//Add result to response
-		fmt.Println(fllsuccess)
-		fmt.Println(fllmessage)
-
-		/*assets := toAssetRegsiterList{}
-		// Obtain all the fields in the asset struct
-		err = json.Unmarshal(body, &assets)*/
-
-		if err != nil {
-			w.WriteHeader(500)
-			fmt.Fprintf(w, "Bad JSON provided to post asset")
-			return
-		}
 
 		funclocnodeflexval := []FunclocNodeFlexVal{}
 
@@ -179,10 +158,30 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 		fmt.Println(flnfvsuccess)
 		fmt.Println(flnfvmessage)
 
+		querystring2 := "SELECT * FROM public.postfuncloclink('" + FunclocID + "', '" + FunclocNodeID + "')"
+		//retrieve result message from database set to response JSON object
+		err = s.dbAccess.QueryRow(querystring2).Scan(&fllsuccess, &fllmessage)
+
+		//Add result to response
+		fmt.Println(fllsuccess)
+		fmt.Println(fllmessage)
+
+		/*assets := toAssetRegsiterList{}
+		// Obtain all the fields in the asset struct
+		err = json.Unmarshal(body, &assets)*/
+
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Bad JSON provided to post funcloclink")
+			return
+		}
+
 		jsonToPostgres := []toAssetRegister{}
 		jsonToPostgres2 := []AssetFlexVal{}
 		jsonToPostgres3 := []ObservationFlexVal{}
-		assetresponse := []Asset{}
+		//response variable for posted assets
+		assetresponse := ARPostResult{}
+		assetresponse.PostedAssetList = []Asset{}
 
 		for _, element := range funclocList.Flist[0].Alist {
 			randomID, _ := newUUID()
@@ -190,6 +189,8 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 			element.ID = randomID
 			element.AssetValID = randomAssetValID
 			element.FunclocID = FunclocID
+			//append response for added assets
+			assetresponse.PostedAssetList = append(assetresponse.PostedAssetList, Asset{element.Name, element.ID})
 			for _, assetelement := range element.FlvList {
 				randomfvID, _ := newUUID()
 				assetelement.ID = randomfvID
@@ -201,10 +202,6 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 				observationelement.ID = randomofvID
 				observationelement.AssetID = randomID
 				jsonToPostgres3 = append(jsonToPostgres3, observationelement)
-			}
-			for _, assetresponseelement := range element.PostedAssetList {
-				assetresponseelement.ID = randomID
-				assetresponse = append(assetresponse, assetresponseelement)
 			}
 			jsonToPostgres = append(jsonToPostgres, element)
 		}
@@ -299,20 +296,25 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 		fmt.Println(ofvsuccess)
 		fmt.Println(ofvmessage)
 
-		postResult := toAssetRegisterResult{}
-		postResult.Success = successfuncloc
-		postResult.Message = flmessage + " " + flfvmessage + " " + flnmessage + " " + fllmessage + " " + flnfvmessage + " " + amessage + " " + afvmessage + " " + ofvmessage
+		assetresponse.FunclocMessage = flmessage
+		assetresponse.FunclocID = FunclocID
+		assetresponse.FunclocflexvalMessage = flfvmessage
+		assetresponse.FunclocnodeMessage = flnmessage
+		assetresponse.FunclocnodeID = FunclocNodeID
+		assetresponse.FuncloclinkMessage = fllmessage
+		assetresponse.FunclocnodeflexvalMessage = flnfvmessage
+		assetresponse.AssetMessage = amessage
+		assetresponse.AssetflexvalMessage = afvmessage
+		assetresponse.ObservationflexvalMessage = ofvmessage
 
 		//convert struct back to JSON
-		js4, jserr4 := json.Marshal(postResult)
+		js4, jserr4 := json.Marshal(assetresponse)
 
 		if jserr4 != nil {
 			w.WriteHeader(500)
 			fmt.Fprintf(w, "Unable to create JSON result object from DB result to update Asset.")
 			return
 		}
-
-		fmt.Println(postResult)
 
 		//return back to advert service
 		w.Header().Set("Content-Type", "application/json")
