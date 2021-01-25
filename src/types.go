@@ -38,6 +38,11 @@ type ObservationFlexVal struct {
 	Name    string `json:"name,omitempty"`
 	Value   string `json:"value,omitempty"`
 }
+
+type Asset struct {
+	Name string `json:"name,omitempty"`
+	ID   string `json:"id,omitempty"`
+}
 type toAssetRegister struct {
 	ID                          string               `json:"id"`
 	Name                        string               `json:"name"`
@@ -116,14 +121,15 @@ type FunclocNodeFlexVal struct {
 	Value         string `json:"value,omitempty"`
 }
 type FunclocNode struct {
-	Name      string               `json:"name,omitempty"`
-	AliasName string               `json:"aliasname,omitempty"`
-	Latitude  string               `json:"latitude,omitempty"`
-	Longitude string               `json:"longitude,omitempty"`
-	Geom      string               `json:"geom,omitempty"`
-	NodeType  string               `json:"nodetype,omitempty"`
-	ParentID  string               `json:"parentid,omitempty"`
-	FLNFVlist []FunclocNodeFlexVal `json:"funclocnodeflexvals,omitempty"`
+	ID         string               `json:"funclocnodeid,omitempty"`
+	Name       string               `json:"name,omitempty"`
+	AliasName  string               `json:"aliasname,omitempty"`
+	Latitude   string               `json:"latitude,omitempty"`
+	Longitude  string               `json:"longitude,omitempty"`
+	Geom       string               `json:"geom,omitempty"`
+	NodeTypeID string               `json:"nodetypeid,omitempty"`
+	ParentID   string               `json:"parentid,omitempty"`
+	FLNFVlist  []FunclocNodeFlexVal `json:"funclocnodeflexvals,omitempty"`
 }
 
 type FunclocNodeList struct {
@@ -133,6 +139,28 @@ type FunclocNodeList struct {
 type toAssetRegisterResult struct {
 	Success bool   `json:"success"`
 	Message string `json:"message"`
+}
+
+type ARPostResult struct {
+	FunclocSuccess            bool    `json:"funclocsuccess,omitempty"`
+	FunclocMessage            string  `json:"funclocmessage,omitempty"`
+	FunclocID                 string  `json:"funclocid,omitempty"`
+	FunclocflexvalSuccess     bool    `json:"funclocflexvalsuccess,omitempty"`
+	FunclocflexvalMessage     string  `json:"funclocflexvalmessage,omitempty"`
+	FunclocnodeSuccess        bool    `json:"funclocnodesuccess,omitempty"`
+	FunclocnodeMessage        string  `json:"funclocnodemessage,omitempty"`
+	FunclocnodeID             string  `json:"funclocnodeid,omitempty"`
+	FuncloclinkSuccess        bool    `json:"funcloclinksuccess,omitempty"`
+	FuncloclinkMessage        string  `json:"funcloclinkmessage,omitempty"`
+	FunclocnodeflexvalSuccess bool    `json:"funclocnodeflexvalsuccess,omitempty"`
+	FunclocnodeflexvalMessage string  `json:"funclocnodeflexvalmessage,omitempty"`
+	AssetSuccess              bool    `json:"assetsuccess,omitempty"`
+	AssetMessage              string  `json:"assetmessage,omitempty"`
+	PostedAssetList           []Asset `json:"postedassets,omitempty"`
+	AssetflexvalSuccess       bool    `json:"assetflexvalsuccess,omitempty"`
+	AssetflexvalMessage       string  `json:"assetflexvalmessage,omitempty"`
+	ObservationflexvalSuccess bool    `json:"observationflexvalsuccess,omitempty"`
+	ObservationflexvalMessage string  `json:"observationflexvalmessage,omitempty"`
 }
 
 type ExportAsset struct {
