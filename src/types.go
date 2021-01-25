@@ -121,15 +121,15 @@ type FunclocNodeFlexVal struct {
 	Value         string `json:"value,omitempty"`
 }
 type FunclocNode struct {
-	ID        string               `json:"funclocnodeid,omitempty"`
-	Name      string               `json:"name,omitempty"`
-	AliasName string               `json:"aliasname,omitempty"`
-	Latitude  string               `json:"latitude,omitempty"`
-	Longitude string               `json:"longitude,omitempty"`
-	Geom      string               `json:"geom,omitempty"`
-	NodeType  string               `json:"nodetype,omitempty"`
-	ParentID  string               `json:"parentid,omitempty"`
-	FLNFVlist []FunclocNodeFlexVal `json:"funclocnodeflexvals,omitempty"`
+	ID         string               `json:"funclocnodeid,omitempty"`
+	Name       string               `json:"name,omitempty"`
+	AliasName  string               `json:"aliasname,omitempty"`
+	Latitude   string               `json:"latitude,omitempty"`
+	Longitude  string               `json:"longitude,omitempty"`
+	Geom       string               `json:"geom,omitempty"`
+	NodeTypeID string               `json:"nodetypeid,omitempty"`
+	ParentID   string               `json:"parentid,omitempty"`
+	FLNFVlist  []FunclocNodeFlexVal `json:"funclocnodeflexvals,omitempty"`
 }
 
 type FunclocNodeList struct {

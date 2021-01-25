@@ -108,7 +108,7 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 
 		querystring1 := "SELECT * FROM public.postfunclocnode('" + funclocList.Flist[0].FLNlist[0].ID + "', '" + funclocList.Flist[0].FLNlist[0].Name + "', '" +
 			funclocList.Flist[0].FLNlist[0].AliasName + "', '" + funclocList.Flist[0].FLNlist[0].Latitude + "' , '" + funclocList.Flist[0].FLNlist[0].Longitude +
-			"', '" + funclocList.Flist[0].FLNlist[0].Geom + "' , '" + funclocList.Flist[0].FLNlist[0].NodeType + "' , '" + funclocList.Flist[0].FLNlist[0].ParentID + "')"
+			"', '" + funclocList.Flist[0].FLNlist[0].Geom + "' , '" + funclocList.Flist[0].FLNlist[0].NodeTypeID + "' , '" + funclocList.Flist[0].FLNlist[0].ParentID + "')"
 		//retrieve result message from database set to response JSON object
 		var FunclocNodeID string
 		err = s.dbAccess.QueryRow(querystring1).Scan(&flnsuccess, &flnmessage, &FunclocNodeID)
@@ -117,7 +117,7 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 
 		fmt.Println(flnsuccess)
 		fmt.Println(flnmessage)
-		//fmt.Println(FunclocNodeID)
+		fmt.Println(FunclocNodeID)
 
 		var fllsuccess bool
 		var fllmessage string
@@ -230,7 +230,7 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 			w.WriteHeader(500)
 			fmt.Fprintf(w, "Unable to process DB Function to post an Asset\n")
 			fmt.Println(err.Error() + "\n")
-			fmt.Println("Error in communicating with database to add advertisement")
+			fmt.Println("Error in communicating with database to import asset")
 			return
 		}
 
