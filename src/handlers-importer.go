@@ -18,16 +18,9 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		body, err := ioutil.ReadAll(r.Body)
 		//Unmarshal for funcloc
-		funclocList := FunclocList{}
-		err = json.Unmarshal(body, &funclocList)
-		/*fmt.Println("Location Name: ")
-		fmt.Println(funclocList.Flist[0].Name)
-		fmt.Println("Asset 1 Name: ")
-		fmt.Println(funclocList.Flist[0].Alist[0].Name)
-		fmt.Println("Asset 2 Name: ")
-		fmt.Println(funclocList.Flist[0].Alist[1].Name)
-		fmt.Println("FunclocNode Name: ")
-		fmt.Println(funclocList.Flist[0].FLNlist[0].Name)*/
+		funcloc := Funcloc{}
+		err = json.Unmarshal(body, &funcloc)
+
 		if err != nil {
 			w.WriteHeader(500)
 			fmt.Fprintf(w, "Bad JSON provided to post funcloc and funcloc")
@@ -36,9 +29,9 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 		var successfuncloc bool
 		var flmessage string
 		var FunclocID string
-		querystring := "SELECT * FROM public.postfuncloc('" + funclocList.Flist[0].Name + "', '" +
-			funclocList.Flist[0].Description + "', '" + funclocList.Flist[0].Latitude + "' , '" + funclocList.Flist[0].Longitude +
-			"', '" + funclocList.Flist[0].Geom + "')"
+		querystring := "SELECT * FROM public.postfuncloc('" + funcloc.Name + "', '" +
+			funcloc.Description + "', '" + funcloc.Latitude + "' , '" + funcloc.Longitude +
+			"', '" + funcloc.Geom + "')"
 		//retrieve result flmessage from database set to response JSON object
 		err = s.dbAccess.QueryRow(querystring).Scan(&successfuncloc, &flmessage, &FunclocID)
 
@@ -48,7 +41,7 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 
 		funclocflexval := []FunclocFlexVal{}
 
-		for _, element := range funclocList.Flist[0].FLFVlist {
+		for _, element := range funcloc.FLFVlist {
 			randomID, _ := newUUID()
 			element.ID = randomID
 			element.FunclocID = FunclocID
@@ -90,9 +83,9 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 
 		err = json.Unmarshal(body, &funclocnodeList)
 
-		if funclocList.Flist[0].FLNlist[0].ID == "" {
+		if funcloc.FLNlist[0].ID == "" {
 			NewNodeID, _ := newUUID()
-			funclocList.Flist[0].FLNlist[0].ID = NewNodeID
+			funcloc.FLNlist[0].ID = NewNodeID
 		}
 
 		if err != nil {
@@ -104,9 +97,9 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 		var flnsuccess bool
 		var flnmessage string
 
-		querystring1 := "SELECT * FROM public.postfunclocnode('" + funclocList.Flist[0].FLNlist[0].ID + "', '" + funclocList.Flist[0].FLNlist[0].Name + "', '" +
-			funclocList.Flist[0].FLNlist[0].AliasName + "', '" + funclocList.Flist[0].FLNlist[0].Latitude + "' , '" + funclocList.Flist[0].FLNlist[0].Longitude +
-			"', '" + funclocList.Flist[0].FLNlist[0].Geom + "' , '" + funclocList.Flist[0].FLNlist[0].NodeTypeID + "' , '" + funclocList.Flist[0].FLNlist[0].ParentID + "')"
+		querystring1 := "SELECT * FROM public.postfunclocnode('" + funcloc.FLNlist[0].ID + "', '" + funcloc.FLNlist[0].Name + "', '" +
+			funcloc.FLNlist[0].AliasName + "', '" + funcloc.FLNlist[0].Latitude + "' , '" + funcloc.FLNlist[0].Longitude +
+			"', '" + funcloc.FLNlist[0].Geom + "' , '" + funcloc.FLNlist[0].NodeTypeID + "' , '" + funcloc.FLNlist[0].ParentID + "')"
 		//retrieve result message from database set to response JSON object
 		var FunclocNodeID string
 		err = s.dbAccess.QueryRow(querystring1).Scan(&flnsuccess, &flnmessage, &FunclocNodeID)
@@ -121,7 +114,7 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 
 		funclocnodeflexval := []FunclocNodeFlexVal{}
 
-		for _, element := range funclocList.Flist[0].FLNlist[0].FLNFVlist {
+		for _, element := range funcloc.FLNlist[0].FLNFVlist {
 			randomID, _ := newUUID()
 			element.ID = randomID
 			element.FunclocNodeID = FunclocNodeID
@@ -183,7 +176,7 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 		assetresponse := ARPostResult{}
 		assetresponse.PostedAssetList = []Asset{}
 
-		for _, element := range funclocList.Flist[0].Alist {
+		for _, element := range funcloc.Alist {
 			randomID, _ := newUUID()
 			randomAssetValID, _ := newUUID()
 			element.ID = randomID
