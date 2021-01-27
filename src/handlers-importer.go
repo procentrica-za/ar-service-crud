@@ -27,11 +27,16 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 			return
 		}
 
+		if funcloc.FunclocID == "" {
+			FunclocID, _ := newUUID()
+			funcloc.FunclocID = FunclocID
+		}
+
 		//Import into funcloc
 		var successfuncloc bool
 		var flmessage string
 		var FunclocID string
-		querystring := "SELECT * FROM public.postfuncloc('" + funcloc.Name + "', '" +
+		querystring := "SELECT * FROM public.postfuncloc('" + funcloc.FunclocID + "', '" + funcloc.Name + "', '" +
 			funcloc.Description + "', '" + funcloc.Latitude + "' , '" + funcloc.Longitude +
 			"', '" + funcloc.Geom + "')"
 		//retrieve result flmessage from database set to response JSON object
@@ -39,7 +44,7 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 
 		fmt.Println(successfuncloc)
 		fmt.Println(flmessage)
-		//fmt.Println(FunclocID)
+		fmt.Println(FunclocID)
 
 		funclocflexval := []FunclocFlexVal{}
 
