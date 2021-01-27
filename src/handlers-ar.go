@@ -475,11 +475,12 @@ func (s *Server) handleGetAssetDetail() http.HandlerFunc {
 			d4u,
 			d5n,
 			d5d,
-			d5u string
+			d5u,
+			typefriendlyname, d1v, d2v, d3v, d4v, d5v string
 
 		// create query string.
 		querystring := "SELECT * FROM public.getassetdetail('" + id + "')"
-		err := s.dbAccess.QueryRow(querystring).Scan(&assetid, &atype, &description, &manufacturedate, &takeondate, &serialno, &derecognitiondate, &derecognitionvalue, &compatibleunitid, &compatibleunitname, &d1n, &d1d, &d1u, &d2n, &d2d, &d2u, &d3n, &d3d, &d3u, &d4n, &d4d, &d4u, &d5n, &d5d, &d5u)
+		err := s.dbAccess.QueryRow(querystring).Scan(&assetid, &atype, &description, &manufacturedate, &takeondate, &serialno, &derecognitiondate, &derecognitionvalue, &compatibleunitid, &compatibleunitname, &d1n, &d1d, &d1u, &d2n, &d2d, &d2u, &d3n, &d3d, &d3u, &d4n, &d4d, &d4u, &d5n, &d5d, &d5u, &typefriendlyname, &d1v, &d2v, &d3v, &d4v, &d5v)
 		if err != nil {
 			w.WriteHeader(500)
 			fmt.Fprintf(w, err.Error())
@@ -491,6 +492,7 @@ func (s *Server) handleGetAssetDetail() http.HandlerFunc {
 		assetdetails := Assetdetails{}
 		assetdetails.ID = assetid
 		assetdetails.Type = atype
+		assetdetails.TypeFriendly = typefriendlyname
 		assetdetails.Description = description
 		assetdetails.ManufactureDate = manufacturedate
 		assetdetails.TakeOnDate = takeondate
@@ -514,6 +516,11 @@ func (s *Server) handleGetAssetDetail() http.HandlerFunc {
 		assetdetails.Dimension5Name = d5n
 		assetdetails.Dimension5Description = d5d
 		assetdetails.Dimension5Unit = d5u
+		assetdetails.Dimension1Value = d1v
+		assetdetails.Dimension2Value = d2v
+		assetdetails.Dimension3Value = d3v
+		assetdetails.Dimension4Value = d4v
+		assetdetails.Dimension5Value = d5v
 
 		// convert struct into JSON payload to send to service that called this function.
 		js, jserr := json.Marshal(assetdetails)

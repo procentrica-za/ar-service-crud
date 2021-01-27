@@ -320,6 +320,7 @@ type NodeAssetsList struct {
 type Assetdetails struct {
 	ID                    string `json:"id,omitempty"`
 	Type                  string `json:"type,omitempty"`
+	TypeFriendly          string `json:"typefriendly,omitempty"`
 	Description           string `json:"description,omitempty"`
 	ManufactureDate       string `json:"manufacturedate,omitempty"`
 	TakeOnDate            string `json:"takeondate,omitempty"`
@@ -343,6 +344,11 @@ type Assetdetails struct {
 	Dimension5Name        string `json:"dimension5name,omitempty"`
 	Dimension5Description string `json:"dimension5description,omitempty"`
 	Dimension5Unit        string `json:"dimension5unit,omitempty"`
+	Dimension1Value       string `json:"dimension1value,omitempty"`
+	Dimension2Value       string `json:"dimension2value,omitempty"`
+	Dimension3Value       string `json:"dimension3value,omitempty"`
+	Dimension4Value       string `json:"dimension4value,omitempty"`
+	Dimension5Value       string `json:"dimension5value,omitempty"`
 }
 
 type FlexVals struct {
