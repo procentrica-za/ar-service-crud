@@ -456,11 +456,30 @@ func (s *Server) handleGetAssetDetail() http.HandlerFunc {
 			description,
 			manufacturedate,
 			takeondate,
-			serialno string
+			serialno,
+			derecognitiondate,
+			derecognitionvalue,
+			compatibleunitid,
+			compatibleunitname,
+			d1n,
+			d1d,
+			d1u,
+			d2n,
+			d2d,
+			d2u,
+			d3n,
+			d3d,
+			d3u,
+			d4n,
+			d4d,
+			d4u,
+			d5n,
+			d5d,
+			d5u string
 
 		// create query string.
 		querystring := "SELECT * FROM public.getassetdetail('" + id + "')"
-		err := s.dbAccess.QueryRow(querystring).Scan(&assetid, &atype, &description, &manufacturedate, &takeondate, &serialno)
+		err := s.dbAccess.QueryRow(querystring).Scan(&assetid, &atype, &description, &manufacturedate, &takeondate, &serialno, &derecognitiondate, &derecognitionvalue, &compatibleunitid, &compatibleunitname, &d1n, &d1d, &d1u, &d2n, &d2d, &d2u, &d3n, &d3d, &d3u, &d4n, &d4d, &d4u, &d5n, &d5d, &d5u)
 		if err != nil {
 			w.WriteHeader(500)
 			fmt.Fprintf(w, err.Error())
@@ -476,6 +495,25 @@ func (s *Server) handleGetAssetDetail() http.HandlerFunc {
 		assetdetails.ManufactureDate = manufacturedate
 		assetdetails.TakeOnDate = takeondate
 		assetdetails.SerialNo = serialno
+		assetdetails.DerecognitionDate = derecognitiondate
+		assetdetails.DerecognitionValue = derecognitionvalue
+		assetdetails.CompatibleUnitID = compatibleunitid
+		assetdetails.CompatibleUnitName = compatibleunitname
+		assetdetails.Dimension1Name = d1n
+		assetdetails.Dimension1Description = d1d
+		assetdetails.Dimension1Unit = d1u
+		assetdetails.Dimension2Name = d2n
+		assetdetails.Dimension2Description = d2d
+		assetdetails.Dimension2Unit = d2u
+		assetdetails.Dimension3Name = d3n
+		assetdetails.Dimension3Description = d3d
+		assetdetails.Dimension3Unit = d3u
+		assetdetails.Dimension4Name = d4n
+		assetdetails.Dimension4Description = d4d
+		assetdetails.Dimension4Unit = d4u
+		assetdetails.Dimension5Name = d5n
+		assetdetails.Dimension5Description = d5d
+		assetdetails.Dimension5Unit = d5u
 
 		// convert struct into JSON payload to send to service that called this function.
 		js, jserr := json.Marshal(assetdetails)

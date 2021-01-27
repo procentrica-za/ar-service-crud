@@ -26,6 +26,8 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 			fmt.Fprintf(w, "Bad JSON provided to post funcloc and funcloc")
 			return
 		}
+
+		//Import into funcloc
 		var successfuncloc bool
 		var flmessage string
 		var FunclocID string
@@ -57,6 +59,7 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 			return
 		}
 
+		//Import into funclocflexval
 		var flfvsuccess bool
 		var flfvmessage string
 
@@ -94,6 +97,7 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 			return
 		}
 
+		//Import into funclocnode
 		var flnsuccess bool
 		var flnmessage string
 
@@ -108,9 +112,6 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 
 		fmt.Println(flnsuccess)
 		fmt.Println(flnmessage)
-
-		var fllsuccess bool
-		var fllmessage string
 
 		funclocnodeflexval := []FunclocNodeFlexVal{}
 
@@ -129,6 +130,8 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 			fmt.Fprintf(w, "Unable to create JSON result object from DB result to post Funcloc flex value.")
 			return
 		}
+
+		//Import into funclocnodeflexval
 
 		var flnfvsuccess bool
 		var flnfvmessage string
@@ -151,6 +154,10 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 		fmt.Println(flnfvsuccess)
 		fmt.Println(flnfvmessage)
 
+		//Import into funcloclink
+		var fllsuccess bool
+		var fllmessage string
+
 		querystring2 := "SELECT * FROM public.postfuncloclink('" + FunclocID + "', '" + FunclocNodeID + "')"
 		//retrieve result message from database set to response JSON object
 		err = s.dbAccess.QueryRow(querystring2).Scan(&fllsuccess, &fllmessage)
@@ -169,6 +176,7 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 			return
 		}
 
+		//Append ID's for posting asset
 		jsonToPostgres := []toAssetRegister{}
 		jsonToPostgres2 := []AssetFlexVal{}
 		jsonToPostgres3 := []ObservationFlexVal{}
@@ -208,6 +216,7 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 			return
 		}
 
+		//Import into Asset
 		var asuccess bool
 		var amessage string
 
@@ -243,6 +252,7 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 		fmt.Println(amessage)
 		//Add result to response
 
+		//Import into assetflexval
 		var afvsuccess bool
 		var afvmessage string
 
@@ -270,6 +280,7 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 			return
 		}
 
+		//Import into observationflexval
 		var ofvsuccess bool
 		var ofvmessage string
 
@@ -289,6 +300,7 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 		fmt.Println(ofvsuccess)
 		fmt.Println(ofvmessage)
 
+		//Compile response struct for import response
 		assetresponse.FunclocMessage = flmessage
 		assetresponse.FunclocID = FunclocID
 		assetresponse.FunclocflexvalMessage = flfvmessage
