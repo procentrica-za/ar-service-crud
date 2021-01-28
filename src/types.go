@@ -142,6 +142,7 @@ type toAssetRegisterResult struct {
 }
 
 type ARPostResult struct {
+	Error                     string  `json:"error,omitempty"`
 	FunclocSuccess            bool    `json:"funclocsuccess,omitempty"`
 	FunclocMessage            string  `json:"funclocmessage,omitempty"`
 	FunclocID                 string  `json:"funclocid,omitempty"`

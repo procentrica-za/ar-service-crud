@@ -23,7 +23,7 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 
 		if err != nil {
 			w.WriteHeader(500)
-			fmt.Fprintf(w, "Bad JSON provided to post funcloc and funcloc")
+			fmt.Fprintf(w, "Bad JSON provided to post funcloc")
 			return
 		}
 
@@ -31,6 +31,9 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 			FunclocID, _ := newUUID()
 			funcloc.FunclocID = FunclocID
 		}
+
+		//response variable for posted assets
+		assetresponse := ARPostResult{}
 
 		//Import into funcloc
 		var successfuncloc bool
@@ -82,10 +85,40 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 		err = s.dbAccess.QueryRow(querystring).Scan(&flfvsuccess, &flfvmessage)
 		//check for response error of 500
 		if err != nil {
-			w.WriteHeader(500)
-			fmt.Fprintf(w, "Unable to process DB Function to post a Funcloc flex value\n"+err.Error()+"\n")
-			fmt.Println(err.Error() + "\n")
-			fmt.Println("Error in communicating with database to add Funcloc flex value")
+			if successfuncloc == true {
+				var dflsuccess bool
+				var dflmessage string
+
+				querystring := "SELECT * FROM public.deletefuncloc('" + funcloc.FunclocID + "')"
+				//retrieve result message from database set to response JSON object
+				err = s.dbAccess.QueryRow(querystring).Scan(&dflsuccess, &dflmessage)
+
+				if err != nil {
+					w.WriteHeader(500)
+					fmt.Fprintf(w, "Unable to process DB Function to revert funcloc"+err.Error()+"\n")
+					fmt.Println(err.Error() + "\n")
+					fmt.Println("Error in communicating with database to revert funcloc")
+					return
+				}
+				fmt.Println(dflsuccess, dflmessage)
+			}
+
+			//Compile response struct for error response
+			assetresponse.Error = "Unable to process DB Function to post FunclocFlex value. If a new funcloc was added it has been reverted."
+
+			//convert struct back to JSON
+			js, jserr := json.Marshal(assetresponse)
+
+			if jserr != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to create JSON error result object from funclocflexval")
+				return
+			}
+
+			//return back to advert service
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(200)
+			w.Write(js)
 			return
 		}
 
@@ -121,6 +154,46 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 		var FunclocNodeID string
 		err = s.dbAccess.QueryRow(querystring1).Scan(&flnsuccess, &flnmessage, &FunclocNodeID)
 
+		//check for response error of 500
+		if err != nil {
+			if successfuncloc == true {
+
+				var dflsuccess bool
+				var dflmessage string
+
+				querystring := "SELECT * FROM public.deletefuncloc('" + FunclocID + "')"
+				//retrieve result message from database set to response JSON object
+				err = s.dbAccess.QueryRow(querystring).Scan(&dflsuccess, &dflmessage)
+
+				if err != nil {
+					w.WriteHeader(500)
+					fmt.Fprintf(w, "Unable to process DB Function to revert funcloc"+err.Error()+"\n")
+					fmt.Println(err.Error() + "\n")
+					fmt.Println("Error in communicating with database to revert funcloc")
+					return
+				}
+				fmt.Println(dflsuccess, dflmessage)
+			}
+
+			//Compile response struct for error response
+			assetresponse.Error = "Unable to process DB Function to post a Funclocnode. If a new funcloc was added it has been reverted."
+
+			//convert struct back to JSON
+			js, jserr := json.Marshal(assetresponse)
+
+			if jserr != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to create JSON error result object from funclocnode")
+				return
+			}
+
+			//return back to advert service
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(200)
+			w.Write(js)
+			return
+		}
+
 		//Add result to response
 
 		fmt.Println(flnsuccess)
@@ -155,10 +228,60 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 		err = s.dbAccess.QueryRow(querystring).Scan(&flnfvsuccess, &flnfvmessage)
 		//check for response error of 500
 		if err != nil {
-			w.WriteHeader(500)
-			fmt.Fprintf(w, "Unable to process DB Function to post a Funcloc node flex value\n"+err.Error()+"\n")
-			fmt.Println(err.Error() + "\n")
-			fmt.Println("Error in communicating with database to add Funcloc node flex value")
+
+			if successfuncloc == true {
+				var dflsuccess bool
+				var dflmessage string
+
+				querystring := "SELECT * FROM public.deletefuncloc('" + FunclocID + "')"
+				//retrieve result message from database set to response JSON object
+				err = s.dbAccess.QueryRow(querystring).Scan(&dflsuccess, &dflmessage)
+
+				if err != nil {
+					w.WriteHeader(500)
+					fmt.Fprintf(w, "Unable to process DB Function to revert funcloc"+err.Error()+"\n")
+					fmt.Println(err.Error() + "\n")
+					fmt.Println("Error in communicating with database to revert funcloc")
+					return
+				}
+				fmt.Println(dflsuccess, dflmessage)
+
+			}
+
+			if flnsuccess == true {
+				var dflnsuccess bool
+				var dflnmessage string
+
+				querystring1 := "SELECT * FROM public.deletefunclocnode('" + FunclocNodeID + "')"
+				//retrieve result message from database set to response JSON object
+				err = s.dbAccess.QueryRow(querystring1).Scan(&dflnsuccess, &dflnmessage)
+
+				if err != nil {
+					w.WriteHeader(500)
+					fmt.Fprintf(w, "Unable to process DB Function to revert funclocnode"+err.Error()+"\n")
+					fmt.Println(err.Error() + "\n")
+					fmt.Println("Error in communicating with database to revert funclocnode")
+					return
+				}
+				fmt.Println(dflnsuccess, dflnmessage)
+			}
+
+			//Compile response struct for error response
+			assetresponse.Error = "Unable to process DB Function to post a Funclocnode flexval. If a new funcloc/funclocnode was added it has been reverted"
+
+			//convert struct back to JSON
+			js, jserr := json.Marshal(assetresponse)
+
+			if jserr != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to create JSON error result object from funclocnode flex val")
+				return
+			}
+
+			//return back to advert service
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(200)
+			w.Write(js)
 			return
 		}
 
@@ -174,6 +297,64 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 		querystring2 := "SELECT * FROM public.postfuncloclink('" + FunclocID + "', '" + FunclocNodeID + "')"
 		//retrieve result message from database set to response JSON object
 		err = s.dbAccess.QueryRow(querystring2).Scan(&fllsuccess, &fllmessage)
+
+		if err != nil {
+
+			if successfuncloc == true {
+				var dflsuccess bool
+				var dflmessage string
+
+				querystring := "SELECT * FROM public.deletefuncloc('" + FunclocID + "')"
+				//retrieve result message from database set to response JSON object
+				err = s.dbAccess.QueryRow(querystring).Scan(&dflsuccess, &dflmessage)
+
+				if err != nil {
+					w.WriteHeader(500)
+					fmt.Fprintf(w, "Unable to process DB Function to revert funcloc"+err.Error()+"\n")
+					fmt.Println(err.Error() + "\n")
+					fmt.Println("Error in communicating with database to revert funcloc")
+					return
+				}
+				fmt.Println(dflsuccess, dflmessage)
+
+			}
+
+			if flnsuccess == true {
+				var dflnsuccess bool
+				var dflnmessage string
+
+				querystring1 := "SELECT * FROM public.deletefunclocnode('" + FunclocNodeID + "')"
+				//retrieve result message from database set to response JSON object
+				err = s.dbAccess.QueryRow(querystring1).Scan(&dflnsuccess, &dflnmessage)
+
+				if err != nil {
+					w.WriteHeader(500)
+					fmt.Fprintf(w, "Unable to process DB Function to revert funclocnode"+err.Error()+"\n")
+					fmt.Println(err.Error() + "\n")
+					fmt.Println("Error in communicating with database to revert funclocnode")
+					return
+				}
+				fmt.Println(dflnsuccess, dflnmessage)
+			}
+
+			//Compile response struct for error response
+			assetresponse.Error = "Unable to process DB Function to post a Funcloclink. If a new funcloc/funclocnode was added it has been reverted"
+
+			//convert struct back to JSON
+			js, jserr := json.Marshal(assetresponse)
+
+			if jserr != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to create JSON error result object from funcloclink")
+				return
+			}
+
+			//return back to advert service
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(200)
+			w.Write(js)
+			return
+		}
 
 		//Add result to response
 		fmt.Println(fllsuccess)
@@ -193,8 +374,7 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 		jsonToPostgres := []toAssetRegister{}
 		jsonToPostgres2 := []AssetFlexVal{}
 		jsonToPostgres3 := []ObservationFlexVal{}
-		//response variable for posted assets
-		assetresponse := ARPostResult{}
+		//asset response for posted assets
 		assetresponse.PostedAssetList = []Asset{}
 
 		for _, element := range funcloc.Alist {
@@ -239,11 +419,61 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 		err = s.dbAccess.QueryRow(querystring).Scan(&asuccess, &amessage)
 		//check for response error of 500
 		if err != nil {
-			w.WriteHeader(500)
-			fmt.Fprintf(w, "Unable to process DB Function to post an Asset\n"+err.Error()+"\n")
-			fmt.Println(err.Error() + "\n")
-			fmt.Println("Error in communicating with database to import asset")
+			if successfuncloc == true {
+				var dflsuccess bool
+				var dflmessage string
+
+				querystring := "SELECT * FROM public.deletefuncloc('" + FunclocID + "')"
+				//retrieve result message from database set to response JSON object
+				err = s.dbAccess.QueryRow(querystring).Scan(&dflsuccess, &dflmessage)
+
+				if err != nil {
+					w.WriteHeader(500)
+					fmt.Fprintf(w, "Unable to process DB Function to revert funcloc"+err.Error()+"\n")
+					fmt.Println(err.Error() + "\n")
+					fmt.Println("Error in communicating with database to revert funcloc")
+					return
+				}
+				fmt.Println(dflsuccess, dflmessage)
+
+			}
+
+			if flnsuccess == true {
+				var dflnsuccess bool
+				var dflnmessage string
+
+				querystring1 := "SELECT * FROM public.deletefunclocnode('" + FunclocNodeID + "')"
+				//retrieve result message from database set to response JSON object
+				err = s.dbAccess.QueryRow(querystring1).Scan(&dflnsuccess, &dflnmessage)
+
+				if err != nil {
+					w.WriteHeader(500)
+					fmt.Fprintf(w, "Unable to process DB Function to revert funclocnode"+err.Error()+"\n")
+					fmt.Println(err.Error() + "\n")
+					fmt.Println("Error in communicating with database to revert funclocnode")
+					return
+				}
+				fmt.Println(dflnsuccess, dflnmessage)
+			}
+
+			//Compile response struct for error response
+			assetresponse.Error = "Unable to process DB Function to post asset. If a new funcloc/funclocnode was added it has been reverted, as well as assets belonging to this functional location"
+
+			//convert struct back to JSON
+			js, jserr := json.Marshal(assetresponse)
+
+			if jserr != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to create JSON error result object from asset")
+				return
+			}
+
+			//return back to advert service
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(200)
+			w.Write(js)
 			return
+
 		}
 
 		//error occured when trying to convert struct to a JSON object
@@ -275,11 +505,80 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 		err = s.dbAccess.QueryRow(querystring).Scan(&afvsuccess, &afvmessage)
 		//check for response error of 500
 		if err != nil {
-			w.WriteHeader(500)
-			fmt.Fprintf(w, "Unable to process DB Function to post an Asset Flex Val\n"+err.Error()+"\n")
-			fmt.Println(err.Error() + "\n")
-			fmt.Println("Error in communicating with database to asset flex val")
+
+			if successfuncloc == true {
+				var dflsuccess bool
+				var dflmessage string
+
+				querystring := "SELECT * FROM public.deletefuncloc('" + FunclocID + "')"
+				//retrieve result message from database set to response JSON object
+				err = s.dbAccess.QueryRow(querystring).Scan(&dflsuccess, &dflmessage)
+
+				if err != nil {
+					w.WriteHeader(500)
+					fmt.Fprintf(w, "Unable to process DB Function to revert funcloc"+err.Error()+"\n")
+					fmt.Println(err.Error() + "\n")
+					fmt.Println("Error in communicating with database to revert funcloc")
+					return
+				}
+				fmt.Println(dflsuccess, dflmessage)
+
+			}
+
+			if flnsuccess == true {
+				var dflnsuccess bool
+				var dflnmessage string
+
+				querystring1 := "SELECT * FROM public.deletefunclocnode('" + FunclocNodeID + "')"
+				//retrieve result message from database set to response JSON object
+				err = s.dbAccess.QueryRow(querystring1).Scan(&dflnsuccess, &dflnmessage)
+
+				if err != nil {
+					w.WriteHeader(500)
+					fmt.Fprintf(w, "Unable to process DB Function to revert funclocnode"+err.Error()+"\n")
+					fmt.Println(err.Error() + "\n")
+					fmt.Println("Error in communicating with database to revert funclocnode")
+					return
+				}
+				fmt.Println(dflnsuccess, dflnmessage)
+			}
+
+			for _, element := range assetresponse.PostedAssetList {
+
+				var davsuccess bool
+				var davmessage string
+				querystring = "SELECT * FROM public.deleteasset('" + element.ID + "')"
+				//retrieve result message from database set to response JSON object
+				err = s.dbAccess.QueryRow(querystring).Scan(&davsuccess, &davmessage)
+				//check for response error of 500
+				if err != nil {
+					w.WriteHeader(500)
+					fmt.Fprintf(w, "Unable to process DB Function to post an Asset Flex Val\n"+err.Error()+"\n")
+					fmt.Println(err.Error() + "\n")
+					fmt.Println("Error in communicating with database to asset flex val")
+					return
+				}
+				fmt.Println(davsuccess, davmessage)
+			}
+
+			//Compile response struct for error response
+			assetresponse.Error = "Unable to process DB Function to post assetflexval. If a new funcloc/funclocnode was added it has been reverted, as well as assets belonging to this functional location"
+
+			//convert struct back to JSON
+			js, jserr := json.Marshal(assetresponse)
+
+			if jserr != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to create JSON error result object from assetflexval")
+				return
+			}
+
+			//return back to advert service
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(200)
+			w.Write(js)
 			return
+
 		}
 
 		fmt.Println(afvsuccess)
@@ -303,10 +602,77 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 		err = s.dbAccess.QueryRow(querystring).Scan(&ofvsuccess, &ofvmessage)
 		//check for response error of 500
 		if err != nil {
-			w.WriteHeader(500)
-			fmt.Fprintf(w, "Unable to process DB Function to post an Observation Flex Val\n"+err.Error()+"\n")
-			fmt.Println(err.Error() + "\n")
-			fmt.Println("Error in communicating with database to observation flex val")
+			if successfuncloc == true {
+				var dflsuccess bool
+				var dflmessage string
+
+				querystring := "SELECT * FROM public.deletefuncloc('" + FunclocID + "')"
+				//retrieve result message from database set to response JSON object
+				err = s.dbAccess.QueryRow(querystring).Scan(&dflsuccess, &dflmessage)
+
+				if err != nil {
+					w.WriteHeader(500)
+					fmt.Fprintf(w, "Unable to process DB Function to revert funcloc"+err.Error()+"\n")
+					fmt.Println(err.Error() + "\n")
+					fmt.Println("Error in communicating with database to revert funcloc")
+					return
+				}
+				fmt.Println(dflsuccess, dflmessage)
+
+			}
+
+			if flnsuccess == true {
+				var dflnsuccess bool
+				var dflnmessage string
+
+				querystring1 := "SELECT * FROM public.deletefunclocnode('" + FunclocNodeID + "')"
+				//retrieve result message from database set to response JSON object
+				err = s.dbAccess.QueryRow(querystring1).Scan(&dflnsuccess, &dflnmessage)
+
+				if err != nil {
+					w.WriteHeader(500)
+					fmt.Fprintf(w, "Unable to process DB Function to revert funclocnode"+err.Error()+"\n")
+					fmt.Println(err.Error() + "\n")
+					fmt.Println("Error in communicating with database to revert funclocnode")
+					return
+				}
+				fmt.Println(dflnsuccess, dflnmessage)
+			}
+
+			for _, element := range assetresponse.PostedAssetList {
+
+				var davsuccess bool
+				var davmessage string
+				querystring = "SELECT * FROM public.deleteasset('" + element.ID + "')"
+				//retrieve result message from database set to response JSON object
+				err = s.dbAccess.QueryRow(querystring).Scan(&davsuccess, &davmessage)
+				//check for response error of 500
+				if err != nil {
+					w.WriteHeader(500)
+					fmt.Fprintf(w, "Unable to process DB Function to post an Asset Flex Val\n"+err.Error()+"\n")
+					fmt.Println(err.Error() + "\n")
+					fmt.Println("Error in communicating with database to asset flex val")
+					return
+				}
+				fmt.Println(davsuccess, davmessage)
+			}
+
+			//Compile response struct for error response
+			assetresponse.Error = "Unable to process DB Function to post an observationflexval. If a new funcloc/funclocnode was added it has been reverted, as well as assets belonging to this functional location"
+
+			//convert struct back to JSON
+			js, jserr := json.Marshal(assetresponse)
+
+			if jserr != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to create JSON error result object from observationflexval")
+				return
+			}
+
+			//return back to advert service
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(200)
+			w.Write(js)
 			return
 		}
 
