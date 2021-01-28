@@ -41,6 +41,14 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 			"', '" + funcloc.Geom + "')"
 		//retrieve result flmessage from database set to response JSON object
 		err = s.dbAccess.QueryRow(querystring).Scan(&successfuncloc, &flmessage, &FunclocID)
+		//check for response error of 500
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to process DB Function to post a Funcloc \n"+err.Error()+"\n")
+			fmt.Println(err.Error() + "\n")
+			fmt.Println("Error in communicating with database to add Funcloc ")
+			return
+		}
 
 		fmt.Println(successfuncloc)
 		fmt.Println(flmessage)
@@ -75,7 +83,7 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 		//check for response error of 500
 		if err != nil {
 			w.WriteHeader(500)
-			fmt.Fprintf(w, "Unable to process DB Function to post a Funcloc flex value\n")
+			fmt.Fprintf(w, "Unable to process DB Function to post a Funcloc flex value\n"+err.Error()+"\n")
 			fmt.Println(err.Error() + "\n")
 			fmt.Println("Error in communicating with database to add Funcloc flex value")
 			return
@@ -148,7 +156,7 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 		//check for response error of 500
 		if err != nil {
 			w.WriteHeader(500)
-			fmt.Fprintf(w, "Unable to process DB Function to post a Funcloc node flex value\n")
+			fmt.Fprintf(w, "Unable to process DB Function to post a Funcloc node flex value\n"+err.Error()+"\n")
 			fmt.Println(err.Error() + "\n")
 			fmt.Println("Error in communicating with database to add Funcloc node flex value")
 			return
@@ -232,7 +240,7 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 		//check for response error of 500
 		if err != nil {
 			w.WriteHeader(500)
-			fmt.Fprintf(w, "Unable to process DB Function to post an Asset\n")
+			fmt.Fprintf(w, "Unable to process DB Function to post an Asset\n"+err.Error()+"\n")
 			fmt.Println(err.Error() + "\n")
 			fmt.Println("Error in communicating with database to import asset")
 			return
@@ -268,7 +276,7 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 		//check for response error of 500
 		if err != nil {
 			w.WriteHeader(500)
-			fmt.Fprintf(w, "Unable to process DB Function to post an Asset Flex Val\n")
+			fmt.Fprintf(w, "Unable to process DB Function to post an Asset Flex Val\n"+err.Error()+"\n")
 			fmt.Println(err.Error() + "\n")
 			fmt.Println("Error in communicating with database to asset flex val")
 			return
@@ -296,7 +304,7 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 		//check for response error of 500
 		if err != nil {
 			w.WriteHeader(500)
-			fmt.Fprintf(w, "Unable to process DB Function to post an Observation Flex Val\n")
+			fmt.Fprintf(w, "Unable to process DB Function to post an Observation Flex Val\n"+err.Error()+"\n")
 			fmt.Println(err.Error() + "\n")
 			fmt.Println("Error in communicating with database to observation flex val")
 			return
