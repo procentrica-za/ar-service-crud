@@ -6,41 +6,56 @@ import (
 	"net/http"
 )
 
-func (s *Server) handleanalyseassets() http.HandlerFunc {
+func (s *Server) handleGetAssetFlexValCondition() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("Handle Analyse Asset Has Been Called...")
-		// retrieving the ID of the assets that are requested.
-		assettypeid := r.URL.Query().Get("assettypeid")
+
+		fmt.Println(" Handle Get Asset Flexval Condition Been Called...")
+		// retrieving the ID of node assets that are requested.
+		nodeid := r.URL.Query().Get("nodeid")
 
 		//set response variables
-		rows, err := s.dbAccess.Query("SELECT * FROM public.analyseassets('" + assettypeid + "')")
+		rows, err := s.dbAccess.Query("SELECT * FROM public.assetflexvalcondition('" + nodeid + "')")
+
 		if err != nil {
 			w.WriteHeader(500)
 			fmt.Fprintf(w, "Unable to process DB Function...")
 			return
 		}
 		defer rows.Close()
- 
-		assetsList := []AssetRegisterResponse{}
 
-		var name, description, serialno, size, atype, class, dimension1val, dimension2val, dimension3val, dimension4val, dimension5val, dimension6val, derecognitionvalue, extent, extentconfidence, takeondate, latitude, longitude string
+		assetsList := []AFVCondition{}
+
+		var Id,
+			FuncLocId,
+			FuncLocNodeId,
+			Name,
+			Description,
+			Lat,
+			Lon,
+			Assettakeondate,
+			Assetflexvalname,
+			Assetflexvalvalue,
+			Remaininguseoflife,
+			Crc,
+			Drc,
+			Assetflexvaluesorted string
 
 		for rows.Next() {
-			err = rows.Scan(&name, &description, &serialno, &size, &atype, &class, &dimension1val, &dimension2val, &dimension3val, &dimension4val, &dimension5val, &dimension6val, &extent, &extentconfidence, &takeondate, &derecognitionvalue, &latitude, &longitude)
+			err = rows.Scan(&Id, &FuncLocId, &FuncLocNodeId, &Name, &Description, &Lat, &Lon, &Assettakeondate, &Assetflexvalname, &Assetflexvalvalue, &Remaininguseoflife, &Crc, &Drc, &Assetflexvaluesorted)
 			if err != nil {
 				w.WriteHeader(500)
-				fmt.Fprintf(w, "Unable to read data from Assets List...")
+				fmt.Fprintf(w, "Unable to read data from assets List...")
 				fmt.Println(err.Error())
 				return
 			}
-			assetsList = append(assetsList, AssetRegisterResponse{name, description, serialno, size, atype, class, dimension1val, dimension2val, dimension3val, dimension4val, dimension5val, dimension6val, extent, extentconfidence, takeondate, derecognitionvalue, latitude, longitude})
+			assetsList = append(assetsList, AFVCondition{Id, Name, Description, Lat, Lon, Assetflexvalname, Assetflexvalvalue, Crc, Drc, Assetflexvaluesorted})
 		}
 
-		// get any error encountered during iteration.
+		// get any error encountered during iteration
 		err = rows.Err()
 		if err != nil {
 			w.WriteHeader(500)
-			fmt.Fprintf(w, "Unable to read data from Advertisement List...")
+			fmt.Fprintf(w, "Unable to read data from assets List...")
 			return
 		}
 
