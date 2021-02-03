@@ -429,13 +429,6 @@ type FlattenedHierarchyList struct {
 }
 
 type AFVCondition struct {
-	Id                   string `json:"id,omitempty"`
-	Assetname            string `json:"assetname,omitempty"`
-	Description          string `json:"description,omitempty"`
-	Lat                  string `json:"lat,omitempty"`
-	Lon                  string `json:"lon,omitempty"`
-	Assetflexvalname     string `json:"assetflexvalname,omitempty"`
-	Assetflexvalvalue    string `json:"assetflexvalvalue,omitempty"`
 	Crc                  string `json:"crc,omitempty"`
 	Drc                  string `json:"drc,omitempty"`
 	Assetflexvaluesorted string `json:"Assetflexvaluesorted,omitempty"`
