@@ -25,30 +25,20 @@ func (s *Server) handleGetAssetFlexValCondition() http.HandlerFunc {
 
 		assetsList := []AFVCondition{}
 
-		var Id,
-			FuncLocId,
-			FuncLocNodeId,
-			Name,
-			Description,
-			Lat,
-			Lon,
-			Assettakeondate,
-			Assetflexvalname,
-			Assetflexvalvalue,
-			Remaininguseoflife,
+		var Assetflexvaluesorted,
 			Crc,
 			Drc,
-			Assetflexvaluesorted string
+			Recordcount string
 
 		for rows.Next() {
-			err = rows.Scan(&Id, &FuncLocId, &FuncLocNodeId, &Name, &Description, &Lat, &Lon, &Assettakeondate, &Assetflexvalname, &Assetflexvalvalue, &Remaininguseoflife, &Crc, &Drc, &Assetflexvaluesorted)
+			err = rows.Scan(&Assetflexvaluesorted, &Crc, &Drc, &Recordcount)
 			if err != nil {
 				w.WriteHeader(500)
 				fmt.Fprintf(w, "Unable to read data from assets List...")
 				fmt.Println(err.Error())
 				return
 			}
-			assetsList = append(assetsList, AFVCondition{Name, Crc, Drc, Assetflexvaluesorted})
+			assetsList = append(assetsList, AFVCondition{Crc, Drc, Assetflexvaluesorted, Recordcount})
 		}
 
 		// get any error encountered during iteration
