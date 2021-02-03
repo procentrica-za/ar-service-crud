@@ -48,7 +48,7 @@ func (s *Server) handleGetAssetFlexValCondition() http.HandlerFunc {
 				fmt.Println(err.Error())
 				return
 			}
-			assetsList = append(assetsList, AFVCondition{Crc, Drc, Assetflexvaluesorted})
+			assetsList = append(assetsList, AFVCondition{Name, Crc, Drc, Assetflexvaluesorted})
 		}
 
 		// get any error encountered during iteration
