@@ -323,6 +323,12 @@ type Assetdetails struct {
 	Name                  string `json:"name,omitempty"`
 	Type                  string `json:"type,omitempty"`
 	TypeFriendly          string `json:"typefriendly,omitempty"`
+	Group                 string `json:"group,omitempty"`
+	Category              string `json:"category,omitempty"`
+	SubCategory           string `json:"subcategory,omitempty"`
+	GroupType             string `json:"grouptype,omitempty"`
+	AssetType             string `json:"assettype,omitempty"`
+	ComponentType         string `json:"componenttype,omitempty"`
 	Description           string `json:"description,omitempty"`
 	ManufactureDate       string `json:"manufacturedate,omitempty"`
 	TakeOnDate            string `json:"takeondate,omitempty"`
@@ -351,6 +357,12 @@ type Assetdetails struct {
 	Dimension3Value       string `json:"dimension3value,omitempty"`
 	Dimension4Value       string `json:"dimension4value,omitempty"`
 	Dimension5Value       string `json:"dimension5value,omitempty"`
+	Extent                string `json:"extent,omitempty"`
+	Rulyears              string `json:"rulyears,omitempty"`
+	Crc                   string `json:"crc,omitempty"`
+	Drc                   string `json:"drc,omitempty"`
+	Cost                  string `json:"cost,omitempty"`
+	CarryingValue         string `json:"carryingvalue,omitempty"`
 }
 
 type FlexVals struct {
@@ -433,4 +445,13 @@ type AFVCondition struct {
 	Drc                  string `json:"drc,omitempty"`
 	Assetflexvaluesorted string `json:"Assetflexvaluesorted,omitempty"`
 	Recordcount          string `json:"Recordcount,omitempty"`
+}
+
+type FunclocPost struct {
+	FunclocID   string `json:"funclocid,omitempty"`
+	Name        string `json:"name,omitempty"`
+	Description string `json:"description,omitempty"`
+	Latitude    string `json:"latitude,omitempty"`
+	Longitude   string `json:"longitude,omitempty"`
+	Geom        string `json:"geom,omitempty"`
 }
