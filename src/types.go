@@ -456,3 +456,14 @@ type Portfolio struct {
 	AssetTypeLevel6 string `json:"assettypelvl6,omitempty"`
 	CRC             string `json:"crc,omitempty"`
 }
+
+type YearReplacement struct {
+	AssetTypeLevel1 string `json:"assettypelvl1,omitempty"`
+	AssetTypeLevel2 string `json:"assettypelvl2,omitempty"`
+	AssetTypeLevel3 string `json:"assettypelvl3,omitempty"`
+	AssetTypeLevel4 string `json:"assettypelvl4,omitempty"`
+	AssetTypeLevel5 string `json:"assettypelvl5,omitempty"`
+	AssetTypeLevel6 string `json:"assettypelvl6,omitempty"`
+	Rul             string `json:"rulyears,omitempty"`
+	CRC             string `json:"replacementcost,omitempty"`
+}
