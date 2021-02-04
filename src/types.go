@@ -447,11 +447,12 @@ type AFVCondition struct {
 	Recordcount          string `json:"Recordcount,omitempty"`
 }
 
-type FunclocPost struct {
-	FunclocID   string `json:"funclocid,omitempty"`
-	Name        string `json:"name,omitempty"`
-	Description string `json:"description,omitempty"`
-	Latitude    string `json:"latitude,omitempty"`
-	Longitude   string `json:"longitude,omitempty"`
-	Geom        string `json:"geom,omitempty"`
+type Portfolio struct {
+	AssetTypeLevel1 string `json:"assettypelvl1,omitempty"`
+	AssetTypeLevel2 string `json:"assettypelvl2,omitempty"`
+	AssetTypeLevel3 string `json:"assettypelvl3,omitempty"`
+	AssetTypeLevel4 string `json:"assettypelvl4,omitempty"`
+	AssetTypeLevel5 string `json:"assettypelvl5,omitempty"`
+	AssetTypeLevel6 string `json:"assettypelvl6,omitempty"`
+	CRC             string `json:"crc,omitempty"`
 }
