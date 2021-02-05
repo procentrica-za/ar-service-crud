@@ -183,3 +183,113 @@ func (s *Server) handleGetYearReplacement() http.HandlerFunc {
 		w.Write(js)
 	}
 }
+
+func (s *Server) handleGetRenewalProfile() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		fmt.Println(" Handle Get renewalprofile has Been Called...")
+		// retrieving the ID of node assets that are requested.
+		nodeid := r.URL.Query().Get("nodeid")
+
+		//set response variables
+		rows, err := s.dbAccess.Query("SELECT * FROM public.renewalprofile('" + nodeid + "')")
+
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to process DB Function...")
+			return
+		}
+		defer rows.Close()
+
+		assetsList := []RenewalProfile{}
+
+		var rulyears, costopeningbalance, crc string
+
+		for rows.Next() {
+			err = rows.Scan(&rulyears, &costopeningbalance, &crc)
+			if err != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to read data from assets List...")
+				fmt.Println(err.Error())
+				return
+			}
+			assetsList = append(assetsList, RenewalProfile{rulyears, costopeningbalance, crc})
+		}
+
+		// get any error encountered during iteration
+		err = rows.Err()
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to read data from assets List...")
+			return
+		}
+
+		js, jserr := json.Marshal(assetsList)
+
+		//If Queryrow returns error, provide error to caller and exit
+		if jserr != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to create JSON from DB renewalprofile result...")
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(200)
+		w.Write(js)
+	}
+}
+
+func (s *Server) handleGetRiskCriticality() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		fmt.Println(" Handle Get RiskCriticality has Been Called...")
+		// retrieving the ID of node assets that are requested.
+		nodeid := r.URL.Query().Get("nodeid")
+
+		//set response variables
+		rows, err := s.dbAccess.Query("SELECT * FROM public.riskcriticality('" + nodeid + "')")
+
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to process DB Function...")
+			return
+		}
+		defer rows.Close()
+
+		assetsList := []RiskCriticality{}
+
+		var consequence, likelyhood, crc string
+
+		for rows.Next() {
+			err = rows.Scan(&consequence, &likelyhood, &crc)
+			if err != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to read data from assets List...")
+				fmt.Println(err.Error())
+				return
+			}
+			assetsList = append(assetsList, RiskCriticality{consequence, likelyhood, crc})
+		}
+
+		// get any error encountered during iteration
+		err = rows.Err()
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to read data from assets List...")
+			return
+		}
+
+		js, jserr := json.Marshal(assetsList)
+
+		//If Queryrow returns error, provide error to caller and exit
+		if jserr != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to create JSON from DB RiskCriticality result...")
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(200)
+		w.Write(js)
+	}
+}

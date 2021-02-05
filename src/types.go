@@ -467,3 +467,15 @@ type YearReplacement struct {
 	Rul             string `json:"rulyears,omitempty"`
 	CRC             string `json:"replacementcost,omitempty"`
 }
+
+type RenewalProfile struct {
+	Rul                string `json:"rulyears,omitempty"`
+	Costopeningbalance string `json:"costopeningbalance,omitempty"`
+	CRC                string `json:"replacementcost,omitempty"`
+}
+
+type RiskCriticality struct {
+	Consequence string `json:"Consequence,omitempty"`
+	Likelyhood  string `json:"likelyhood,omitempty"`
+	CRC         string `json:"replacementcost,omitempty"`
+}
