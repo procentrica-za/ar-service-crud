@@ -441,41 +441,41 @@ type FlattenedHierarchyList struct {
 }
 
 type AFVCondition struct {
-	Crc                  string `json:"crc,omitempty"`
-	Drc                  string `json:"drc,omitempty"`
-	Assetflexvaluesorted string `json:"Assetflexvaluesorted,omitempty"`
-	Recordcount          string `json:"Recordcount,omitempty"`
+	Crc                  string `json:"crc"`
+	Drc                  string `json:"drc"`
+	Assetflexvaluesorted string `json:"Assetflexvaluesorted"`
+	Recordcount          string `json:"Recordcount"`
 }
 
 type Portfolio struct {
-	AssetTypeLevel1 string `json:"assettypelvl1,omitempty"`
-	AssetTypeLevel2 string `json:"assettypelvl2,omitempty"`
-	AssetTypeLevel3 string `json:"assettypelvl3,omitempty"`
-	AssetTypeLevel4 string `json:"assettypelvl4,omitempty"`
-	AssetTypeLevel5 string `json:"assettypelvl5,omitempty"`
-	AssetTypeLevel6 string `json:"assettypelvl6,omitempty"`
-	CRC             string `json:"crc,omitempty"`
+	AssetTypeLevel1 string `json:"assettypelvl1"`
+	AssetTypeLevel2 string `json:"assettypelvl2"`
+	AssetTypeLevel3 string `json:"assettypelvl3"`
+	AssetTypeLevel4 string `json:"assettypelvl4"`
+	AssetTypeLevel5 string `json:"assettypelvl5"`
+	AssetTypeLevel6 string `json:"assettypelvl6"`
+	CRC             string `json:"crc"`
 }
 
 type YearReplacement struct {
-	AssetTypeLevel1 string `json:"assettypelvl1,omitempty"`
-	AssetTypeLevel2 string `json:"assettypelvl2,omitempty"`
-	AssetTypeLevel3 string `json:"assettypelvl3,omitempty"`
-	AssetTypeLevel4 string `json:"assettypelvl4,omitempty"`
-	AssetTypeLevel5 string `json:"assettypelvl5,omitempty"`
-	AssetTypeLevel6 string `json:"assettypelvl6,omitempty"`
-	Rul             string `json:"rulyears,omitempty"`
-	CRC             string `json:"replacementcost,omitempty"`
+	AssetTypeLevel1 string `json:"assettypelvl1"`
+	AssetTypeLevel2 string `json:"assettypelvl2"`
+	AssetTypeLevel3 string `json:"assettypelvl3"`
+	AssetTypeLevel4 string `json:"assettypelvl4"`
+	AssetTypeLevel5 string `json:"assettypelvl5"`
+	AssetTypeLevel6 string `json:"assettypelvl6"`
+	Rul             string `json:"rulyears"`
+	CRC             string `json:"replacementcost"`
 }
 
 type RenewalProfile struct {
-	Rul                string `json:"rulyears,omitempty"`
-	Costopeningbalance string `json:"costopeningbalance,omitempty"`
-	CRC                string `json:"replacementcost,omitempty"`
+	Rul                string `json:"rulyears"`
+	Costopeningbalance string `json:"costopeningbalance"`
+	CRC                string `json:"replacementcost"`
 }
 
 type RiskCriticality struct {
-	Consequence string `json:"Consequence,omitempty"`
-	Likelyhood  string `json:"likelyhood,omitempty"`
-	CRC         string `json:"replacementcost,omitempty"`
+	Consequence string `json:"Consequence"`
+	Likelyhood  string `json:"likelyhood"`
+	CRC         string `json:"replacementcost"`
 }
