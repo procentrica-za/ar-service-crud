@@ -407,17 +407,19 @@ func (s *Server) handleGetNodeAssets() http.HandlerFunc {
 			Description,
 			Type,
 			Lat,
-			Lon string
+			Lon,
+			Cuname,
+			Typename string
 
 		for rows.Next() {
-			err = rows.Scan(&Id, &FuncLocId, &FuncLocNodeId, &Name, &Description, &Type, &Lat, &Lon)
+			err = rows.Scan(&Id, &FuncLocId, &FuncLocNodeId, &Name, &Description, &Type, &Lat, &Lon, &Cuname, &Typename)
 			if err != nil {
 				w.WriteHeader(500)
 				fmt.Fprintf(w, "Unable to read data from assets List...")
 				fmt.Println(err.Error())
 				return
 			}
-			assetsList.NodeAssets = append(assetsList.NodeAssets, NodeAssets{Id, FuncLocNodeId, FuncLocId, Name, Description, Lat, Lon})
+			assetsList.NodeAssets = append(assetsList.NodeAssets, NodeAssets{Id, FuncLocNodeId, FuncLocId, Name, Description, Lat, Lon, Cuname, Typename})
 		}
 
 		// get any error encountered during iteration

@@ -312,6 +312,8 @@ type NodeAssets struct {
 	Description   string `json:"description,omitempty"`
 	Lat           string `json:"lat,omitempty"`
 	Lon           string `json:"lon,omitempty"`
+	Cuname        string `json:"cuname,omitempty"`
+	Typename      string `json:"typename,omitempty"`
 }
 
 type NodeAssetsList struct {
@@ -477,5 +479,12 @@ type RenewalProfile struct {
 type RiskCriticality struct {
 	Consequence string `json:"Consequence"`
 	Likelyhood  string `json:"likelyhood"`
+	CRC         string `json:"replacementcost"`
+}
+
+
+type ReplacementByCondition struct {
+	RULYears string `json:"rulyearsears"`
+	Condition  string `json:"condition"`
 	CRC         string `json:"replacementcost"`
 }
