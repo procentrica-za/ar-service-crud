@@ -579,17 +579,17 @@ func (s *Server) handleGetAssetFlexval() http.HandlerFunc {
 		flexvalList := AssetDetail{}
 		flexvalList.Flexvals = []FlexVals{}
 
-		var name, value string
+		var flexfldid, value string
 
 		for rows.Next() {
-			err = rows.Scan(&name, &value)
+			err = rows.Scan(&flexfldid, &value)
 			if err != nil {
 				w.WriteHeader(500)
 				fmt.Fprintf(w, "Unable to read data from FlexVal List...")
 				fmt.Println(err.Error())
 				return
 			}
-			flexvalList.Flexvals = append(flexvalList.Flexvals, FlexVals{name, value})
+			flexvalList.Flexvals = append(flexvalList.Flexvals, FlexVals{flexfldid, value})
 		}
 		// get any error encountered during iteration
 		err = rows.Err()
