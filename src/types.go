@@ -33,10 +33,10 @@ type AssetFlexVal struct {
 }
 
 type ObservationFlexVal struct {
-	ID      string `json:"id,omitempty"`
-	AssetID string `json:"assetid,omitempty"`
-	Name    string `json:"name,omitempty"`
-	Value   string `json:"value,omitempty"`
+	ID        string `json:"id,omitempty"`
+	AssetID   string `json:"assetid,omitempty"`
+	Flexfldid string `json:"flexfldid,omitempty"`
+	Value     string `json:"value,omitempty"`
 }
 
 type Asset struct {
@@ -94,7 +94,7 @@ type toAssetRegsiterList struct {
 type FunclocFlexVal struct {
 	ID        string `json:"id,omitempty"`
 	FunclocID string `json:"funclocid,omitempty"`
-	Name      string `json:"name,omitempty"`
+	Flexfldid string `json:"flexfldid,omitempty"`
 	Value     string `json:"value,omitempty"`
 }
 
@@ -117,7 +117,7 @@ type FunclocList struct {
 type FunclocNodeFlexVal struct {
 	ID            string `json:"id,omitempty"`
 	FunclocNodeID string `json:"funclocnodeid,omitempty"`
-	Name          string `json:"name,omitempty"`
+	Flexfldid     string `json:"flexfldid,omitempty"`
 	Value         string `json:"value,omitempty"`
 }
 type FunclocNode struct {
@@ -314,6 +314,15 @@ type NodeAssets struct {
 	Lon           string `json:"lon,omitempty"`
 	Cuname        string `json:"cuname,omitempty"`
 	Typename      string `json:"typename,omitempty"`
+	SerialNo      string `json:"serialno,omitempty"`
+	Extent        string `json:"extent,omitempty"`
+	Crc           string `json:"crc,omitempty"`
+	Drc           string `json:"drc,omitempty"`
+	Cost          string `json:"cost,omitempty"`
+	CarryingValue string `json:"carryingvalue,omitempty"`
+	TakeOnDate    string `json:"takeondate,omitempty"`
+	Rulyears      string `json:"rulyears,omitempty"`
+	TypeFriendly  string `json:"typefriendly,omitempty"`
 }
 
 type NodeAssetsList struct {
@@ -325,12 +334,6 @@ type Assetdetails struct {
 	Name                  string `json:"name,omitempty"`
 	Type                  string `json:"type,omitempty"`
 	TypeFriendly          string `json:"typefriendly,omitempty"`
-	Group                 string `json:"group,omitempty"`
-	Category              string `json:"category,omitempty"`
-	SubCategory           string `json:"subcategory,omitempty"`
-	GroupType             string `json:"grouptype,omitempty"`
-	AssetType             string `json:"assettype,omitempty"`
-	ComponentType         string `json:"componenttype,omitempty"`
 	Description           string `json:"description,omitempty"`
 	ManufactureDate       string `json:"manufacturedate,omitempty"`
 	TakeOnDate            string `json:"takeondate,omitempty"`
@@ -368,12 +371,24 @@ type Assetdetails struct {
 }
 
 type FlexVals struct {
-	Flexfldid string `json:"flexfldid,omitempty"`
-	Value     string `json:"value,omitempty"`
+	Category     string `json:"category,omitempty"`
+	Name         string `json:"name,omitempty"`
+	Value        string `json:"value,omitempty"`
+	DisplayOrder string `json:"displayorder,omitempty"`
 }
 
 type AssetDetail struct {
 	Flexvals []FlexVals `json:"flexvalues"`
+}
+
+type Levels struct {
+	TypeLevelName string `json:"typelevelname,omitempty"`
+	Level         int    `json:"level,omitempty"`
+	Name          string `json:"name,omitempty"`
+}
+
+type AssetLevels struct {
+	ALevels []Levels `json:"levels"`
 }
 
 type FunclocationAssets struct {
@@ -482,9 +497,8 @@ type RiskCriticality struct {
 	CRC         string `json:"replacementcost"`
 }
 
-
 type ReplacementByCondition struct {
-	RULYears string `json:"rulyearsears"`
-	Condition  string `json:"condition"`
-	CRC         string `json:"replacementcost"`
+	RULYears  string `json:"rulyearsears"`
+	Condition string `json:"condition"`
+	CRC       string `json:"replacementcost"`
 }

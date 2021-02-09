@@ -198,6 +198,7 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 
 		fmt.Println(flnsuccess)
 		fmt.Println(flnmessage)
+		fmt.Println(FunclocNodeID)
 
 		funclocnodeflexval := []FunclocNodeFlexVal{}
 

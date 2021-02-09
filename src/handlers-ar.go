@@ -409,17 +409,26 @@ func (s *Server) handleGetNodeAssets() http.HandlerFunc {
 			Lat,
 			Lon,
 			Cuname,
-			Typename string
+			Typename,
+			Serialno,
+			Extent,
+			CRC,
+			DRC,
+			Cost,
+			CarryingValue,
+			TakeOnDate,
+			RULYears,
+			TypeFriendlyName string
 
 		for rows.Next() {
-			err = rows.Scan(&Id, &FuncLocId, &FuncLocNodeId, &Name, &Description, &Type, &Lat, &Lon, &Cuname, &Typename)
+			err = rows.Scan(&Id, &FuncLocId, &FuncLocNodeId, &Name, &Description, &Type, &Lat, &Lon, &Cuname, &Typename, &Serialno, &Extent, &CRC, &DRC, &Cost, &CarryingValue, &TakeOnDate, &RULYears, &TypeFriendlyName)
 			if err != nil {
 				w.WriteHeader(500)
 				fmt.Fprintf(w, "Unable to read data from assets List...")
 				fmt.Println(err.Error())
 				return
 			}
-			assetsList.NodeAssets = append(assetsList.NodeAssets, NodeAssets{Id, FuncLocNodeId, FuncLocId, Name, Description, Lat, Lon, Cuname, Typename})
+			assetsList.NodeAssets = append(assetsList.NodeAssets, NodeAssets{Id, FuncLocNodeId, FuncLocId, Name, Description, Lat, Lon, Cuname, Typename, Serialno, Extent, CRC, DRC, Cost, CarryingValue, TakeOnDate, RULYears, TypeFriendlyName})
 		}
 
 		// get any error encountered during iteration
@@ -456,12 +465,6 @@ func (s *Server) handleGetAssetDetail() http.HandlerFunc {
 		var assetid,
 			name,
 			atype,
-			group,
-			category,
-			subcategory,
-			grouptype,
-			assettype,
-			componenttype,
 			description,
 			manufacturedate,
 			takeondate,
@@ -490,7 +493,7 @@ func (s *Server) handleGetAssetDetail() http.HandlerFunc {
 
 		// create query string.
 		querystring := "SELECT * FROM public.getassetdetail('" + id + "')"
-		err := s.dbAccess.QueryRow(querystring).Scan(&assetid, &name, &atype, &description, &manufacturedate, &takeondate, &serialno, &derecognitiondate, &derecognitionvalue, &compatibleunitid, &compatibleunitname, &d1n, &d1d, &d1u, &d2n, &d2d, &d2u, &d3n, &d3d, &d3u, &d4n, &d4d, &d4u, &d5n, &d5d, &d5u, &typefriendlyname, &group, &category, &subcategory, &grouptype, &assettype, &componenttype, &d1v, &d2v, &d3v, &d4v, &d5v, &extent, &rulyears, &crc, &drc, &cost, &carryingvalue)
+		err := s.dbAccess.QueryRow(querystring).Scan(&assetid, &name, &atype, &description, &manufacturedate, &takeondate, &serialno, &derecognitiondate, &derecognitionvalue, &compatibleunitid, &compatibleunitname, &d1n, &d1d, &d1u, &d2n, &d2d, &d2u, &d3n, &d3d, &d3u, &d4n, &d4d, &d4u, &d5n, &d5d, &d5u, &typefriendlyname, &d1v, &d2v, &d3v, &d4v, &d5v, &extent, &rulyears, &crc, &drc, &cost, &carryingvalue)
 		if err != nil {
 			w.WriteHeader(500)
 			fmt.Fprintf(w, err.Error())
@@ -504,12 +507,6 @@ func (s *Server) handleGetAssetDetail() http.HandlerFunc {
 		assetdetails.Name = name
 		assetdetails.Type = atype
 		assetdetails.TypeFriendly = typefriendlyname
-		assetdetails.Group = group
-		assetdetails.Category = category
-		assetdetails.SubCategory = subcategory
-		assetdetails.GroupType = grouptype
-		assetdetails.AssetType = assettype
-		assetdetails.ComponentType = componenttype
 		assetdetails.Description = description
 		assetdetails.ManufactureDate = manufacturedate
 		assetdetails.TakeOnDate = takeondate
@@ -581,17 +578,17 @@ func (s *Server) handleGetAssetFlexval() http.HandlerFunc {
 		flexvalList := AssetDetail{}
 		flexvalList.Flexvals = []FlexVals{}
 
-		var flexfldid, value string
+		var category, name, value, displayorder string
 
 		for rows.Next() {
-			err = rows.Scan(&flexfldid, &value)
+			err = rows.Scan(&category, &name, &value, &displayorder)
 			if err != nil {
 				w.WriteHeader(500)
 				fmt.Fprintf(w, "Unable to read data from FlexVal List...")
 				fmt.Println(err.Error())
 				return
 			}
-			flexvalList.Flexvals = append(flexvalList.Flexvals, FlexVals{flexfldid, value})
+			flexvalList.Flexvals = append(flexvalList.Flexvals, FlexVals{category, name, value, displayorder})
 		}
 		// get any error encountered during iteration
 		err = rows.Err()
@@ -602,6 +599,215 @@ func (s *Server) handleGetAssetFlexval() http.HandlerFunc {
 		}
 
 		js, jserr := json.Marshal(flexvalList)
+
+		//If Queryrow returns error, provide error to caller and exit
+		if jserr != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to create JSON from DB result...")
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(200)
+		w.Write(js)
+	}
+}
+
+func (s *Server) handleGetAssetLevel() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println(" Handle Get flex vals Has Been Called...")
+		// retrieving the ID of node that is requested.
+		id := r.URL.Query().Get("id")
+
+		//set response variables
+		rows, err := s.dbAccess.Query("SELECT * FROM public.getassetlvl1('" + id + "')")
+
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to process DB Function...")
+			return
+		}
+		defer rows.Close()
+
+		levelList := AssetLevels{}
+		levelList.ALevels = []Levels{}
+
+		//Level 1
+		var name1 string
+
+		for rows.Next() {
+			err = rows.Scan(&name1)
+			if err != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to read data from FlexVal List...")
+				fmt.Println(err.Error())
+				return
+			}
+			levelList.ALevels = append(levelList.ALevels, Levels{"Group", 1, name1})
+		}
+		// get any error encountered during iteration
+		err = rows.Err()
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to read data from Level List 1...")
+			return
+		}
+
+		//Level 2
+		var name2 string
+		//set response variables
+		rows, err1 := s.dbAccess.Query("SELECT * FROM public.getassetlvl2('" + id + "')")
+
+		if err1 != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to process DB Function...")
+			return
+		}
+		defer rows.Close()
+
+		for rows.Next() {
+			err = rows.Scan(&name2)
+			if err != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to read data from FlexVal List...")
+				fmt.Println(err.Error())
+				return
+			}
+			levelList.ALevels = append(levelList.ALevels, Levels{"Category", 2, name2})
+		}
+		// get any error encountered during iteration
+		err = rows.Err()
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to read data from Level List 2...")
+			return
+		}
+
+		//Level 3
+		var name3 string
+
+		//set response variables
+		rows, err2 := s.dbAccess.Query("SELECT * FROM public.getassetlvl3('" + id + "')")
+
+		if err2 != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to process DB Function...")
+			return
+		}
+		defer rows.Close()
+
+		for rows.Next() {
+			err = rows.Scan(&name3)
+			if err != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to read data from FlexVal List...")
+				fmt.Println(err.Error())
+				return
+			}
+			levelList.ALevels = append(levelList.ALevels, Levels{"Sub Category", 3, name3})
+		}
+		// get any error encountered during iteration
+		err = rows.Err()
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to read data from Level List 3...")
+			return
+		}
+
+		//Level 4
+		var name4 string
+
+		//set response variables
+		rows, err3 := s.dbAccess.Query("SELECT * FROM public.getassetlvl4('" + id + "')")
+
+		if err3 != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to process DB Function...")
+			return
+		}
+		defer rows.Close()
+
+		for rows.Next() {
+			err = rows.Scan(&name4)
+			if err != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to read data from FlexVal List...")
+				fmt.Println(err.Error())
+				return
+			}
+			levelList.ALevels = append(levelList.ALevels, Levels{"Group Type", 4, name4})
+		}
+		// get any error encountered during iteration
+		err = rows.Err()
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to read data from Level List 4...")
+			return
+		}
+
+		//Level 5
+		var name5 string
+
+		//set response variables
+		rows, err4 := s.dbAccess.Query("SELECT * FROM public.getassetlvl5('" + id + "')")
+
+		if err4 != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to process DB Function...")
+			return
+		}
+		defer rows.Close()
+
+		for rows.Next() {
+			err = rows.Scan(&name5)
+			if err != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to read data from FlexVal List...")
+				fmt.Println(err.Error())
+				return
+			}
+			levelList.ALevels = append(levelList.ALevels, Levels{"Asset Type", 5, name5})
+		}
+		// get any error encountered during iteration
+		err = rows.Err()
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to read data from Level List 5...")
+			return
+		}
+
+		//Level 6
+		var name6 string
+
+		//set response variables
+		rows, err5 := s.dbAccess.Query("SELECT * FROM public.getassetlvl6('" + id + "')")
+
+		if err5 != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to process DB Function...")
+			return
+		}
+		defer rows.Close()
+
+		for rows.Next() {
+			err = rows.Scan(&name6)
+			if err != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to read data from FlexVal List...")
+				fmt.Println(err.Error())
+				return
+			}
+			levelList.ALevels = append(levelList.ALevels, Levels{"Component Type", 6, name6})
+		}
+		// get any error encountered during iteration
+		err = rows.Err()
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to read data from Level List 6...")
+			return
+		}
+
+		js, jserr := json.Marshal(levelList)
 
 		//If Queryrow returns error, provide error to caller and exit
 		if jserr != nil {
