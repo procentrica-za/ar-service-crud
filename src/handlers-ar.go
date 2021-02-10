@@ -643,6 +643,10 @@ func (s *Server) handleGetAssetLevel() http.HandlerFunc {
 				fmt.Println(err.Error())
 				return
 			}
+
+			if name1 == "" {
+				levelList.ALevels = append(levelList.ALevels, Levels{"", 0, ""})
+			}
 			levelList.ALevels = append(levelList.ALevels, Levels{"Group", 1, name1})
 		}
 		// get any error encountered during iteration
@@ -672,6 +676,10 @@ func (s *Server) handleGetAssetLevel() http.HandlerFunc {
 				fmt.Fprintf(w, "Unable to read data from FlexVal List...")
 				fmt.Println(err.Error())
 				return
+			}
+
+			if name2 == "" {
+				levelList.ALevels = append(levelList.ALevels, Levels{"", 0, ""})
 			}
 			levelList.ALevels = append(levelList.ALevels, Levels{"Category", 2, name2})
 		}
@@ -704,6 +712,10 @@ func (s *Server) handleGetAssetLevel() http.HandlerFunc {
 				fmt.Println(err.Error())
 				return
 			}
+
+			if name3 == "" {
+				levelList.ALevels = append(levelList.ALevels, Levels{"", 0, ""})
+			}
 			levelList.ALevels = append(levelList.ALevels, Levels{"Sub Category", 3, name3})
 		}
 		// get any error encountered during iteration
@@ -734,6 +746,10 @@ func (s *Server) handleGetAssetLevel() http.HandlerFunc {
 				fmt.Fprintf(w, "Unable to read data from FlexVal List...")
 				fmt.Println(err.Error())
 				return
+			}
+
+			if name4 == "" {
+				levelList.ALevels = append(levelList.ALevels, Levels{"", 0, ""})
 			}
 			levelList.ALevels = append(levelList.ALevels, Levels{"Group Type", 4, name4})
 		}
@@ -766,6 +782,10 @@ func (s *Server) handleGetAssetLevel() http.HandlerFunc {
 				fmt.Println(err.Error())
 				return
 			}
+
+			if name5 == "" {
+				levelList.ALevels = append(levelList.ALevels, Levels{"", 0, ""})
+			}
 			levelList.ALevels = append(levelList.ALevels, Levels{"Asset Type", 5, name5})
 		}
 		// get any error encountered during iteration
@@ -796,6 +816,10 @@ func (s *Server) handleGetAssetLevel() http.HandlerFunc {
 				fmt.Fprintf(w, "Unable to read data from FlexVal List...")
 				fmt.Println(err.Error())
 				return
+			}
+
+			if name6 == "" {
+				levelList.ALevels = append(levelList.ALevels, Levels{"", 0, ""})
 			}
 			levelList.ALevels = append(levelList.ALevels, Levels{"Component Type", 6, name6})
 		}
