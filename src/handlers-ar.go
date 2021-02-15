@@ -340,11 +340,12 @@ func (s *Server) handleGetNodeFuncLocs() http.HandlerFunc {
 			FuncLocNodeId,
 			Name,
 			Description,
-			Lat,
-			Lon,
 			InstallDate,
 			Status,
 			FuncLocNodeName string
+
+		var Lat,
+			Lon float32
 
 		for rows.Next() {
 			err = rows.Scan(&Id, &FuncLocNodeId, &Name, &Description, &Lat, &Lon, &InstallDate, &Status, &FuncLocNodeName)
@@ -406,19 +407,19 @@ func (s *Server) handleGetNodeAssets() http.HandlerFunc {
 			FuncLocNodeId, Name,
 			Description,
 			Type,
-			Lat,
-			Lon,
 			Cuname,
 			Typename,
 			Serialno,
 			Extent,
+			TakeOnDate,
+			TypeFriendlyName string
+
+		var Lat, Lon,
 			CRC,
 			DRC,
 			Cost,
 			CarryingValue,
-			TakeOnDate,
-			RULYears,
-			TypeFriendlyName string
+			RULYears float32
 
 		for rows.Next() {
 			err = rows.Scan(&Id, &FuncLocId, &FuncLocNodeId, &Name, &Description, &Type, &Lat, &Lon, &Cuname, &Typename, &Serialno, &Extent, &CRC, &DRC, &Cost, &CarryingValue, &TakeOnDate, &RULYears, &TypeFriendlyName)
@@ -1079,7 +1080,7 @@ func (s *Server) handleGetNodeFuncLocSpatial() http.HandlerFunc {
 
 		if err != nil {
 			w.WriteHeader(500)
-			fmt.Fprintf(w, "Unable to process DB Function...")
+			fmt.Fprintf(w, "Unable to process DB Function....")
 			return
 		}
 		defer rows.Close()
@@ -1091,11 +1092,12 @@ func (s *Server) handleGetNodeFuncLocSpatial() http.HandlerFunc {
 			FuncLocNodeId,
 			Name,
 			Description,
-			Lat,
-			Lon,
 			InstallDate,
 			Status,
 			FuncLocNodeName string
+
+		var Lat,
+			Lon float32
 
 		for rows.Next() {
 			err = rows.Scan(&Id, &FuncLocNodeId, &Name, &Description, &Lat, &Lon, &InstallDate, &Status, &FuncLocNodeName)

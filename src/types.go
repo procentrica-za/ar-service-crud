@@ -305,24 +305,24 @@ type NodeFuncLocsList struct {
 }
 
 type NodeAssets struct {
-	Id            string `json:"id,omitempty"`
-	FuncLocNodeId string `json:"funclocnodeid,omitempty"`
-	FuncLocID     string `json:"funclocid,omitempty"`
-	Name          string `json:"name,omitempty"`
-	Description   string `json:"description,omitempty"`
-	Lat           string `json:"lat,omitempty"`
-	Lon           string `json:"lon,omitempty"`
-	Cuname        string `json:"cuname,omitempty"`
-	Typename      string `json:"typename,omitempty"`
-	SerialNo      string `json:"serialno,omitempty"`
-	Extent        string `json:"extent,omitempty"`
-	Crc           string `json:"crc,omitempty"`
-	Drc           string `json:"drc,omitempty"`
-	Cost          string `json:"cost,omitempty"`
-	CarryingValue string `json:"carryingvalue,omitempty"`
-	TakeOnDate    string `json:"takeondate,omitempty"`
-	Rulyears      string `json:"rulyears,omitempty"`
-	TypeFriendly  string `json:"typefriendly,omitempty"`
+	Id            string  `json:"id,omitempty"`
+	FuncLocNodeId string  `json:"funclocnodeid,omitempty"`
+	FuncLocID     string  `json:"funclocid,omitempty"`
+	Name          string  `json:"name,omitempty"`
+	Description   string  `json:"description,omitempty"`
+	Lat           float32 `json:"lat,omitempty"`
+	Lon           float32 `json:"lon,omitempty"`
+	Cuname        string  `json:"cuname,omitempty"`
+	Typename      string  `json:"typename,omitempty"`
+	SerialNo      string  `json:"serialno,omitempty"`
+	Extent        string  `json:"extent,omitempty"`
+	Crc           float32 `json:"crc,omitempty"`
+	Drc           float32 `json:"drc,omitempty"`
+	Cost          float32 `json:"cost,omitempty"`
+	CarryingValue float32 `json:"carryingvalue,omitempty"`
+	TakeOnDate    string  `json:"takeondate,omitempty"`
+	Rulyears      float32 `json:"rulyears,omitempty"`
+	TypeFriendly  string  `json:"typefriendly,omitempty"`
 }
 
 type NodeAssetsList struct {
@@ -435,10 +435,10 @@ type FuncLocSpatialList struct {
 }
 
 type NodeFuncLocsSpatial struct {
-	Name string `json:"name,omitempty"`
-	Lat  string `json:"lat,omitempty"`
-	Lon  string `json:"lon,omitempty"`
-	Id   string `json:"id,omitempty"`
+	Name string  `json:"name,omitempty"`
+	Lat  float32 `json:"lat,omitempty"`
+	Lon  float32 `json:"lon,omitempty"`
+	Id   string  `json:"id,omitempty"`
 }
 
 type NodeFuncLocsSpatialList struct {
