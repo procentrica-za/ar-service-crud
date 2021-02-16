@@ -489,12 +489,15 @@ func (s *Server) handleGetAssetDetail() http.HandlerFunc {
 			d5n,
 			d5d,
 			d5u,
-			typefriendlyname, d1v, d2v, d3v, d4v, d5v,
-			extent, rulyears, crc, drc, cost, carryingvalue string
+			typefriendlyname string
+
+		var size,
+			d1v, d2v, d3v, d4v, d5v,
+			extent, rulyears, crc, drc, cost, carryingvalue float32
 
 		// create query string.
 		querystring := "SELECT * FROM public.getassetdetail('" + id + "')"
-		err := s.dbAccess.QueryRow(querystring).Scan(&assetid, &name, &atype, &description, &manufacturedate, &takeondate, &serialno, &derecognitiondate, &derecognitionvalue, &compatibleunitid, &compatibleunitname, &d1n, &d1d, &d1u, &d2n, &d2d, &d2u, &d3n, &d3d, &d3u, &d4n, &d4d, &d4u, &d5n, &d5d, &d5u, &typefriendlyname, &d1v, &d2v, &d3v, &d4v, &d5v, &extent, &rulyears, &crc, &drc, &cost, &carryingvalue)
+		err := s.dbAccess.QueryRow(querystring).Scan(&assetid, &name, &atype, &description, &manufacturedate, &takeondate, &serialno, &derecognitiondate, &derecognitionvalue, &compatibleunitid, &compatibleunitname, &d1n, &d1d, &d1u, &d2n, &d2d, &d2u, &d3n, &d3d, &d3u, &d4n, &d4d, &d4u, &d5n, &d5d, &d5u, &typefriendlyname, &d1v, &d2v, &d3v, &d4v, &d5v, &extent, &rulyears, &crc, &drc, &cost, &carryingvalue, &size)
 		if err != nil {
 			w.WriteHeader(500)
 			fmt.Fprintf(w, err.Error())
@@ -542,6 +545,7 @@ func (s *Server) handleGetAssetDetail() http.HandlerFunc {
 		assetdetails.Drc = drc
 		assetdetails.Cost = cost
 		assetdetails.CarryingValue = carryingvalue
+		assetdetails.Size = size
 
 		// convert struct into JSON payload to send to service that called this function.
 		js, jserr := json.Marshal(assetdetails)
@@ -867,7 +871,9 @@ func (s *Server) handlegetFuncLocAssets() http.HandlerFunc {
 		assetsList.Funclocassets = []FunclocationAssets{}
 
 		var id, funclocationid,
-			name, description, lat, lon string
+			name, description string
+
+		var lat, lon float32
 
 		for rows.Next() {
 			err = rows.Scan(&id, &funclocationid, &name, &description, &lat, &lon)
@@ -1031,9 +1037,10 @@ func (s *Server) handleGetFuncLocSpatial() http.HandlerFunc {
 		funcslist.FuncLocSpatial = []FuncLocSpatial{}
 
 		var Name,
-			Lat,
-			Lon,
 			Id string
+
+		var Lat,
+			Lon float32
 		for rows.Next() {
 			err = rows.Scan(&Name, &Lat, &Lon, &Id)
 			if err != nil {
