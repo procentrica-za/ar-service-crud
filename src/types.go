@@ -323,6 +323,7 @@ type NodeAssets struct {
 	TakeOnDate    string  `json:"takeondate,omitempty"`
 	Rulyears      float32 `json:"rulyears,omitempty"`
 	TypeFriendly  string  `json:"typefriendly,omitempty"`
+	Size          float32 `json:"size,omitempty"`
 }
 
 type NodeAssetsList struct {

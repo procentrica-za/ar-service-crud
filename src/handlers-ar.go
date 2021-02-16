@@ -419,17 +419,17 @@ func (s *Server) handleGetNodeAssets() http.HandlerFunc {
 			DRC,
 			Cost,
 			CarryingValue,
-			RULYears float32
+			RULYears, Size float32
 
 		for rows.Next() {
-			err = rows.Scan(&Id, &FuncLocId, &FuncLocNodeId, &Name, &Description, &Type, &Lat, &Lon, &Cuname, &Typename, &Serialno, &Extent, &CRC, &DRC, &Cost, &CarryingValue, &TakeOnDate, &RULYears, &TypeFriendlyName)
+			err = rows.Scan(&Id, &FuncLocId, &FuncLocNodeId, &Name, &Description, &Type, &Lat, &Lon, &Cuname, &Typename, &Serialno, &Extent, &CRC, &DRC, &Cost, &CarryingValue, &TakeOnDate, &RULYears, &TypeFriendlyName, &Size)
 			if err != nil {
 				w.WriteHeader(500)
 				fmt.Fprintf(w, "Unable to read data from assets List...")
 				fmt.Println(err.Error())
 				return
 			}
-			assetsList.NodeAssets = append(assetsList.NodeAssets, NodeAssets{Id, FuncLocNodeId, FuncLocId, Name, Description, Lat, Lon, Cuname, Typename, Serialno, Extent, CRC, DRC, Cost, CarryingValue, TakeOnDate, RULYears, TypeFriendlyName})
+			assetsList.NodeAssets = append(assetsList.NodeAssets, NodeAssets{Id, FuncLocNodeId, FuncLocId, Name, Description, Lat, Lon, Cuname, Typename, Serialno, Extent, CRC, DRC, Cost, CarryingValue, TakeOnDate, RULYears, TypeFriendlyName, Size})
 		}
 
 		// get any error encountered during iteration
