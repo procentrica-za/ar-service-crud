@@ -41,6 +41,8 @@ func (s *Server) routes() {
 	//Get Node Heirarchy Flattened
 	s.router.HandleFunc("/nodehierarchyflattened", s.handleGetNodeHierarchyFlattened()).Methods("GET")
 
+	s.router.HandleFunc("/hierarchy", s.handlePopulate()).Methods("GET")
+
 	//Analytics endpoints
 	s.router.HandleFunc("/assetflexvalcondition", s.handleGetAssetFlexValCondition()).Methods("GET")
 	s.router.HandleFunc("/portfolio", s.handleGetPortfolio()).Methods("GET")

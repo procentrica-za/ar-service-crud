@@ -6,6 +6,23 @@ import (
 	"net/http"
 )
 
+func (s *Server) handlePopulate() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		fmt.Println("Handle Update asset type hierarchy Has Been Called...")
+		var success string
+		// create query string.
+		querystring := "SELECT * FROM public.populatehierarchy()"
+		err := s.dbAccess.QueryRow(querystring).Scan(&success)
+		if err != nil {
+
+			fmt.Println("Error in communicating with database to populate asset type hierarchy")
+			return
+		}
+		fmt.Println("The result of the scheduled reloading was " + success)
+	}
+}
+
 func (s *Server) handleGetAssetFlexValCondition() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 

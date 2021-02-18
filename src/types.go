@@ -67,7 +67,7 @@ type toAssetRegister struct {
 	Geom                        string               `json:"geom"`
 	FunclocID                   string               `json:"funclocid"`
 	InstallDate                 string               `json:"installdate"`
-	Status                      string               `json:"status,omitempty"`
+	Status                      string               `json:"active,omitempty"`
 	Age                         string               `json:"age,omitempty"`
 	CarryingValueClosingBalance string               `json:"carryingvalueclosingbalance,omitempty"`
 	CarryingValueOpeningBalance string               `json:"carryingvalueopeningbalance,omitempty"`

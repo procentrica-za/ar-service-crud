@@ -13,6 +13,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/lib/pq"
+	"github.com/prprprus/scheduler"
 )
 
 var dbconf dbConfig
@@ -70,21 +71,6 @@ func openDatabase(host string, port string, user string, password string, dbname
 	return db, err
 }
 
-func (s *Server) populateassettypehierarchy() {
-
-	fmt.Println("Handle Update asset type hierarchy Has Been Called...")
-	var success string
-	// create query string.
-	querystring := "SELECT * FROM public.populatehierarchy()"
-	err := s.dbAccess.QueryRow(querystring).Scan(&success)
-	if err != nil {
-
-		fmt.Println("Error in communicating with database to populate asset type hierarchy")
-		return
-	}
-	fmt.Println("The result of the scheduled reloading was " + success)
-}
-
 func main() {
 	conn, err := openDatabase(dbconf.PostgresHost, dbconf.PostgresPort, dbconf.UserName, dbconf.Password, dbconf.DatabaseName)
 
@@ -102,8 +88,32 @@ func main() {
 	server.routes()
 	handler := removeTrailingSlash(server.router)
 
+	s, err := scheduler.NewScheduler(1000)
+	if err != nil {
+		panic(err) // just example
+	}
+
+	s.Delay().Hour(24).Do(task1)
 	fmt.Printf("starting server on port " + conf.ListenServePort + " .... \n")
 	log.Fatal(http.ListenAndServe(":"+conf.ListenServePort, handler))
+
+}
+
+func task1() {
+	fmt.Println("Handle sheduler for hierarchy has been called...")
+
+	//post to crud service
+	req, respErr := http.Get("http://crud:9951/hierarchy")
+
+	//check for response error of 500
+	if respErr != nil {
+
+		fmt.Println("Error in communication with CRUD service endpoint for request to funclocassets information")
+		return
+	}
+	//close the request
+	defer req.Body.Close()
+
 }
 
 func removeTrailingSlash(next http.Handler) http.Handler {
