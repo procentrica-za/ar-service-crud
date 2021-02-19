@@ -41,7 +41,7 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 		var FunclocID string
 		querystring := "SELECT * FROM public.postfuncloc('" + funcloc.FunclocID + "', '" + funcloc.Name + "', '" +
 			funcloc.Description + "', '" + funcloc.Latitude + "' , '" + funcloc.Longitude +
-			"', '" + funcloc.Geom + "')"
+			"', '" + funcloc.Geom + "', '" + funcloc.Status + "')"
 		//retrieve result flmessage from database set to response JSON object
 		err = s.dbAccess.QueryRow(querystring).Scan(&successfuncloc, &flmessage, &FunclocID)
 		//check for response error of 500
@@ -149,7 +149,7 @@ func (s *Server) handlePostToAssetRegister() http.HandlerFunc {
 
 		querystring1 := "SELECT * FROM public.postfunclocnode('" + funcloc.FLNlist[0].ID + "', '" + funcloc.FLNlist[0].Name + "', '" +
 			funcloc.FLNlist[0].AliasName + "', '" + funcloc.FLNlist[0].Latitude + "' , '" + funcloc.FLNlist[0].Longitude +
-			"', '" + funcloc.FLNlist[0].Geom + "' , '" + funcloc.FLNlist[0].NodeTypeID + "' , '" + funcloc.FLNlist[0].ParentID + "')"
+			"', '" + funcloc.FLNlist[0].Geom + "' , '" + funcloc.FLNlist[0].NodeTypeID + "' , '" + funcloc.FLNlist[0].ParentID + "' , '" + funcloc.FLNlist[0].Status + "')"
 		//retrieve result message from database set to response JSON object
 		var FunclocNodeID string
 		err = s.dbAccess.QueryRow(querystring1).Scan(&flnsuccess, &flnmessage, &FunclocNodeID)

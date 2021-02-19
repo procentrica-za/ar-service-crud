@@ -67,7 +67,7 @@ type toAssetRegister struct {
 	Geom                        string               `json:"geom"`
 	FunclocID                   string               `json:"funclocid"`
 	InstallDate                 string               `json:"installdate"`
-	Status                      string               `json:"active,omitempty"`
+	Status                      string               `json:"status,omitempty"`
 	Age                         string               `json:"age,omitempty"`
 	CarryingValueClosingBalance string               `json:"carryingvalueclosingbalance,omitempty"`
 	CarryingValueOpeningBalance string               `json:"carryingvalueopeningbalance,omitempty"`
@@ -105,6 +105,7 @@ type Funcloc struct {
 	Latitude    string            `json:"latitude,omitempty"`
 	Longitude   string            `json:"longitude,omitempty"`
 	Geom        string            `json:"geom,omitempty"`
+	Status      string            `json:"status,omitempty"`
 	FLNlist     []FunclocNode     `json:"funclocnodes,omitempty"`
 	FLFVlist    []FunclocFlexVal  `json:"funclocflexvals,omitempty"`
 	Alist       []toAssetRegister `json:"assets,omitempty"`
@@ -129,6 +130,7 @@ type FunclocNode struct {
 	Geom       string               `json:"geom,omitempty"`
 	NodeTypeID string               `json:"nodetypeid,omitempty"`
 	ParentID   string               `json:"parentid,omitempty"`
+	Status     string               `json:"status,omitempty"`
 	FLNFVlist  []FunclocNodeFlexVal `json:"funclocnodeflexvals,omitempty"`
 }
 
@@ -315,7 +317,7 @@ type NodeAssets struct {
 	Cuname        string  `json:"cuname,omitempty"`
 	Typename      string  `json:"typename,omitempty"`
 	SerialNo      string  `json:"serialno,omitempty"`
-	Extent        float32  `json:"extent,omitempty"`
+	Extent        float32 `json:"extent,omitempty"`
 	Crc           float32 `json:"crc,omitempty"`
 	Drc           float32 `json:"drc,omitempty"`
 	Cost          float32 `json:"cost,omitempty"`
