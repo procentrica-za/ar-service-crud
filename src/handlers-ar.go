@@ -410,7 +410,6 @@ func (s *Server) handleGetNodeAssets() http.HandlerFunc {
 			Cuname,
 			Typename,
 			Serialno,
-			Extent,
 			TakeOnDate,
 			TypeFriendlyName string
 
@@ -419,6 +418,7 @@ func (s *Server) handleGetNodeAssets() http.HandlerFunc {
 			DRC,
 			Cost,
 			CarryingValue,
+			Extent,
 			RULYears, Size float32
 
 		for rows.Next() {
@@ -877,7 +877,6 @@ func (s *Server) handlegetFuncLocAssets() http.HandlerFunc {
 			Cuname,
 			Typename,
 			Serialno,
-			Extent,
 			TakeOnDate,
 			TypeFriendlyName string
 
@@ -886,7 +885,8 @@ func (s *Server) handlegetFuncLocAssets() http.HandlerFunc {
 			DRC,
 			Cost,
 			CarryingValue,
-			RULYears, Size float32
+			RULYears, Size,
+			Extent float32
 
 		for rows.Next() {
 			err = rows.Scan(&Id, &FuncLocId, &Name, &Description, &Lat, &Lon, &Cuname, &Typename, &Serialno, &Extent, &CRC, &DRC, &Cost, &CarryingValue, &TakeOnDate, &RULYears, &TypeFriendlyName, &Size)
