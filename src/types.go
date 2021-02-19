@@ -394,12 +394,24 @@ type AssetLevels struct {
 }
 
 type FunclocationAssets struct {
-	ID          string  `json:"id,omitempty"`
-	FuncLocId   string  `json:"funclocId,omitempty"`
-	Name        string  `json:"name,omitempty"`
-	Description string  `json:"description,omitempty"`
-	Lat         float32 `json:"lat,omitempty"`
-	Lon         float32 `json:"lon,omitempty"`
+	ID            string  `json:"id,omitempty"`
+	FuncLocId     string  `json:"funclocId,omitempty"`
+	Name          string  `json:"name,omitempty"`
+	Description   string  `json:"description,omitempty"`
+	Lat           float32 `json:"lat,omitempty"`
+	Lon           float32 `json:"lon,omitempty"`
+	Cuname        string  `json:"cuname,omitempty"`
+	Typename      string  `json:"typename,omitempty"`
+	SerialNo      string  `json:"serialno,omitempty"`
+	Extent        string  `json:"extent,omitempty"`
+	Crc           float32 `json:"crc,omitempty"`
+	Drc           float32 `json:"drc,omitempty"`
+	Cost          float32 `json:"cost,omitempty"`
+	CarryingValue float32 `json:"carryingvalue,omitempty"`
+	TakeOnDate    string  `json:"takeondate,omitempty"`
+	Rulyears      float32 `json:"rulyears,omitempty"`
+	TypeFriendly  string  `json:"typefriendly,omitempty"`
+	Size          float32 `json:"size,omitempty"`
 }
 
 type FunclocationAssetsList struct {

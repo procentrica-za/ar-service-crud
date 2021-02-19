@@ -867,14 +867,13 @@ func (s *Server) handlegetFuncLocAssets() http.HandlerFunc {
 		}
 		defer rows.Close()
 
-		assetsList := NodeAssetsList{}
-		assetsList.NodeAssets = []NodeAssets{}
+		assetsList := FunclocationAssetsList{}
+		assetsList.Funclocassets = []FunclocationAssets{}
 
 		var Id,
 			FuncLocId,
-			FuncLocNodeId, Name,
+			Name,
 			Description,
-			Type,
 			Cuname,
 			Typename,
 			Serialno,
@@ -890,14 +889,14 @@ func (s *Server) handlegetFuncLocAssets() http.HandlerFunc {
 			RULYears, Size float32
 
 		for rows.Next() {
-			err = rows.Scan(&Id, &FuncLocId, &FuncLocNodeId, &Name, &Description, &Type, &Lat, &Lon, &Cuname, &Typename, &Serialno, &Extent, &CRC, &DRC, &Cost, &CarryingValue, &TakeOnDate, &RULYears, &TypeFriendlyName, &Size)
+			err = rows.Scan(&Id, &FuncLocId, &Name, &Description, &Lat, &Lon, &Cuname, &Typename, &Serialno, &Extent, &CRC, &DRC, &Cost, &CarryingValue, &TakeOnDate, &RULYears, &TypeFriendlyName, &Size)
 			if err != nil {
 				w.WriteHeader(500)
 				fmt.Fprintf(w, "Unable to read data from assets List...")
 				fmt.Println(err.Error())
 				return
 			}
-			assetsList.NodeAssets = append(assetsList.NodeAssets, NodeAssets{Id, FuncLocNodeId, FuncLocId, Name, Description, Lat, Lon, Cuname, Typename, Serialno, Extent, CRC, DRC, Cost, CarryingValue, TakeOnDate, RULYears, TypeFriendlyName, Size})
+			assetsList.Funclocassets = append(assetsList.Funclocassets, FunclocationAssets{Id, FuncLocId, Name, Description, Lat, Lon, Cuname, Typename, Serialno, Extent, CRC, DRC, Cost, CarryingValue, TakeOnDate, RULYears, TypeFriendlyName, Size})
 		}
 
 		// get any error encountered during iteration

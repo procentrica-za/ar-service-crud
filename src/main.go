@@ -93,7 +93,11 @@ func main() {
 		panic(err) // just example
 	}
 
-	s.Every().Second(15).Minute(40).Hour(16).Weekday(4).Do(task1)
+	s.Every().Second(15).Minute(59).Hour(23).Weekday(1).Do(task1)
+	s.Every().Second(15).Minute(59).Hour(23).Weekday(2).Do(task1)
+	s.Every().Second(15).Minute(59).Hour(23).Weekday(3).Do(task1)
+	s.Every().Second(15).Minute(59).Hour(23).Weekday(4).Do(task1)
+	s.Every().Second(15).Minute(59).Hour(23).Weekday(5).Do(task1)
 	fmt.Printf("starting server on port " + conf.ListenServePort + " .... \n")
 	log.Fatal(http.ListenAndServe(":"+conf.ListenServePort, handler))
 
