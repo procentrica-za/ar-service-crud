@@ -515,10 +515,10 @@ type RiskCriticality struct {
 }
 
 type RiskCriticalityDD struct {
-	Name        string  `json:"a"`
-	Consequence string  `json:"b"`
-	Likelyhood  string  `json:"c"`
-	CRC         float32 `json:"d"`
+	Name        string `json:"a"`
+	Consequence string `json:"b"`
+	Likelyhood  string `json:"c"`
+	CRC         string `json:"d"`
 }
 
 type ReplacementByCondition struct {

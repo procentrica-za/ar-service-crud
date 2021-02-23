@@ -385,9 +385,7 @@ func (s *Server) handleGetRiskCriticalityDrillDown() http.HandlerFunc {
 
 		assetsList := []RiskCriticalityDD{}
 
-		var name, consequence, likelyhood string
-
-		var crc float32
+		var name, consequence, likelyhood, crc string
 
 		for rows.Next() {
 			err = rows.Scan(&name, &consequence, &likelyhood, &crc)
