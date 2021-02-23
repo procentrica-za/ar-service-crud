@@ -22,6 +22,7 @@ var conf Config
 func init() {
 	dbconf = CreateDbConfig()
 	conf = CreateConfig()
+	fmt.Printf("CrudHost: %v\n", conf.CRUDHost)
 }
 
 func CreateDbConfig() dbConfig {
@@ -40,6 +41,7 @@ func CreateDbConfig() dbConfig {
 func CreateConfig() Config {
 	conf := Config{
 		ListenServePort: os.Getenv("LISTEN_AND_SERVE_PORT"),
+		CRUDHost:        os.Getenv("CRUD_Host"),
 	}
 	return conf
 }
@@ -107,7 +109,7 @@ func task1() {
 	fmt.Println("Handle sheduler for hierarchy has been called...")
 
 	//post to crud service
-	req, respErr := http.Get("http://crud:9951/hierarchy")
+	req, respErr := http.Get("http://" + conf.CRUDHost + ":" + conf.ListenServePort + "/hierarchy")
 
 	//check for response error of 500
 	if respErr != nil {

@@ -22,6 +22,7 @@ type dbConfig struct {
 }
 
 type Config struct {
+	CRUDHost        string
 	ListenServePort string
 }
 
@@ -511,6 +512,13 @@ type RiskCriticality struct {
 	Consequence string `json:"Consequence"`
 	Likelyhood  string `json:"likelyhood"`
 	CRC         string `json:"replacementcost"`
+}
+
+type RiskCriticalityDD struct {
+	Name        string  `json:"a"`
+	Consequence string  `json:"b"`
+	Likelyhood  string  `json:"c"`
+	CRC         float32 `json:"d"`
 }
 
 type ReplacementByCondition struct {

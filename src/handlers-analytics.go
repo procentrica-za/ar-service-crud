@@ -365,3 +365,60 @@ func (s *Server) handleGetReplacementByCondition() http.HandlerFunc {
 		w.Write(js)
 	}
 }
+
+func (s *Server) handleGetRiskCriticalityDrillDown() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		fmt.Println(" Handle Get RiskCriticality Drill Down has Been Called...")
+		// retrieving the ID of node assets that are requested.
+		nodeid := r.URL.Query().Get("nodeid")
+
+		//set response variables
+		rows, err := s.dbAccess.Query("SELECT * FROM public.riskcriticalitydrilldown('" + nodeid + "')")
+
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to process DB Function...")
+			return
+		}
+		defer rows.Close()
+
+		assetsList := []RiskCriticalityDD{}
+
+		var name, consequence, likelyhood string
+
+		var crc float32
+
+		for rows.Next() {
+			err = rows.Scan(&name, &consequence, &likelyhood, &crc)
+			if err != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to read data from assets List...")
+				fmt.Println(err.Error())
+				return
+			}
+			assetsList = append(assetsList, RiskCriticalityDD{name, consequence, likelyhood, crc})
+		}
+
+		// get any error encountered during iteration
+		err = rows.Err()
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to read data from assets List...")
+			return
+		}
+
+		js, jserr := json.Marshal(assetsList)
+
+		//If Queryrow returns error, provide error to caller and exit
+		if jserr != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to create JSON from DB RiskCriticality result...")
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(200)
+		w.Write(js)
+	}
+}
