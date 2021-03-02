@@ -515,10 +515,22 @@ type RiskCriticality struct {
 }
 
 type RiskCriticalityDD struct {
-	Name        string `json:"a"`
-	Consequence string `json:"b"`
-	Likelyhood  string `json:"c"`
-	CRC         string `json:"d"`
+	Name          string `json:"a"`
+	Consequence   string `json:"b"`
+	Likelyhood    string `json:"c"`
+	Crc           string `json:"d"`
+	Description   string `json:"e"`
+	Cuname        string `json:"f"`
+	Typename      string `json:"g"`
+	SerialNo      string `json:"h"`
+	Extent        string `json:"i"`
+	Drc           string `json:"j"`
+	Cost          string `json:"k"`
+	CarryingValue string `json:"l"`
+	TakeOnDate    string `json:"m"`
+	Rulyears      string `json:"n"`
+	TypeFriendly  string `json:"o"`
+	Size          string `json:"p"`
 }
 
 type ReplacementByCondition struct {

@@ -385,17 +385,28 @@ func (s *Server) handleGetRiskCriticalityDrillDown() http.HandlerFunc {
 
 		assetsList := []RiskCriticalityDD{}
 
-		var name, consequence, likelyhood, crc string
+		var name, consequence, likelyhood, crc, drc,
+			Description,
+			Type,
+			Cuname,
+			Typename,
+			Serialno,
+			TakeOnDate,
+			TypeFriendlyName,
+			Cost,
+			CarryingValue,
+			Extent,
+			RULYears, Size string
 
 		for rows.Next() {
-			err = rows.Scan(&name, &consequence, &likelyhood, &crc)
+			err = rows.Scan(&name, &consequence, &likelyhood, &crc, &Description, &Type, &Cuname, &Typename, &Serialno, &Extent, &drc, &Cost, &CarryingValue, &TakeOnDate, &RULYears, &TypeFriendlyName, &Size)
 			if err != nil {
 				w.WriteHeader(500)
 				fmt.Fprintf(w, "Unable to read data from assets List...")
 				fmt.Println(err.Error())
 				return
 			}
-			assetsList = append(assetsList, RiskCriticalityDD{name, consequence, likelyhood, crc})
+			assetsList = append(assetsList, RiskCriticalityDD{name, consequence, likelyhood, crc, Description, Cuname, Typename, Serialno, Extent, drc, Cost, CarryingValue, TakeOnDate, RULYears, TypeFriendlyName, Size})
 		}
 
 		// get any error encountered during iteration
