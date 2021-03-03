@@ -1239,3 +1239,96 @@ func (s *Server) handleGetNodeHierarchyFlattened() http.HandlerFunc {
 		w.Write(js)
 	}
 }
+
+// The function handling the request to get filtered node hierarchy
+func (s *Server) handleGetNodeHierarchyFlattenedFlitered() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println(" Handle Get Node Hierarchy Flattened Filtered Has Been Called...")
+
+		// retrieving the ID of node that is requested.
+		nodeid := r.URL.Query().Get("funclocnodeid")
+
+		// retrieving the ID of node that is requested.
+		filter := r.URL.Query().Get("filter")
+
+		//set response variables
+		rows, err := s.dbAccess.Query("WITH RECURSIVE hierarchy AS(SELECT fln_a.id,fln_a.parentid FROM public.funclocnode fln_a WHERE fln_a.id ='" + nodeid + "' UNION SELECT  fln.id, fln.parentid FROM public.funclocnode fln INNER JOIN hierarchy h ON h.id = fln.parentid) SELECT  CASE WHEN fln.parentid IS NULL THEN '' ELSE fln.parentid::character varying END, fln.id , CASE WHEN fln.name IS NULL OR fln.name = '' THEN '' ELSE fln.name::character varying END, CASE WHEN n.name IS NULL OR n.name = '' THEN '' ELSE n.name::character varying END	 FROM hierarchy h INNER JOIN public.FuncLocNode fln ON h.id = fln.parentid INNER JOIN public.NodeType n ON n.id = fln.nodetypeid " + filter + "; " + "END;")
+
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to process DB Function...")
+			return
+		}
+		defer rows.Close()
+
+		nodesList := FlattenedHierarchyList{}
+		nodesList.FlattenedHierarchy = []FlattenedHierarchy{}
+
+		var Id,
+			Name,
+			ParentId,
+			NodeType string
+
+		for rows.Next() {
+			err = rows.Scan(&ParentId, &Id, &Name, &NodeType)
+			fmt.Println(Id, Name)
+			if err != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to read data from GetNodeHierarchyFlattened List...")
+				fmt.Println(err.Error())
+				return
+			}
+			nodesList.FlattenedHierarchy = append(nodesList.FlattenedHierarchy, FlattenedHierarchy{ParentId, Id, Name, NodeType, false})
+		}
+
+		// get any error encountered during iteration
+		err = rows.Err()
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to read data from GetNodeHierarchyFlattened List...")
+			return
+		}
+
+		//set response variables
+		rows1, err := s.dbAccess.Query("WITH RECURSIVE hierarchy AS(SELECT fln_a.id,fln_a.parentid FROM public.funclocnode fln_a WHERE fln_a.id ='" + nodeid + "' UNION SELECT  fln.id, fln.parentid FROM public.funclocnode fln INNER JOIN hierarchy h ON h.id = fln.parentid) SELECT  CASE WHEN fll.funclocnodeid IS NULL THEN '' ELSE fll.funclocnodeid::character varying END, fl.id , CASE WHEN fl.name IS NULL OR fl.name = '' THEN '' ELSE fl.name::character varying END, CASE WHEN n.name IS NULL OR n.name = '' THEN '' ELSE n.name::character varying END FROM hierarchy h INNER JOIN public.FuncLocNode fln ON h.id = fln.parentid INNER JOIN public.FunclocLink fll ON fln.id = fll.funclocnodeid INNER JOIN public.FuncLoc fl ON fl.id = fll.funclocid INNER JOIN public.NodeType n ON n.id = fln.nodetypeid " + filter + "; " + "END;")
+
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to process DB Function...")
+			return
+		}
+		defer rows1.Close()
+
+		for rows1.Next() {
+			err = rows1.Scan(&ParentId, &Id, &Name, &NodeType)
+			if err != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to read data from GetNodeHierarchyFlattened List...")
+				fmt.Println(err.Error())
+				return
+			}
+			nodesList.FlattenedHierarchy = append(nodesList.FlattenedHierarchy, FlattenedHierarchy{ParentId, Id, Name, NodeType, true})
+		}
+
+		// get any error encountered during iteration
+		err = rows1.Err()
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to read data from GetNodeHierarchyFlattened List...")
+			return
+		}
+
+		js, jserr := json.Marshal(nodesList)
+
+		//If Queryrow returns error, provide error to caller and exit
+		if jserr != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to create JSON from DB result...")
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(200)
+		w.Write(js)
+	}
+}
