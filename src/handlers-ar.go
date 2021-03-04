@@ -1271,7 +1271,6 @@ func (s *Server) handleGetNodeHierarchyFlattenedFlitered() http.HandlerFunc {
 
 		for rows.Next() {
 			err = rows.Scan(&ParentId, &Id, &Name, &NodeType)
-			fmt.Println(Id, Name)
 			if err != nil {
 				w.WriteHeader(500)
 				fmt.Fprintf(w, "Unable to read data from GetNodeHierarchyFlattened List...")

@@ -514,6 +514,15 @@ type RiskCriticality struct {
 	CRC         string `json:"replacementcost"`
 }
 
+type RiskCriticalityDetails struct {
+	Consequence       string  `json:"consequence,omititempty"`
+	ConsequenceWeight string  `json:"cweight,omititempty"`
+	Likelyhood        string  `json:"likelyhood,omititempty"`
+	LikelyhoodWeight  string  `json:"lweight,omititempty"`
+	CRC               float32 `json:"replacementcost,omititempty"`
+	score             string  `json:"score,omititempty"`
+}
+
 type RiskCriticalityDD struct {
 	Name          string `json:"a"`
 	Consequence   string `json:"b"`
@@ -531,6 +540,25 @@ type RiskCriticalityDD struct {
 	Rulyears      string `json:"n"`
 	TypeFriendly  string `json:"o"`
 	Size          string `json:"p"`
+}
+
+type RiskCriticalityFilter struct {
+	Name          string  `json:"name,omititempty"`
+	Consequence   string  `json:"consequence,omititempty"`
+	Likelyhood    string  `json:"likelyhood,omititempty"`
+	Crc           float32 `json:"crc,omititempty"`
+	Description   string  `json:"description,omititempty"`
+	Cuname        string  `json:"cuname,omititempty"`
+	Typename      string  `json:"typename,omititempty"`
+	SerialNo      string  `json:"serialno,omititempty"`
+	Extent        float32 `json:"extent,omititempty"`
+	Drc           float32 `json:"drc,omititempty"`
+	Cost          float32 `json:"cost,omititempty"`
+	CarryingValue float32 `json:"carryingvalue,omititempty"`
+	TakeOnDate    string  `json:"takeondate,omititempty"`
+	Rulyears      float32 `json:"rulyears,omititempty"`
+	TypeFriendly  string  `json:"typefriendly,omititempty"`
+	Size          float32 `json:"size,omititempty"`
 }
 
 type ReplacementByCondition struct {
