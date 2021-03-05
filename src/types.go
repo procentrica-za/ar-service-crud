@@ -470,6 +470,12 @@ type FlattenedHierarchy struct {
 	IsLeaf   bool   `json:"isleaf,omitempty"`
 }
 
+type FlattenedHierarchyFilter struct {
+	NodeID      string `json:"nodeid,omitempty"`
+	Likelyhood  string `json:"likelyhood,omitempty"`
+	Consequence string `json:"consequence,omitempty"`
+}
+
 type FlattenedHierarchyList struct {
 	FlattenedHierarchy []FlattenedHierarchy `json:"nodehierarchyflattened"`
 }

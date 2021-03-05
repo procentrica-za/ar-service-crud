@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 )
 
@@ -1245,14 +1246,59 @@ func (s *Server) handleGetNodeHierarchyFlattenedFlitered() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(" Handle Get Node Hierarchy Flattened Filtered Has Been Called...")
 
-		// retrieving the ID of node that is requested.
-		nodeid := r.URL.Query().Get("funclocnodeid")
+		body, err := ioutil.ReadAll(r.Body)
+		//Unmarshal for funcloc
+		hierarchy := FlattenedHierarchyFilter{}
+		err = json.Unmarshal(body, &hierarchy)
 
-		// retrieving the ID of node that is requested.
-		filter := r.URL.Query().Get("filter")
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Bad JSON provided to filter flattened")
+			return
+		}
+
+		filter := ""
+		if hierarchy.Likelyhood != "" && hierarchy.Consequence != "" {
+			// variable for likelyhood filter
+			filterlikelyhood := ""
+			switch hierarchy.Likelyhood {
+			case "Almost Certain":
+				filterlikelyhood = "av.rulyears::INTEGER <= 1"
+			case "Likely":
+				filterlikelyhood = "av.rulyears::INTEGER > 1 AND av.rulyears::INTEGER <= 5"
+			case "Moderate":
+				filterlikelyhood = "av.rulyears::INTEGER > 5 AND av.rulyears::INTEGER <= 10"
+			case "Unlikely":
+				filterlikelyhood = "av.rulyears::INTEGER > 10 AND av.rulyears::INTEGER <= 20"
+			case "Rare":
+				filterlikelyhood = "av.rulyears::INTEGER > 20"
+			default:
+				filterlikelyhood = ""
+			}
+
+			// variable for consequence filter
+			filterconsequence := ""
+			switch hierarchy.Consequence {
+			case "Insignificant":
+				filterconsequence = "cl.code::integer = 1"
+			case "Minor":
+				filterconsequence = "cl.code::integer = 2"
+			case "Moderate":
+				filterconsequence = "cl.code::integer = 3"
+			case "Major":
+				filterconsequence = "cl.code::integer = 4"
+			case "Catastrophic":
+				filterconsequence = "cl.code::integer = 5"
+			default:
+				filterconsequence = ""
+			}
+
+			filter = "Where " + filterlikelyhood + " And " + filterconsequence
+
+		}
 
 		//set response variables
-		rows, err := s.dbAccess.Query("WITH RECURSIVE hierarchy AS(SELECT fln_a.id,fln_a.parentid FROM public.funclocnode fln_a WHERE fln_a.id ='" + nodeid + "' UNION SELECT  fln.id, fln.parentid FROM public.funclocnode fln INNER JOIN hierarchy h ON h.id = fln.parentid) SELECT DISTINCT on (fln.id) CASE WHEN fln.parentid IS NULL THEN '' ELSE fln.parentid::character varying END, fln.id , CASE WHEN fln.name IS NULL OR fln.name = '' THEN '' ELSE fln.name::character varying END, CASE WHEN n.name IS NULL OR n.name = '' THEN '' ELSE n.name::character varying END	 FROM hierarchy h INNER JOIN public.funclocnode fln on fln.id = h.id INNER JOIN public.NodeType n ON n.id = fln.nodetypeid INNER JOIN public.funcloclink fll on fll.funclocnodeid = fln.id INNER JOIN public.funcloc fl on fll.funclocid = fl.id LEFT JOIN public.assetdeployment ad on ad.funclockid = fl.id LEFT JOIN public.asset a on a.id = ad.assetid LEFT JOIN public.AssetValue av ON av.assetid = a.id LEFT JOIN public.compatibleunit cu on cu.id = a.compatibleunitid LEFT JOIN public.criticalitytypelookup cl ON cl.id = cu.criticalitytypelookupid LEFT JOIN public.observationflexval afv ON afv.assetid = a.id AND afv.flexfldid = '79C62216-039C-410B-B8D1-05EDD6F6988C' LEFT JOIN public.AssetTypeHierarchy at ON at.key = a.assettype AND at.cuid = a.compatibleunitid " + filter + "; " + "END;")
+		rows, err := s.dbAccess.Query("WITH RECURSIVE hierarchy AS(SELECT fln_a.id,fln_a.parentid FROM public.funclocnode fln_a WHERE fln_a.id ='" + hierarchy.NodeID + "' UNION SELECT  fln.id, fln.parentid FROM public.funclocnode fln INNER JOIN hierarchy h ON h.id = fln.parentid) SELECT DISTINCT on (fln.id) CASE WHEN fln.parentid IS NULL THEN '' ELSE fln.parentid::character varying END, fln.id , CASE WHEN fln.name IS NULL OR fln.name = '' THEN '' ELSE fln.name::character varying END, CASE WHEN n.name IS NULL OR n.name = '' THEN '' ELSE n.name::character varying END	 FROM hierarchy h INNER JOIN public.funclocnode fln on fln.id = h.id INNER JOIN public.NodeType n ON n.id = fln.nodetypeid INNER JOIN public.funcloclink fll on fll.funclocnodeid = fln.id INNER JOIN public.funcloc fl on fll.funclocid = fl.id LEFT JOIN public.assetdeployment ad on ad.funclockid = fl.id LEFT JOIN public.asset a on a.id = ad.assetid LEFT JOIN public.AssetValue av ON av.assetid = a.id LEFT JOIN public.compatibleunit cu on cu.id = a.compatibleunitid LEFT JOIN public.criticalitytypelookup cl ON cl.id = cu.criticalitytypelookupid LEFT JOIN public.observationflexval afv ON afv.assetid = a.id AND afv.flexfldid = '79C62216-039C-410B-B8D1-05EDD6F6988C' LEFT JOIN public.AssetTypeHierarchy at ON at.key = a.assettype AND at.cuid = a.compatibleunitid  " + filter + "; " + "END;")
 
 		if err != nil {
 			w.WriteHeader(500)
@@ -1289,7 +1335,7 @@ func (s *Server) handleGetNodeHierarchyFlattenedFlitered() http.HandlerFunc {
 		}
 
 		//set response variables
-		rows1, err := s.dbAccess.Query("WITH RECURSIVE hierarchy AS(SELECT fln_a.id,fln_a.parentid FROM public.funclocnode fln_a WHERE fln_a.id ='" + nodeid + "' UNION SELECT  fln.id, fln.parentid FROM public.funclocnode fln INNER JOIN hierarchy h ON h.id = fln.parentid) SELECT  CASE WHEN fll.funclocnodeid IS NULL THEN '' ELSE fll.funclocnodeid::character varying END, fl.id , CASE WHEN fl.name IS NULL OR fl.name = '' THEN '' ELSE fl.name::character varying END, CASE WHEN n.name IS NULL OR n.name = '' THEN '' ELSE n.name::character varying END FROM hierarchy h INNER JOIN public.FuncLocNode fln ON h.id = fln.parentid INNER JOIN public.FunclocLink fll ON fln.id = fll.funclocnodeid INNER JOIN public.FuncLoc fl ON fl.id = fll.funclocid INNER JOIN public.NodeType n ON n.id = fln.nodetypeid LEFT JOIN public.assetdeployment ad on ad.funclockid = fl.id LEFT JOIN public.asset a on a.id = ad.assetid LEFT JOIN public.AssetValue av ON av.assetid = a.id LEFT JOIN public.compatibleunit cu on cu.id = a.compatibleunitid LEFT JOIN public.criticalitytypelookup cl ON cl.id = cu.criticalitytypelookupid LEFT JOIN public.observationflexval afv ON afv.assetid = a.id AND afv.flexfldid = '79C62216-039C-410B-B8D1-05EDD6F6988C' LEFT JOIN public.AssetTypeHierarchy at ON at.key = a.assettype AND at.cuid = a.compatibleunitid " + filter + "; " + "END;")
+		rows1, err := s.dbAccess.Query("WITH RECURSIVE hierarchy AS(SELECT fln_a.id,fln_a.parentid FROM public.funclocnode fln_a WHERE fln_a.id ='" + hierarchy.NodeID + "' UNION SELECT  fln.id, fln.parentid FROM public.funclocnode fln INNER JOIN hierarchy h ON h.id = fln.parentid) SELECT  CASE WHEN fll.funclocnodeid IS NULL THEN '' ELSE fll.funclocnodeid::character varying END, fl.id , CASE WHEN fl.name IS NULL OR fl.name = '' THEN '' ELSE fl.name::character varying END, CASE WHEN n.name IS NULL OR n.name = '' THEN '' ELSE n.name::character varying END FROM hierarchy h INNER JOIN public.FuncLocNode fln ON h.id = fln.parentid INNER JOIN public.FunclocLink fll ON fln.id = fll.funclocnodeid INNER JOIN public.FuncLoc fl ON fl.id = fll.funclocid INNER JOIN public.NodeType n ON n.id = fln.nodetypeid LEFT JOIN public.assetdeployment ad on ad.funclockid = fl.id LEFT JOIN public.asset a on a.id = ad.assetid LEFT JOIN public.AssetValue av ON av.assetid = a.id LEFT JOIN public.compatibleunit cu on cu.id = a.compatibleunitid LEFT JOIN public.criticalitytypelookup cl ON cl.id = cu.criticalitytypelookupid LEFT JOIN public.observationflexval afv ON afv.assetid = a.id AND afv.flexfldid = '79C62216-039C-410B-B8D1-05EDD6F6988C' LEFT JOIN public.AssetTypeHierarchy at ON at.key = a.assettype AND at.cuid = a.compatibleunitid " + filter + "; " + "END;")
 
 		if err != nil {
 			w.WriteHeader(500)
