@@ -1242,7 +1242,7 @@ func (s *Server) handleGetNodeHierarchyFlattened() http.HandlerFunc {
 }
 
 // The function handling the request to get filtered node hierarchy
-func (s *Server) handleGetNodeHierarchyFlattenedFlitered() http.HandlerFunc {
+func (s *Server) handleGetNodeHierarchyFlattenedFiltered() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(" Handle Get Node Hierarchy Flattened Filtered Has Been Called...")
 
