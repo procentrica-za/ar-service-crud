@@ -526,7 +526,6 @@ type RiskCriticalityDetails struct {
 	Likelyhood        string  `json:"likelyhood,omititempty"`
 	LikelyhoodWeight  string  `json:"lweight,omititempty"`
 	CRC               float32 `json:"replacementcost,omititempty"`
-	Score             string  `json:"score,omititempty"`
 }
 
 type RiskCriticalityDD struct {

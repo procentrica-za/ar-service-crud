@@ -462,7 +462,7 @@ func (s *Server) handleGetRiskCriticalityDetails() http.HandlerFunc {
 				fmt.Println(err.Error())
 				return
 			}
-			assetsList = append(assetsList, RiskCriticalityDetails{consequence, cweight, likelyhood, lweight, crc, score})
+			assetsList = append(assetsList, RiskCriticalityDetails{consequence, cweight, likelyhood, lweight, crc})
 		}
 
 		// get any error encountered during iteration
