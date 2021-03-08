@@ -59,5 +59,6 @@ func (s *Server) routes() {
 	//Filtered endpoints
 	s.router.HandleFunc("/nodehierarchyfiltered", s.handleGetNodeHierarchyFlattenedFiltered()).Methods("POST")
 	s.router.HandleFunc("/nodeassetsfiltered", s.handleGetNodeAssetsFiltered()).Methods("POST")
+	s.router.HandleFunc("/funclocassetsfiltered", s.handlegetFuncLocAssetsFiltered()).Methods("POST")
 
 }

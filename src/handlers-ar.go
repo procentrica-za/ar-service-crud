@@ -1529,3 +1529,125 @@ func (s *Server) handleGetNodeAssetsFiltered() http.HandlerFunc {
 		w.Write(js)
 	}
 }
+
+// The function handling the request to get node assets
+func (s *Server) handlegetFuncLocAssetsFiltered() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		fmt.Println(" Handle Get Node Assets filtered Has Been Called...")
+
+		body, err := ioutil.ReadAll(r.Body)
+		//Unmarshal for funcloc
+		hierarchy := FlattenedHierarchyFilter{}
+		err = json.Unmarshal(body, &hierarchy)
+
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Bad JSON provided to filter flattened")
+			return
+		}
+
+		filter := ""
+		if hierarchy.Likelyhood != "" && hierarchy.Consequence != "" {
+			// variable for likelyhood filter
+			filterlikelyhood := ""
+			switch hierarchy.Likelyhood {
+			case "Almost Certain":
+				filterlikelyhood = "av.rulyears::INTEGER <= 1"
+			case "Likely":
+				filterlikelyhood = "av.rulyears::INTEGER > 1 AND av.rulyears::INTEGER <= 5"
+			case "Moderate":
+				filterlikelyhood = "av.rulyears::INTEGER > 5 AND av.rulyears::INTEGER <= 10"
+			case "Unlikely":
+				filterlikelyhood = "av.rulyears::INTEGER > 10 AND av.rulyears::INTEGER <= 20"
+			case "Rare":
+				filterlikelyhood = "av.rulyears::INTEGER > 20"
+			default:
+				filterlikelyhood = ""
+			}
+
+			// variable for consequence filter
+			filterconsequence := ""
+			switch hierarchy.Consequence {
+			case "Insignificant":
+				filterconsequence = "cl.code::integer = 1"
+			case "Minor":
+				filterconsequence = "cl.code::integer = 2"
+			case "Moderate":
+				filterconsequence = "cl.code::integer = 3"
+			case "Major":
+				filterconsequence = "cl.code::integer = 4"
+			case "Catastrophic":
+				filterconsequence = "cl.code::integer = 5"
+			default:
+				filterconsequence = ""
+			}
+
+			filter = "And " + filterlikelyhood + " And " + filterconsequence
+
+		}
+
+		//set response variables
+		rows, err := s.dbAccess.Query("SELECT DISTINCT ON (a.id) a.id, fll.funclocnodeid,  CASE WHEN a.name IS NULL OR a.name = '' THEN '' ELSE a.name::character varying END,  CASE WHEN a.description IS NULL OR a.description = '' THEN '' ELSE a.description::character varying END,  CASE WHEN a.lat IS NULL THEN 0 ELSE a.lat END,  CASE WHEN a.lon IS NULL THEN 0 ELSE a.lon END, CASE WHEN cu.name IS NULL OR cu.name = ''  THEN '' ELSE cu.name::varchar END, CASE WHEN at.assettype6name IS NULL  THEN (CASE WHEN at.assettype5name IS NULL THEN(CASE WHEN at.assettype4name IS NULL THEN (CASE WHEN at.assettype3name IS NULL THEN (CASE WHEN at.assettype2name IS NULL THEN '' ELSE at.assettype2name END) ELSE at.assettype3name END) ELSE at.assettype4name END) ELSE at.assettype5name END) ELSE at.assettype6name END, CASE WHEN a.serialno IS NULL OR a.serialno = '' THEN '' ELSE a.serialno::character varying END, CASE WHEN a.extent IS NULL THEN 0 ELSE a.extent END, CASE WHEN av.crc IS NULL THEN 0 ELSE av.crc END, CASE WHEN av.drc IS NULL THEN 0 ELSE av.drc END, CASE WHEN av.costclosingbalance IS NULL THEN 0 ELSE av.costclosingbalance END, CASE WHEN av.carryingvalueclosingbalance IS NULL THEN 0 ELSE av.carryingvalueclosingbalance END, CASE WHEN a.takeondate IS NULL THEN '' ELSE a.takeondate::character varying END, CASE WHEN av.rulyears IS NULL THEN 0 ELSE av.rulyears END, CONCAT(at.assettype1name ,' / ', at.assettype2name ,' / ', at.assettype3name ,' / ', at.assettype4name ,' / ', at.assettype5name ,' / ', at.assettype6name)::character varying, CASE WHEN cu.size IS NULL THEN 0 ELSE cu.size END FROM public.Asset a INNER JOIN public.AssetDeployment ad ON ad.assetid = a.id INNER JOIN public.Funcloc f ON f.id = ad.funclockid INNER JOIN public.funcloclink fll on fll.funclocid = f.id INNER JOIN public.AssetValue av ON av.assetid = a.id INNER JOIN public.compatibleunit cu on cu.id = a.compatibleunitid INNER JOIN public.AssetTypeHierarchy at ON at.key = a.assettype AND at.cuid = a.compatibleunitid INNER JOIN public.criticalitytypelookup cl ON cl.id = cu.criticalitytypelookupid INNER JOIN public.observationflexval afv ON afv.assetid = a.id  WHERE f.id = '" + hierarchy.NodeID + "' " + filter + "; " + "END;")
+
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to process DB Function...")
+			return
+		}
+		defer rows.Close()
+
+		assetsList := FunclocationAssetsList{}
+		assetsList.Funclocassets = []FunclocationAssets{}
+
+		var Id,
+			FuncLocId,
+			Name,
+			Description,
+			Cuname,
+			Typename,
+			Serialno,
+			TakeOnDate,
+			TypeFriendlyName string
+
+		var Lat, Lon,
+			CRC,
+			DRC,
+			Cost,
+			CarryingValue,
+			RULYears, Size,
+			Extent float32
+
+		for rows.Next() {
+			err = rows.Scan(&Id, &FuncLocId, &Name, &Description, &Lat, &Lon, &Cuname, &Typename, &Serialno, &Extent, &CRC, &DRC, &Cost, &CarryingValue, &TakeOnDate, &RULYears, &TypeFriendlyName, &Size)
+			if err != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to read data from assets List...")
+				fmt.Println(err.Error())
+				return
+			}
+			assetsList.Funclocassets = append(assetsList.Funclocassets, FunclocationAssets{Id, FuncLocId, Name, Description, Lat, Lon, Cuname, Typename, Serialno, Extent, CRC, DRC, Cost, CarryingValue, TakeOnDate, RULYears, TypeFriendlyName, Size})
+		}
+
+		// get any error encountered during iteration
+		err = rows.Err()
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to read data from assets List...")
+			return
+		}
+
+		js, jserr := json.Marshal(assetsList)
+
+		//If Queryrow returns error, provide error to caller and exit
+		if jserr != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to create JSON from DB result...")
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(200)
+		w.Write(js)
+	}
+}
