@@ -1363,37 +1363,8 @@ func (s *Server) handleGetNodeHierarchyFlattenedFiltered() http.HandlerFunc {
 			return
 		}
 
-		//Get filtered parent funcloc elements
-		rows1, err := s.dbAccess.Query("WITH RECURSIVE hierarchy AS(SELECT fln_a.id,fln_a.parentid FROM public.funclocnode fln_a WHERE fln_a.id ='" + hierarchy.NodeID + "' UNION SELECT  fln.id, fln.parentid FROM public.funclocnode fln INNER JOIN hierarchy h ON h.parentid = fln.id) SELECT DISTINCT ON (fl.id)  CASE WHEN fll.funclocnodeid IS NULL THEN '' ELSE fll.funclocnodeid::character varying END, fl.id , CASE WHEN fl.name IS NULL OR fl.name = '' THEN '' ELSE fl.name::character varying END, CASE WHEN n.name IS NULL OR n.name = '' THEN '' ELSE n.name::character varying END FROM hierarchy h INNER JOIN public.FuncLocNode fln ON h.id = fln.parentid INNER JOIN public.NodeType n ON n.id = fln.nodetypeid AND n.id = 'c3824f2d-6e25-40e4-b258-8b108e72612f' LEFT JOIN public.FunclocLink fll ON fln.id = fll.funclocnodeid LEFT JOIN public.FuncLoc fl ON fl.id = fll.funclocid LEFT JOIN public.assetdeployment ad on ad.funclockid = fl.id LEFT JOIN public.asset a on a.id = ad.assetid LEFT JOIN public.AssetValue av ON av.assetid = a.id LEFT JOIN public.compatibleunit cu on cu.id = a.compatibleunitid LEFT JOIN public.criticalitytypelookup cl ON cl.id = cu.criticalitytypelookupid LEFT JOIN public.observationflexval afv ON afv.assetid = a.id AND afv.flexfldid = '79C62216-039C-410B-B8D1-05EDD6F6988C' LEFT JOIN public.AssetTypeHierarchy at ON at.key = a.assettype AND at.cuid = a.compatibleunitid " + filter + "; " + "END;")
-
-		if err != nil {
-			w.WriteHeader(500)
-			fmt.Fprintf(w, "Unable to process DB Function...")
-			return
-		}
-		defer rows1.Close()
-
-		for rows1.Next() {
-			err = rows1.Scan(&ParentId, &Id, &Name, &NodeType)
-			if err != nil {
-				w.WriteHeader(500)
-				fmt.Fprintf(w, "Unable to read data from GetNodeHierarchyFlattened List...")
-				fmt.Println(err.Error())
-				return
-			}
-			nodesList.FlattenedHierarchy = append(nodesList.FlattenedHierarchy, FlattenedHierarchy{ParentId, Id, Name, NodeType, true})
-		}
-
-		// get any error encountered during iteration
-		err = rows1.Err()
-		if err != nil {
-			w.WriteHeader(500)
-			fmt.Fprintf(w, "Unable to read data from GetNodeHierarchyFlattened List...")
-			return
-		}
-
 		//Get filtered child funcloc elements
-		rows3, err := s.dbAccess.Query("WITH RECURSIVE hierarchy AS(SELECT fln_a.id,fln_a.parentid FROM public.funclocnode fln_a WHERE fln_a.id ='" + hierarchy.NodeID + "' UNION SELECT  fln.id, fln.parentid FROM public.funclocnode fln INNER JOIN hierarchy h ON h.id = fln.parentid) SELECT DISTINCT On (fl.id)  CASE WHEN fll.funclocnodeid IS NULL THEN '' ELSE fll.funclocnodeid::character varying END, fl.id , CASE WHEN fl.name IS NULL OR fl.name = '' THEN '' ELSE fl.name::character varying END, CASE WHEN n.name IS NULL OR n.name = '' THEN '' ELSE n.name::character varying END FROM hierarchy h INNER JOIN public.FuncLocNode fln ON h.id = fln.parentid INNER JOIN public.NodeType n ON n.id = fln.nodetypeid LEFT JOIN public.FunclocLink fll ON fln.id = fll.funclocnodeid LEFT JOIN public.FuncLoc fl ON fl.id = fll.funclocid LEFT JOIN public.assetdeployment ad on ad.funclockid = fl.id LEFT JOIN public.asset a on a.id = ad.assetid LEFT JOIN public.AssetValue av ON av.assetid = a.id LEFT JOIN public.compatibleunit cu on cu.id = a.compatibleunitid LEFT JOIN public.criticalitytypelookup cl ON cl.id = cu.criticalitytypelookupid LEFT JOIN public.observationflexval afv ON afv.assetid = a.id AND afv.flexfldid = '79C62216-039C-410B-B8D1-05EDD6F6988C' LEFT JOIN public.AssetTypeHierarchy at ON at.key = a.assettype AND at.cuid = a.compatibleunitid " + filter + "; " + "END;")
+		rows3, err := s.dbAccess.Query("WITH RECURSIVE hierarchy AS(SELECT fln_a.id,fln_a.parentid FROM public.funclocnode fln_a WHERE fln_a.id ='" + hierarchy.NodeID + "' UNION SELECT  fln.id, fln.parentid FROM public.funclocnode fln INNER JOIN hierarchy h ON h.id = fln.parentid) select CASE WHEN fll.funclocnodeid IS NULL  THEN '' ELSE fll.funclocnodeid::varchar END, fl.id, CASE WHEN fl.name IS NULL OR fl.name = ''  THEN '' ELSE fl.name::varchar END, CASE WHEN n.name IS NULL OR n.name  = ''  THEN '' ELSE n.name::varchar END FROM hierarchy h INNER JOIN public.funclocnode fln on fln.id = h.id INNER JOIN public.NodeType n ON n.id = fln.nodetypeid INNER JOIN public.funcloclink fll on fll.funclocnodeid = h.id INNER JOIN public.funcloc fl on fll.funclocid = fl.id LEFT JOIN public.assetdeployment ad on ad.funclockid = fl.id LEFT JOIN public.asset a on a.id = ad.assetid LEFT JOIN public.AssetValue av ON av.assetid = a.id LEFT JOIN public.compatibleunit cu on cu.id = a.compatibleunitid LEFT JOIN public.criticalitytypelookup cl ON cl.id = cu.criticalitytypelookupid LEFT JOIN public.observationflexval afv ON afv.assetid = a.id " + filter + "; " + "END;")
 
 		if err != nil {
 			w.WriteHeader(500)
