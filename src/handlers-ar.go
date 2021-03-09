@@ -1334,35 +1334,6 @@ func (s *Server) handleGetNodeHierarchyFlattenedFiltered() http.HandlerFunc {
 			return
 		}
 
-		//Get filtered child elements for funclocnode (All children results up to facility node type)
-		rows4, err := s.dbAccess.Query("WITH RECURSIVE hierarchy AS(SELECT fln_a.id,fln_a.parentid FROM public.funclocnode fln_a WHERE fln_a.id ='" + hierarchy.NodeID + "' UNION SELECT  fln.id, fln.parentid FROM public.funclocnode fln INNER JOIN hierarchy h ON h.id = fln.parentid) SELECT  CASE WHEN fln.parentid IS NULL THEN '' ELSE fln.parentid::character varying END, fln.id , CASE WHEN fln.name IS NULL OR fln.name = '' THEN '' ELSE fln.name::character varying END, CASE WHEN n.name IS NULL OR n.name = '' THEN '' ELSE n.name::character varying END FROM hierarchy h INNER JOIN public.funclocnode fln on fln.id = h.id INNER JOIN public.NodeType n ON n.id = fln.nodetypeid WHERE n.id != 'C3824F2D-6E25-40E4-B258-8B108E72612F'; END;")
-
-		if err != nil {
-			w.WriteHeader(500)
-			fmt.Fprintf(w, "Unable to process DB Function...")
-			return
-		}
-		defer rows4.Close()
-
-		for rows4.Next() {
-			err = rows4.Scan(&ParentId, &Id, &Name, &NodeType)
-			if err != nil {
-				w.WriteHeader(500)
-				fmt.Fprintf(w, "Unable to read data to get child elements of Funclocnode...")
-				fmt.Println(err.Error())
-				return
-			}
-			nodesList.FlattenedHierarchy = append(nodesList.FlattenedHierarchy, FlattenedHierarchy{ParentId, Id, Name, NodeType, false})
-		}
-
-		// get any error encountered during iteration
-		err = rows4.Err()
-		if err != nil {
-			w.WriteHeader(500)
-			fmt.Fprintf(w, "Unable to read data to get child elements of Funclocnode...")
-			return
-		}
-
 		//Get filtered child elements for funclocnode
 		rows, err := s.dbAccess.Query("WITH RECURSIVE hierarchy AS(SELECT fln_a.id,fln_a.parentid FROM public.funclocnode fln_a WHERE fln_a.id ='" + hierarchy.NodeID + "' UNION SELECT  fln.id, fln.parentid FROM public.funclocnode fln INNER JOIN hierarchy h ON h.id = fln.parentid) SELECT  CASE WHEN fln.parentid IS NULL THEN '' ELSE fln.parentid::character varying END, fln.id , CASE WHEN fln.name IS NULL OR fln.name = '' THEN '' ELSE fln.name::character varying END, CASE WHEN n.name IS NULL OR n.name = '' THEN '' ELSE n.name::character varying END FROM hierarchy h INNER JOIN public.funclocnode fln on fln.id = h.id INNER JOIN public.NodeType n ON n.id = fln.nodetypeid LEFT JOIN public.funcloclink fll on fll.funclocnodeid = fln.id LEFT JOIN public.funcloc fl on fll.funclocid = fl.id LEFT JOIN public.assetdeployment ad on ad.funclockid = fl.id LEFT JOIN public.asset a on a.id = ad.assetid LEFT JOIN public.AssetValue av ON av.assetid = a.id LEFT JOIN public.compatibleunit cu on cu.id = a.compatibleunitid LEFT JOIN public.criticalitytypelookup cl ON cl.id = cu.criticalitytypelookupid LEFT JOIN public.observationflexval afv ON afv.assetid = a.id LEFT JOIN public.AssetTypeHierarchy at ON at.key = a.assettype AND at.cuid = a.compatibleunitid  " + filter + "; " + "END;")
 
@@ -1418,6 +1389,41 @@ func (s *Server) handleGetNodeHierarchyFlattenedFiltered() http.HandlerFunc {
 		if err != nil {
 			w.WriteHeader(500)
 			fmt.Fprintf(w, "Unable to read data from GetNodeHierarchyFlattened List...")
+			return
+		}
+
+		//Get filtered child elements for funclocnode (All children results up to facility node type)
+		rows4, err := s.dbAccess.Query("WITH RECURSIVE hierarchy AS(SELECT fln_a.id,fln_a.parentid FROM public.funclocnode fln_a WHERE fln_a.id ='" + hierarchy.NodeID + "' UNION SELECT  fln.id, fln.parentid FROM public.funclocnode fln INNER JOIN hierarchy h ON h.id = fln.parentid) SELECT  CASE WHEN fln.parentid IS NULL THEN '' ELSE fln.parentid::character varying END, fln.id , CASE WHEN fln.name IS NULL OR fln.name = '' THEN '' ELSE fln.name::character varying END, CASE WHEN n.name IS NULL OR n.name = '' THEN '' ELSE n.name::character varying END FROM hierarchy h INNER JOIN public.funclocnode fln on fln.id = h.id INNER JOIN public.NodeType n ON n.id = fln.nodetypeid WHERE n.id != 'C3824F2D-6E25-40E4-B258-8B108E72612F'; END;")
+
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to process DB Function...")
+			return
+		}
+		defer rows4.Close()
+
+		for rows4.Next() {
+			err = rows4.Scan(&ParentId, &Id, &Name, &NodeType)
+			if err != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to read data to get child elements of Funclocnode...")
+				fmt.Println(err.Error())
+				return
+			}
+
+			for _, x := range nodesList.FlattenedHierarchy {
+				if x.ParentId == Id {
+					nodesList.FlattenedHierarchy = append(nodesList.FlattenedHierarchy, FlattenedHierarchy{ParentId, Id, Name, NodeType, false})
+				}
+			}
+
+		}
+
+		// get any error encountered during iteration
+		err = rows4.Err()
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to read data to get child elements of Funclocnode...")
 			return
 		}
 
