@@ -1689,3 +1689,230 @@ func (s *Server) handlegetFuncLocAssetsFiltered() http.HandlerFunc {
 		w.Write(js)
 	}
 }
+
+// The function handling the request to get funcloc assets
+func (s *Server) handleGetNodeFuncLocsFiltered() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println(" Handle Get Node funclocs filtered Has Been Called...")
+
+		body, err := ioutil.ReadAll(r.Body)
+		//Unmarshal for funcloc
+		hierarchy := FlattenedHierarchyFilter{}
+		err = json.Unmarshal(body, &hierarchy)
+
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Bad JSON provided to filter node funclocs")
+			return
+		}
+
+		filter := ""
+		if hierarchy.Likelyhood != "" && hierarchy.Consequence != "" {
+			// variable for likelyhood filter
+			filterlikelyhood := ""
+			switch hierarchy.Likelyhood {
+			case "Almost Certain":
+				filterlikelyhood = "av.rulyears::INTEGER <= 1"
+			case "Likely":
+				filterlikelyhood = "av.rulyears::INTEGER > 1 AND av.rulyears::INTEGER <= 5"
+			case "Moderate":
+				filterlikelyhood = "av.rulyears::INTEGER > 5 AND av.rulyears::INTEGER <= 10"
+			case "Unlikely":
+				filterlikelyhood = "av.rulyears::INTEGER > 10 AND av.rulyears::INTEGER <= 20"
+			case "Rare":
+				filterlikelyhood = "av.rulyears::INTEGER > 20"
+			default:
+				filterlikelyhood = ""
+			}
+
+			// variable for consequence filter
+			filterconsequence := ""
+			switch hierarchy.Consequence {
+			case "Insignificant":
+				filterconsequence = "cl.code::integer = 1"
+			case "Minor":
+				filterconsequence = "cl.code::integer = 2"
+			case "Moderate":
+				filterconsequence = "cl.code::integer = 3"
+			case "Major":
+				filterconsequence = "cl.code::integer = 4"
+			case "Catastrophic":
+				filterconsequence = "cl.code::integer = 5"
+			default:
+				filterconsequence = ""
+			}
+
+			filter = "WHERE " + filterlikelyhood + " And " + filterconsequence
+
+		}
+
+		//set response variables
+		rows, err := s.dbAccess.Query("WITH RECURSIVE hierarchy AS( SELECT fln_a.id, fln_a.parentid FROM public.funclocnode fln_a WHERE fln_a.id = '" + hierarchy.NodeID + "' UNION SELECT  fln.id, fln.parentid FROM public.funclocnode fln INNER JOIN hierarchy h ON h.id = fln.parentid) select fl.id, fll.funclocnodeid, CASE WHEN fl.name IS NULL OR fl.name = ''  THEN '' ELSE fl.name::varchar END, CASE WHEN fl.description IS NULL OR fl.description = ''  THEN '' ELSE fl.description::varchar END, CASE WHEN fl.lat IS NULL THEN 0 ELSE fl.lat END, CASE WHEN fl.lon IS NULL THEN 0 ELSE fl.lon END, CASE WHEN fl.statusdate IS NULL THEN '' ELSE fl.statusdate::varchar END, CASE WHEN fl.status IS NULL OR fl.status = ''  THEN '' ELSE fl.status::varchar END, CASE WHEN fln.name IS NULL OR fln.name = ''  THEN '' ELSE fln.name::varchar END FROM hierarchy h INNER JOIN public.funclocnode fln on fln.id = h.id INNER JOIN public.funcloclink fll on fll.funclocnodeid = h.id INNER JOIN public.funcloc fl on fll.funclocid = fl.id INNER JOIN public.assetdeployment ad on ad.funclockid = fl.id INNER JOIN public.asset a on a.id = ad.assetid INNER JOIN public.AssetValue av ON av.assetid = a.id INNER JOIN public.compatibleunit cu on cu.id = a.compatibleunitid INNER JOIN public.criticalitytypelookup cl ON cl.id = cu.criticalitytypelookupid LEFT JOIN public.observationflexval afv ON afv.assetid = a.id " + filter + "; " + "END;")
+
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to process DB Function...")
+			return
+		}
+		defer rows.Close()
+		nodesList := NodeFuncLocsList{}
+		nodesList.NodeFuncLocs = []NodeFuncLocs{}
+
+		var Id,
+			FuncLocNodeId,
+			Name,
+			Description,
+			InstallDate,
+			Status,
+			FuncLocNodeName string
+
+		var Lat,
+			Lon float32
+
+		for rows.Next() {
+			err = rows.Scan(&Id, &FuncLocNodeId, &Name, &Description, &Lat, &Lon, &InstallDate, &Status, &FuncLocNodeName)
+			if err != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to read data from Node funclocs List...")
+				fmt.Println(err.Error())
+				return
+			}
+			nodesList.NodeFuncLocs = append(nodesList.NodeFuncLocs, NodeFuncLocs{Id, FuncLocNodeId, Name, Description, InstallDate, Status, FuncLocNodeName})
+		}
+
+		// get any error encountered during iteration
+		err = rows.Err()
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to read data from Node funclocs List...")
+			return
+		}
+
+		js, jserr := json.Marshal(nodesList)
+
+		//If Queryrow returns error, provide error to caller and exit
+		if jserr != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to create JSON from DB result...")
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(200)
+		w.Write(js)
+	}
+}
+
+// The function handling the request to get funcloc assets
+func (s *Server) handleGetNodeFuncLocSpatialFiltered() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println(" Handle Get Node funclocs spatial filtered Has Been Called...")
+
+		body, err := ioutil.ReadAll(r.Body)
+		//Unmarshal for funcloc
+		hierarchy := FlattenedHierarchyFilter{}
+		err = json.Unmarshal(body, &hierarchy)
+
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Bad JSON provided to filter node funclocs spatial")
+			return
+		}
+
+		filter := ""
+		if hierarchy.Likelyhood != "" && hierarchy.Consequence != "" {
+			// variable for likelyhood filter
+			filterlikelyhood := ""
+			switch hierarchy.Likelyhood {
+			case "Almost Certain":
+				filterlikelyhood = "av.rulyears::INTEGER <= 1"
+			case "Likely":
+				filterlikelyhood = "av.rulyears::INTEGER > 1 AND av.rulyears::INTEGER <= 5"
+			case "Moderate":
+				filterlikelyhood = "av.rulyears::INTEGER > 5 AND av.rulyears::INTEGER <= 10"
+			case "Unlikely":
+				filterlikelyhood = "av.rulyears::INTEGER > 10 AND av.rulyears::INTEGER <= 20"
+			case "Rare":
+				filterlikelyhood = "av.rulyears::INTEGER > 20"
+			default:
+				filterlikelyhood = ""
+			}
+
+			// variable for consequence filter
+			filterconsequence := ""
+			switch hierarchy.Consequence {
+			case "Insignificant":
+				filterconsequence = "cl.code::integer = 1"
+			case "Minor":
+				filterconsequence = "cl.code::integer = 2"
+			case "Moderate":
+				filterconsequence = "cl.code::integer = 3"
+			case "Major":
+				filterconsequence = "cl.code::integer = 4"
+			case "Catastrophic":
+				filterconsequence = "cl.code::integer = 5"
+			default:
+				filterconsequence = ""
+			}
+
+			filter = "WHERE " + filterlikelyhood + " And " + filterconsequence
+
+		}
+
+		//set response variables
+		rows, err := s.dbAccess.Query("WITH RECURSIVE hierarchy AS( SELECT fln_a.id, fln_a.parentid FROM public.funclocnode fln_a WHERE fln_a.id = '" + hierarchy.NodeID + "' UNION SELECT  fln.id, fln.parentid FROM public.funclocnode fln INNER JOIN hierarchy h ON h.id = fln.parentid) select fl.id, fll.funclocnodeid, CASE WHEN fl.name IS NULL OR fl.name = ''  THEN '' ELSE fl.name::varchar END, CASE WHEN fl.description IS NULL OR fl.description = ''  THEN '' ELSE fl.description::varchar END, CASE WHEN fl.lat IS NULL THEN 0 ELSE fl.lat END, CASE WHEN fl.lon IS NULL THEN 0 ELSE fl.lon END, CASE WHEN fl.statusdate IS NULL THEN '' ELSE fl.statusdate::varchar END, CASE WHEN fl.status IS NULL OR fl.status = ''  THEN '' ELSE fl.status::varchar END, CASE WHEN fln.name IS NULL OR fln.name = ''  THEN '' ELSE fln.name::varchar END FROM hierarchy h INNER JOIN public.funclocnode fln on fln.id = h.id INNER JOIN public.funcloclink fll on fll.funclocnodeid = h.id INNER JOIN public.funcloc fl on fll.funclocid = fl.id INNER JOIN public.assetdeployment ad on ad.funclockid = fl.id INNER JOIN public.asset a on a.id = ad.assetid INNER JOIN public.AssetValue av ON av.assetid = a.id INNER JOIN public.compatibleunit cu on cu.id = a.compatibleunitid INNER JOIN public.criticalitytypelookup cl ON cl.id = cu.criticalitytypelookupid LEFT JOIN public.observationflexval afv ON afv.assetid = a.id " + filter + "; " + "END;")
+
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to process DB Function...")
+			return
+		}
+		defer rows.Close()
+
+		nodesList := NodeFuncLocsSpatialList{}
+		nodesList.NodeFuncLocsSpatial = []NodeFuncLocsSpatial{}
+
+		var Id,
+			FuncLocNodeId,
+			Name,
+			Description,
+			InstallDate,
+			Status,
+			FuncLocNodeName string
+
+		var Lat,
+			Lon float32
+
+		for rows.Next() {
+			err = rows.Scan(&Id, &FuncLocNodeId, &Name, &Description, &Lat, &Lon, &InstallDate, &Status, &FuncLocNodeName)
+			if err != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to read data from NodeFuncLocsSpatial List...")
+				fmt.Println(err.Error())
+				return
+			}
+			nodesList.NodeFuncLocsSpatial = append(nodesList.NodeFuncLocsSpatial, NodeFuncLocsSpatial{Name, Lat, Lon, Id})
+		}
+
+		// get any error encountered during iteration
+		err = rows.Err()
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to read data from NodeFuncLocsSpatial List...")
+			return
+		}
+
+		js, jserr := json.Marshal(nodesList)
+
+		//If Queryrow returns error, provide error to caller and exit
+		if jserr != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to create JSON from DB result...")
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(200)
+		w.Write(js)
+	}
+}
