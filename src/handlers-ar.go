@@ -1392,7 +1392,10 @@ func (s *Server) handleGetNodeHierarchyFlattenedFiltered() http.HandlerFunc {
 			return
 		}
 
-		js, jserr := json.Marshal(nodesList)
+		//remove duplicates
+		resultSlice := RemoveDuplicatesFromSlice(nodesList.FlattenedHierarchy)
+
+		js, jserr := json.Marshal(resultSlice)
 
 		//If Queryrow returns error, provide error to caller and exit
 		if jserr != nil {
