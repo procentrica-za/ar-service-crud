@@ -440,7 +440,7 @@ func (s *Server) handleGetRiskCriticalityDetails() http.HandlerFunc {
 		nodeid := r.URL.Query().Get("nodeid")
 
 		//set response variables
-		rows, err := s.dbAccess.Query("SELECT * FROM public.riskcriticalitydetails('" + nodeid + "')")
+		rows, err := s.dbAccess.Query("SELECT * FROM public.riskcriticalitydetailsgrouped('" + nodeid + "')")
 
 		if err != nil {
 			w.WriteHeader(500)
