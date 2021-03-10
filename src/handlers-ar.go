@@ -1392,8 +1392,8 @@ func (s *Server) handleGetNodeHierarchyFlattenedFiltered() http.HandlerFunc {
 			return
 		}
 
-		//Get filtered child elements for funclocnode (All children results up to facility node type)
-		rows4, err := s.dbAccess.Query("WITH RECURSIVE hierarchy AS(SELECT fln_a.id,fln_a.parentid FROM public.funclocnode fln_a WHERE fln_a.id ='" + hierarchy.NodeID + "' UNION SELECT  fln.id, fln.parentid FROM public.funclocnode fln INNER JOIN hierarchy h ON h.id = fln.parentid) SELECT  CASE WHEN fln.parentid IS NULL THEN '' ELSE fln.parentid::character varying END, fln.id , CASE WHEN fln.name IS NULL OR fln.name = '' THEN '' ELSE fln.name::character varying END, CASE WHEN n.name IS NULL OR n.name = '' THEN '' ELSE n.name::character varying END FROM hierarchy h INNER JOIN public.funclocnode fln on fln.id = h.id INNER JOIN public.NodeType n ON n.id = fln.nodetypeid WHERE n.id != 'C3824F2D-6E25-40E4-B258-8B108E72612F'; END;")
+		//Get all child elements for funclocnode (All children results up to facility node type)
+		rows4, err := s.dbAccess.Query("WITH RECURSIVE hierarchy AS(SELECT fln_a.id,fln_a.parentid FROM public.funclocnode fln_a WHERE fln_a.id ='" + hierarchy.NodeID + "' UNION SELECT  fln.id, fln.parentid FROM public.funclocnode fln INNER JOIN hierarchy h ON h.id = fln.parentid) SELECT  CASE WHEN fln.parentid IS NULL THEN '' ELSE fln.parentid::character varying END, fln.id , CASE WHEN fln.name IS NULL OR fln.name = '' THEN '' ELSE fln.name::character varying END, CASE WHEN n.name IS NULL OR n.name = '' THEN '' ELSE n.name::character varying END FROM hierarchy h INNER JOIN public.funclocnode fln on fln.id = h.id INNER JOIN public.NodeType n ON n.id = fln.nodetypeid WHERE n.id != 'C3824F2D-6E25-40E4-B258-8B108E72612F' ORDER BY CASE fln.nodetypeid WHEN 'EC64C243-85DF-487D-A066-269F32A626EB' THEN 1 WHEN 'EE9FB624-5A33-427D-9199-1230CBC3B800' THEN 2 WHEN 'B668108D-AA94-4837-ADA2-DABCCA82BED2' THEN 3 WHEN '19FDC33C-2FDE-41B8-99FD-5EFA76D54FC6' THEN 4 END ; END;")
 
 		if err != nil {
 			w.WriteHeader(500)

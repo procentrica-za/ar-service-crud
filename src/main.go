@@ -160,3 +160,22 @@ func RemoveDuplicatesFromSlice(s []FlattenedHierarchy) FlattenedHierarchyList {
 
 	return nodesList
 }
+
+func RemoveParentsFromSlice(s []FlattenedHierarchy) FlattenedHierarchyList {
+	m := make(map[FlattenedHierarchy]bool)
+	for _, item := range s {
+		if _, ok := m[item]; ok {
+			// duplicate item
+		} else {
+			m[item] = true
+		}
+	}
+	nodesList := FlattenedHierarchyList{}
+	nodesList.FlattenedHierarchy = []FlattenedHierarchy{}
+
+	for item, _ := range m {
+		nodesList.FlattenedHierarchy = append(nodesList.FlattenedHierarchy, item)
+	}
+
+	return nodesList
+}
