@@ -1338,48 +1338,10 @@ func (s *Server) handleGetNodeAssetsFiltered() http.HandlerFunc {
 			return
 		}
 
-		filter := ""
-		if hierarchy.Likelyhood != "" && hierarchy.Consequence != "" {
-			// variable for likelyhood filter
-			filterlikelyhood := ""
-			switch hierarchy.Likelyhood {
-			case "Almost Certain":
-				filterlikelyhood = "av.rulyears::INTEGER <= 1"
-			case "Likely":
-				filterlikelyhood = "av.rulyears::INTEGER > 1 AND av.rulyears::INTEGER <= 5"
-			case "Moderate":
-				filterlikelyhood = "av.rulyears::INTEGER > 5 AND av.rulyears::INTEGER <= 10"
-			case "Unlikely":
-				filterlikelyhood = "av.rulyears::INTEGER > 10 AND av.rulyears::INTEGER <= 20"
-			case "Rare":
-				filterlikelyhood = "av.rulyears::INTEGER > 20"
-			default:
-				filterlikelyhood = ""
-			}
-
-			// variable for consequence filter
-			filterconsequence := ""
-			switch hierarchy.Consequence {
-			case "Insignificant":
-				filterconsequence = "cl.code::integer = 1"
-			case "Minor":
-				filterconsequence = "cl.code::integer = 2"
-			case "Moderate":
-				filterconsequence = "cl.code::integer = 3"
-			case "Major":
-				filterconsequence = "cl.code::integer = 4"
-			case "Catastrophic":
-				filterconsequence = "cl.code::integer = 5"
-			default:
-				filterconsequence = ""
-			}
-
-			filter = "Where " + filterlikelyhood + " And " + filterconsequence
-
-		}
+		
 
 		//set response variables
-		rows, err := s.dbAccess.Query("WITH RECURSIVE hierarchy AS(SELECT fln_a.id,fln_a.parentid FROM public.funclocnode fln_a WHERE fln_a.id ='" + hierarchy.NodeID + "' UNION SELECT  fln.id, fln.parentid FROM public.funclocnode fln INNER JOIN hierarchy h ON h.id = fln.parentid) select a.id, fl.id, fll.funclocnodeid , CASE WHEN a.name IS NULL OR a.name = ''  THEN '' ELSE a.name::varchar END, CASE WHEN a.description IS NULL OR a.description = ''  THEN '' ELSE a.description::varchar END, CASE WHEN a.assettype IS NULL OR a.assettype = ''  THEN '' ELSE a.assettype::varchar END, CASE WHEN a.lat IS NULL THEN 0 ELSE a.lat END, CASE WHEN a.lon IS NULL THEN 0 ELSE a.lon END, CASE WHEN cu.name IS NULL OR cu.name = ''  THEN '' ELSE cu.name::varchar END, CASE WHEN at.assettype6name IS NULL  THEN (CASE WHEN at.assettype5name IS NULL THEN(CASE WHEN at.assettype4name IS NULL THEN (CASE WHEN at.assettype3name IS NULL THEN (CASE WHEN at.assettype2name IS NULL THEN '' ELSE at.assettype2name END) ELSE at.assettype3name END) ELSE at.assettype4name END) ELSE at.assettype5name END) ELSE at.assettype6name END, CASE WHEN a.serialno IS NULL OR a.serialno = '' THEN '' ELSE a.serialno::character varying END, CASE WHEN a.extent IS NULL THEN 0 ELSE a.extent END, CASE WHEN av.crc IS NULL THEN 0 ELSE av.crc END, CASE WHEN av.drc IS NULL THEN 0 ELSE av.drc END, CASE WHEN av.costclosingbalance IS NULL THEN 0 ELSE av.costclosingbalance END, CASE WHEN av.carryingvalueclosingbalance IS NULL THEN 0 ELSE av.carryingvalueclosingbalance END, CASE WHEN a.takeondate IS NULL THEN '' ELSE a.takeondate::character varying END, CASE WHEN av.rulyears IS NULL THEN 0 ELSE av.rulyears END, CONCAT(at.assettype1name ,' / ', at.assettype2name ,' / ', at.assettype3name ,' / ', at.assettype4name ,' / ', at.assettype5name ,' / ', at.assettype6name)::character varying, CASE WHEN cu.size IS NULL THEN 0 ELSE cu.size END FROM hierarchy h INNER JOIN public.funcloclink fll on fll.funclocnodeid = h.id INNER JOIN public.funcloc fl on fll.funclocid = fl.id INNER JOIN public.assetdeployment ad on ad.funclockid = fl.id INNER JOIN public.asset a on a.id = ad.assetid INNER JOIN public.AssetValue av ON av.assetid = a.id INNER JOIN public.compatibleunit cu on cu.id = a.compatibleunitid INNER JOIN public.AssetTypeHierarchy at ON at.key = a.assettype AND at.cuid = a.compatibleunitid INNER JOIN public.criticalitytypelookup cl ON cl.id = cu.criticalitytypelookupid " + filter + "; " + "END;")
+		rows, err := s.dbAccess.Query("SELECT * FROM public.getnodeassetsrecursefiltered2('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "')")
 
 		if err != nil {
 			w.WriteHeader(500)
@@ -1461,48 +1423,10 @@ func (s *Server) handlegetFuncLocAssetsFiltered() http.HandlerFunc {
 			return
 		}
 
-		filter := ""
-		if hierarchy.Likelyhood != "" && hierarchy.Consequence != "" {
-			// variable for likelyhood filter
-			filterlikelyhood := ""
-			switch hierarchy.Likelyhood {
-			case "Almost Certain":
-				filterlikelyhood = "av.rulyears::INTEGER <= 1"
-			case "Likely":
-				filterlikelyhood = "av.rulyears::INTEGER > 1 AND av.rulyears::INTEGER <= 5"
-			case "Moderate":
-				filterlikelyhood = "av.rulyears::INTEGER > 5 AND av.rulyears::INTEGER <= 10"
-			case "Unlikely":
-				filterlikelyhood = "av.rulyears::INTEGER > 10 AND av.rulyears::INTEGER <= 20"
-			case "Rare":
-				filterlikelyhood = "av.rulyears::INTEGER > 20"
-			default:
-				filterlikelyhood = ""
-			}
-
-			// variable for consequence filter
-			filterconsequence := ""
-			switch hierarchy.Consequence {
-			case "Insignificant":
-				filterconsequence = "cl.code::integer = 1"
-			case "Minor":
-				filterconsequence = "cl.code::integer = 2"
-			case "Moderate":
-				filterconsequence = "cl.code::integer = 3"
-			case "Major":
-				filterconsequence = "cl.code::integer = 4"
-			case "Catastrophic":
-				filterconsequence = "cl.code::integer = 5"
-			default:
-				filterconsequence = ""
-			}
-
-			filter = "And " + filterlikelyhood + " And " + filterconsequence
-
-		}
+		
 
 		//set response variables
-		rows, err := s.dbAccess.Query("SELECT a.id, fll.funclocnodeid,  CASE WHEN a.name IS NULL OR a.name = '' THEN '' ELSE a.name::character varying END,  CASE WHEN a.description IS NULL OR a.description = '' THEN '' ELSE a.description::character varying END,  CASE WHEN a.lat IS NULL THEN 0 ELSE a.lat END,  CASE WHEN a.lon IS NULL THEN 0 ELSE a.lon END, CASE WHEN cu.name IS NULL OR cu.name = ''  THEN '' ELSE cu.name::varchar END, CASE WHEN at.assettype6name IS NULL  THEN (CASE WHEN at.assettype5name IS NULL THEN(CASE WHEN at.assettype4name IS NULL THEN (CASE WHEN at.assettype3name IS NULL THEN (CASE WHEN at.assettype2name IS NULL THEN '' ELSE at.assettype2name END) ELSE at.assettype3name END) ELSE at.assettype4name END) ELSE at.assettype5name END) ELSE at.assettype6name END, CASE WHEN a.serialno IS NULL OR a.serialno = '' THEN '' ELSE a.serialno::character varying END, CASE WHEN a.extent IS NULL THEN 0 ELSE a.extent END, CASE WHEN av.crc IS NULL THEN 0 ELSE av.crc END, CASE WHEN av.drc IS NULL THEN 0 ELSE av.drc END, CASE WHEN av.costclosingbalance IS NULL THEN 0 ELSE av.costclosingbalance END, CASE WHEN av.carryingvalueclosingbalance IS NULL THEN 0 ELSE av.carryingvalueclosingbalance END, CASE WHEN a.takeondate IS NULL THEN '' ELSE a.takeondate::character varying END, CASE WHEN av.rulyears IS NULL THEN 0 ELSE av.rulyears END, CONCAT(at.assettype1name ,' / ', at.assettype2name ,' / ', at.assettype3name ,' / ', at.assettype4name ,' / ', at.assettype5name ,' / ', at.assettype6name)::character varying, CASE WHEN cu.size IS NULL THEN 0 ELSE cu.size END FROM public.Asset a INNER JOIN public.AssetDeployment ad ON ad.assetid = a.id INNER JOIN public.Funcloc f ON f.id = ad.funclockid INNER JOIN public.funcloclink fll on fll.funclocid = f.id INNER JOIN public.AssetValue av ON av.assetid = a.id INNER JOIN public.compatibleunit cu on cu.id = a.compatibleunitid INNER JOIN public.AssetTypeHierarchy at ON at.key = a.assettype AND at.cuid = a.compatibleunitid INNER JOIN public.criticalitytypelookup cl ON cl.id = cu.criticalitytypelookupid INNER JOIN public.observationflexval afv ON afv.assetid = a.id  WHERE f.id = '" + hierarchy.NodeID + "' " + filter + "; " + "END;")
+		rows, err := s.dbAccess.Query("SELECT * FROM public.getfunclocassetsfiltered2('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "')")
 
 		if err != nil {
 			w.WriteHeader(500)
@@ -1582,48 +1506,10 @@ func (s *Server) handleGetNodeFuncLocsFiltered() http.HandlerFunc {
 			return
 		}
 
-		filter := ""
-		if hierarchy.Likelyhood != "" && hierarchy.Consequence != "" {
-			// variable for likelyhood filter
-			filterlikelyhood := ""
-			switch hierarchy.Likelyhood {
-			case "Almost Certain":
-				filterlikelyhood = "av.rulyears::INTEGER <= 1"
-			case "Likely":
-				filterlikelyhood = "av.rulyears::INTEGER > 1 AND av.rulyears::INTEGER <= 5"
-			case "Moderate":
-				filterlikelyhood = "av.rulyears::INTEGER > 5 AND av.rulyears::INTEGER <= 10"
-			case "Unlikely":
-				filterlikelyhood = "av.rulyears::INTEGER > 10 AND av.rulyears::INTEGER <= 20"
-			case "Rare":
-				filterlikelyhood = "av.rulyears::INTEGER > 20"
-			default:
-				filterlikelyhood = ""
-			}
-
-			// variable for consequence filter
-			filterconsequence := ""
-			switch hierarchy.Consequence {
-			case "Insignificant":
-				filterconsequence = "cl.code::integer = 1"
-			case "Minor":
-				filterconsequence = "cl.code::integer = 2"
-			case "Moderate":
-				filterconsequence = "cl.code::integer = 3"
-			case "Major":
-				filterconsequence = "cl.code::integer = 4"
-			case "Catastrophic":
-				filterconsequence = "cl.code::integer = 5"
-			default:
-				filterconsequence = ""
-			}
-
-			filter = "WHERE " + filterlikelyhood + " And " + filterconsequence
-
-		}
+		
 
 		//set response variables
-		rows, err := s.dbAccess.Query("WITH RECURSIVE hierarchy AS( SELECT fln_a.id, fln_a.parentid FROM public.funclocnode fln_a WHERE fln_a.id = '" + hierarchy.NodeID + "' UNION SELECT  fln.id, fln.parentid FROM public.funclocnode fln INNER JOIN hierarchy h ON h.id = fln.parentid) select fl.id, fll.funclocnodeid, CASE WHEN fl.name IS NULL OR fl.name = ''  THEN '' ELSE fl.name::varchar END, CASE WHEN fl.description IS NULL OR fl.description = ''  THEN '' ELSE fl.description::varchar END, CASE WHEN fl.lat IS NULL THEN 0 ELSE fl.lat END, CASE WHEN fl.lon IS NULL THEN 0 ELSE fl.lon END, CASE WHEN fl.statusdate IS NULL THEN '' ELSE fl.statusdate::varchar END, CASE WHEN fl.status IS NULL OR fl.status = ''  THEN '' ELSE fl.status::varchar END, CASE WHEN fln.name IS NULL OR fln.name = ''  THEN '' ELSE fln.name::varchar END FROM hierarchy h INNER JOIN public.funclocnode fln on fln.id = h.id INNER JOIN public.funcloclink fll on fll.funclocnodeid = h.id INNER JOIN public.funcloc fl on fll.funclocid = fl.id INNER JOIN public.assetdeployment ad on ad.funclockid = fl.id INNER JOIN public.asset a on a.id = ad.assetid INNER JOIN public.AssetValue av ON av.assetid = a.id INNER JOIN public.compatibleunit cu on cu.id = a.compatibleunitid INNER JOIN public.criticalitytypelookup cl ON cl.id = cu.criticalitytypelookupid INNER JOIN public.observationflexval afv ON afv.assetid = a.id " + filter + "; " + "END;")
+		rows, err := s.dbAccess.Query("SELECT * FROM public.getnodefunclocrecursefilter2('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "')")
 
 		if err != nil {
 			w.WriteHeader(500)
@@ -1695,48 +1581,9 @@ func (s *Server) handleGetNodeFuncLocSpatialFiltered() http.HandlerFunc {
 			return
 		}
 
-		filter := ""
-		if hierarchy.Likelyhood != "" && hierarchy.Consequence != "" {
-			// variable for likelyhood filter
-			filterlikelyhood := ""
-			switch hierarchy.Likelyhood {
-			case "Almost Certain":
-				filterlikelyhood = "av.rulyears::INTEGER <= 1"
-			case "Likely":
-				filterlikelyhood = "av.rulyears::INTEGER > 1 AND av.rulyears::INTEGER <= 5"
-			case "Moderate":
-				filterlikelyhood = "av.rulyears::INTEGER > 5 AND av.rulyears::INTEGER <= 10"
-			case "Unlikely":
-				filterlikelyhood = "av.rulyears::INTEGER > 10 AND av.rulyears::INTEGER <= 20"
-			case "Rare":
-				filterlikelyhood = "av.rulyears::INTEGER > 20"
-			default:
-				filterlikelyhood = ""
-			}
-
-			// variable for consequence filter
-			filterconsequence := ""
-			switch hierarchy.Consequence {
-			case "Insignificant":
-				filterconsequence = "cl.code::integer = 1"
-			case "Minor":
-				filterconsequence = "cl.code::integer = 2"
-			case "Moderate":
-				filterconsequence = "cl.code::integer = 3"
-			case "Major":
-				filterconsequence = "cl.code::integer = 4"
-			case "Catastrophic":
-				filterconsequence = "cl.code::integer = 5"
-			default:
-				filterconsequence = ""
-			}
-
-			filter = "WHERE " + filterlikelyhood + " And " + filterconsequence
-
-		}
 
 		//set response variables
-		rows, err := s.dbAccess.Query("WITH RECURSIVE hierarchy AS( SELECT fln_a.id, fln_a.parentid FROM public.funclocnode fln_a WHERE fln_a.id = '" + hierarchy.NodeID + "' UNION SELECT  fln.id, fln.parentid FROM public.funclocnode fln INNER JOIN hierarchy h ON h.id = fln.parentid) select fl.id, fll.funclocnodeid, CASE WHEN fl.name IS NULL OR fl.name = ''  THEN '' ELSE fl.name::varchar END, CASE WHEN fl.description IS NULL OR fl.description = ''  THEN '' ELSE fl.description::varchar END, CASE WHEN fl.lat IS NULL THEN 0 ELSE fl.lat END, CASE WHEN fl.lon IS NULL THEN 0 ELSE fl.lon END, CASE WHEN fl.statusdate IS NULL THEN '' ELSE fl.statusdate::varchar END, CASE WHEN fl.status IS NULL OR fl.status = ''  THEN '' ELSE fl.status::varchar END, CASE WHEN fln.name IS NULL OR fln.name = ''  THEN '' ELSE fln.name::varchar END FROM hierarchy h INNER JOIN public.funclocnode fln on fln.id = h.id INNER JOIN public.funcloclink fll on fll.funclocnodeid = h.id INNER JOIN public.funcloc fl on fll.funclocid = fl.id INNER JOIN public.assetdeployment ad on ad.funclockid = fl.id INNER JOIN public.asset a on a.id = ad.assetid INNER JOIN public.AssetValue av ON av.assetid = a.id INNER JOIN public.compatibleunit cu on cu.id = a.compatibleunitid INNER JOIN public.criticalitytypelookup cl ON cl.id = cu.criticalitytypelookupid INNER JOIN public.observationflexval afv ON afv.assetid = a.id " + filter + "; " + "END;")
+		rows, err := s.dbAccess.Query("SELECT * FROM public.getnodefunclocrecursefilter2('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "')")
 
 		if err != nil {
 			w.WriteHeader(500)
