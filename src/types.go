@@ -579,10 +579,10 @@ type PortfolioDD struct {
 }
 
 type PortfolioList struct {
-	Portfolio []PortfolioDD `json:"Levels"`
+	Portfolio []PortfolioDD `json:"levels"`
 	CRC       string        `json:"crc"`
 }
 
 type PortfolioListHigher struct {
-	PortfolioHigher []PortfolioList `json:"Levels"`
+	PortfolioHigher []PortfolioList `json:"portfolio"`
 }
