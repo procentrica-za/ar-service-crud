@@ -572,3 +572,17 @@ type ReplacementByCondition struct {
 	Condition string `json:"condition"`
 	CRC       string `json:"replacementcost"`
 }
+
+type PortfolioDD struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+}
+
+type PortfolioList struct {
+	Portfolio []PortfolioDD `json:"Levels"`
+	CRC       string        `json:"crc"`
+}
+
+type PortfolioListHigher struct {
+	PortfolioHigher []PortfolioList `json:"Levels"`
+}

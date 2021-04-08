@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 )
 
@@ -548,6 +549,110 @@ func (s *Server) handleGetRiskCriticalityFilter() http.HandlerFunc {
 		if jserr != nil {
 			w.WriteHeader(500)
 			fmt.Fprintf(w, "Unable to create JSON from DB RiskCriticality result...")
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(200)
+		w.Write(js)
+	}
+}
+
+func (s *Server) handleGetPortfolioFilter() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		fmt.Println(" Handle Get Portfolio Filter has Been Called...")
+		body, err := ioutil.ReadAll(r.Body)
+		//Unmarshal for funcloc
+		hierarchy := FlattenedHierarchyFilter{}
+		err = json.Unmarshal(body, &hierarchy)
+
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Bad JSON provided to filter flattened")
+			return
+		}
+
+		//set response variables
+		rows, err := s.dbAccess.Query("SELECT * FROM public.assetportfoliofilter('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "')")
+
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to process DB Function...")
+			return
+		}
+		defer rows.Close()
+
+		portfolioListHigher := PortfolioListHigher{}
+		portfolioListHigher.PortfolioHigher = []PortfolioList{}
+
+		var a1id,
+			a1,
+			a2id,
+			a2,
+			a3id,
+			a3,
+			a4id,
+			a4,
+			a5id,
+			a5,
+			a6id,
+			a6, crc string
+
+		for rows.Next() {
+			err = rows.Scan(&a1id, &a1, &a2id, &a2, &a3id, &a3, &a4id, &a4, &a5id, &a5, &a6id, &a6, &crc)
+			if err != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to read data from assets List...")
+				fmt.Println(err.Error())
+				return
+			}
+			portfolioListDDlvl1 := PortfolioDD{}
+			portfolioListDDlvl2 := PortfolioDD{}
+			portfolioListDDlvl3 := PortfolioDD{}
+			portfolioListDDlvl4 := PortfolioDD{}
+			portfolioListDDlvl5 := PortfolioDD{}
+			portfolioListDDlvl6 := PortfolioDD{}
+
+			portfolioListDDlvl1.ID = a1id
+			portfolioListDDlvl1.Name = a1
+			portfolioListDDlvl2.ID = a2id
+			portfolioListDDlvl2.Name = a2
+			portfolioListDDlvl3.ID = a3id
+			portfolioListDDlvl3.Name = a3
+			portfolioListDDlvl4.ID = a4id
+			portfolioListDDlvl4.Name = a4
+			portfolioListDDlvl5.ID = a5id
+			portfolioListDDlvl5.Name = a5
+			portfolioListDDlvl6.ID = a6id
+			portfolioListDDlvl6.Name = a6
+
+			portfolioList := PortfolioList{}
+			portfolioList.CRC = crc
+			portfolioList.Portfolio = append(portfolioList.Portfolio, portfolioListDDlvl1)
+			portfolioList.Portfolio = append(portfolioList.Portfolio, portfolioListDDlvl2)
+			portfolioList.Portfolio = append(portfolioList.Portfolio, portfolioListDDlvl3)
+			portfolioList.Portfolio = append(portfolioList.Portfolio, portfolioListDDlvl4)
+			portfolioList.Portfolio = append(portfolioList.Portfolio, portfolioListDDlvl5)
+			portfolioList.Portfolio = append(portfolioList.Portfolio, portfolioListDDlvl6)
+
+			portfolioListHigher.PortfolioHigher = append(portfolioListHigher.PortfolioHigher, portfolioList)
+		}
+
+		// get any error encountered during iteration
+		err = rows.Err()
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to read data from assets List...")
+			return
+		}
+
+		js, jserr := json.Marshal(portfolioListHigher)
+
+		//If Queryrow returns error, provide error to caller and exit
+		if jserr != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to create JSON from DB portfolio result...")
 			return
 		}
 
