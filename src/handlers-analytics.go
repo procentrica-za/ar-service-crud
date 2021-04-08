@@ -597,8 +597,9 @@ func (s *Server) handleGetPortfolioFilter() http.HandlerFunc {
 			a5id,
 			a5,
 			a6id,
-			a6, crc string
+			a6 string
 
+		var crc float32
 		for rows.Next() {
 			err = rows.Scan(&a1id, &a1, &a2id, &a2, &a3id, &a3, &a4id, &a4, &a5id, &a5, &a6id, &a6, &crc)
 			if err != nil {

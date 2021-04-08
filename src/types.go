@@ -580,7 +580,7 @@ type PortfolioDD struct {
 
 type PortfolioList struct {
 	Portfolio []PortfolioDD `json:"levels"`
-	CRC       string        `json:"crc"`
+	CRC       float32       `json:"crc"`
 }
 
 type PortfolioListHigher struct {
