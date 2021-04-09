@@ -380,6 +380,12 @@ type FlexVals struct {
 	Name         string `json:"name,omitempty"`
 	Value        string `json:"value,omitempty"`
 	DisplayOrder string `json:"displayorder,omitempty"`
+	Flddefname   string `json:"flddefname,omitempty"`
+	Datatype     string `json:"datatype,omitempty"`
+	Controltype  string `json:"controltype,omitempty"`
+	Isunique     bool   `json:"isunique,omitempty"`
+	Unit         string `json:"unit,omitempty"`
+	Lookupvals   string `json:"lookupvals,omitempty"`
 }
 
 type AssetDetail struct {

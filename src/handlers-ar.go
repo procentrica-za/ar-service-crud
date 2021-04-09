@@ -584,17 +584,18 @@ func (s *Server) handleGetAssetFlexval() http.HandlerFunc {
 		flexvalList := AssetDetail{}
 		flexvalList.Flexvals = []FlexVals{}
 
-		var category, name, value, displayorder string
+		var category, name, value, displayorder, flddefname, datatype, controltype, unit, lookupvals string
+		var isunique bool
 
 		for rows.Next() {
-			err = rows.Scan(&category, &name, &value, &displayorder)
+			err = rows.Scan(&category, &name, &value, &displayorder, &flddefname, &datatype, &controltype, &isunique, &unit, &lookupvals)
 			if err != nil {
 				w.WriteHeader(500)
 				fmt.Fprintf(w, "Unable to read data from FlexVal List...")
 				fmt.Println(err.Error())
 				return
 			}
-			flexvalList.Flexvals = append(flexvalList.Flexvals, FlexVals{category, name, value, displayorder})
+			flexvalList.Flexvals = append(flexvalList.Flexvals, FlexVals{category, name, value, displayorder, flddefname, datatype, controltype, isunique, unit, lookupvals})
 		}
 		// get any error encountered during iteration
 		err = rows.Err()
@@ -1257,8 +1258,6 @@ func (s *Server) handleGetNodeHierarchyFlattenedFiltered() http.HandlerFunc {
 			return
 		}
 
-	
-
 		//Get filtered child and parent elements for funclocnode
 		rows, err := s.dbAccess.Query("SELECT * FROM public.getallfunclocnodesfiltered2nulls('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "')")
 
@@ -1304,8 +1303,6 @@ func (s *Server) handleGetNodeHierarchyFlattenedFiltered() http.HandlerFunc {
 			return
 		}
 
-
-
 		js, jserr := json.Marshal(nodesList)
 
 		//If Queryrow returns error, provide error to caller and exit
@@ -1337,8 +1334,6 @@ func (s *Server) handleGetNodeAssetsFiltered() http.HandlerFunc {
 			fmt.Fprintf(w, "Bad JSON provided to filter flattened")
 			return
 		}
-
-		
 
 		//set response variables
 		rows, err := s.dbAccess.Query("SELECT * FROM public.getnodeassetsrecursefiltered2('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "')")
@@ -1423,8 +1418,6 @@ func (s *Server) handlegetFuncLocAssetsFiltered() http.HandlerFunc {
 			return
 		}
 
-		
-
 		//set response variables
 		rows, err := s.dbAccess.Query("SELECT * FROM public.getfunclocassetsfiltered2('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "')")
 
@@ -1506,8 +1499,6 @@ func (s *Server) handleGetNodeFuncLocsFiltered() http.HandlerFunc {
 			return
 		}
 
-		
-
 		//set response variables
 		rows, err := s.dbAccess.Query("SELECT * FROM public.getnodefunclocrecursefilter2('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "')")
 
@@ -1580,7 +1571,6 @@ func (s *Server) handleGetNodeFuncLocSpatialFiltered() http.HandlerFunc {
 			fmt.Fprintf(w, "Bad JSON provided to filter node funclocs spatial")
 			return
 		}
-
 
 		//set response variables
 		rows, err := s.dbAccess.Query("SELECT * FROM public.getnodefunclocrecursefilter2('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "')")
