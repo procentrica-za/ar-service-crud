@@ -1629,3 +1629,59 @@ func (s *Server) handleGetNodeFuncLocSpatialFiltered() http.HandlerFunc {
 		w.Write(js)
 	}
 }
+
+// The function handling the request to get observation flex val
+func (s *Server) handleGetAssetObservationFlexval() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println(" Handle Get asset observation flex vals Has Been Called...")
+		// retrieving the ID of node that is requested.
+		id := r.URL.Query().Get("id")
+
+		//set response variables
+		rows, err := s.dbAccess.Query("SELECT * FROM public.getassetdetailobservationflexval('" + id + "')")
+
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to process DB Function...")
+			return
+		}
+		defer rows.Close()
+
+		flexvalList := AssetDetail{}
+		flexvalList.Flexvals = []FlexVals{}
+
+		var category, name, value, displayorder, flddefname, datatype, controltype, unit, lookupvals string
+		var isunique bool
+
+		for rows.Next() {
+			err = rows.Scan(&category, &name, &value, &displayorder, &flddefname, &datatype, &controltype, &isunique, &unit, &lookupvals)
+			if err != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to read data from FlexVal List...")
+				fmt.Println(err.Error())
+				return
+			}
+			flexvalList.Flexvals = append(flexvalList.Flexvals, FlexVals{category, name, value, displayorder, flddefname, datatype, controltype, isunique, unit, lookupvals})
+		}
+		// get any error encountered during iteration
+		err = rows.Err()
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to read data from FlexVal List...")
+			return
+		}
+
+		js, jserr := json.Marshal(flexvalList)
+
+		//If Queryrow returns error, provide error to caller and exit
+		if jserr != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to create JSON from DB result...")
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(200)
+		w.Write(js)
+	}
+}
