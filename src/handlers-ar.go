@@ -1286,9 +1286,22 @@ func (s *Server) handleGetNodeHierarchyFlattenedFiltered() http.HandlerFunc {
 			return
 		}
 
-		//Get filtered child and parent elements for funclocnode
-		rows, err := s.dbAccess.Query("SELECT * FROM public.getallfunclocnodesfiltered2nulls('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "')")
+		if hierarchy.AssettypeID == "" {
+			fmt.Println("Hit")
+			hierarchy.AssettypeID = "00000000-0000-0000-0000-000000000000"
+		}
 
+		if hierarchy.Likelyhood == "" {
+			hierarchy.Likelyhood = "none"
+		}
+
+		if hierarchy.Consequence == "" {
+			hierarchy.Consequence = "none"
+		}
+
+		//Get filtered child and parent elements for funclocnode
+		rows, err := s.dbAccess.Query("SELECT * FROM public.getallfunclocnodesfiltered2nulls('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "')")
+		fmt.Println(hierarchy.NodeID, hierarchy.AssettypeID, hierarchy.Consequence, hierarchy.Likelyhood)
 		if err != nil {
 			w.WriteHeader(500)
 			fmt.Fprintf(w, "Unable to process DB Function...")

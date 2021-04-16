@@ -480,6 +480,7 @@ type FlattenedHierarchyFilter struct {
 	NodeID      string `json:"nodeid,omitempty"`
 	Likelyhood  string `json:"likelyhood,omitempty"`
 	Consequence string `json:"consequence,omitempty"`
+	AssettypeID string `json:"assettypeid,omitempty"`
 }
 
 type FlattenedHierarchyList struct {
