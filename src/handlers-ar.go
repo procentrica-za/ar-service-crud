@@ -1374,8 +1374,20 @@ func (s *Server) handleGetNodeAssetsFiltered() http.HandlerFunc {
 			return
 		}
 
+		if hierarchy.AssettypeID == "" {
+			hierarchy.AssettypeID = "00000000-0000-0000-0000-000000000000"
+		}
+
+		if hierarchy.Likelyhood == "" {
+			hierarchy.Likelyhood = "none"
+		}
+
+		if hierarchy.Consequence == "" {
+			hierarchy.Consequence = "none"
+		}
+
 		//set response variables
-		rows, err := s.dbAccess.Query("SELECT * FROM public.getnodeassetsrecursefiltered2('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "')")
+		rows, err := s.dbAccess.Query("SELECT * FROM public.getnodeassetsrecursefiltered2('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "')")
 
 		if err != nil {
 			w.WriteHeader(500)
@@ -1457,8 +1469,20 @@ func (s *Server) handlegetFuncLocAssetsFiltered() http.HandlerFunc {
 			return
 		}
 
+		if hierarchy.AssettypeID == "" {
+			hierarchy.AssettypeID = "00000000-0000-0000-0000-000000000000"
+		}
+
+		if hierarchy.Likelyhood == "" {
+			hierarchy.Likelyhood = "none"
+		}
+
+		if hierarchy.Consequence == "" {
+			hierarchy.Consequence = "none"
+		}
+
 		//set response variables
-		rows, err := s.dbAccess.Query("SELECT * FROM public.getfunclocassetsfiltered2('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "')")
+		rows, err := s.dbAccess.Query("SELECT * FROM public.getfunclocassetsfiltered2('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "')")
 
 		if err != nil {
 			w.WriteHeader(500)
@@ -1538,8 +1562,20 @@ func (s *Server) handleGetNodeFuncLocsFiltered() http.HandlerFunc {
 			return
 		}
 
+		if hierarchy.AssettypeID == "" {
+			hierarchy.AssettypeID = "00000000-0000-0000-0000-000000000000"
+		}
+
+		if hierarchy.Likelyhood == "" {
+			hierarchy.Likelyhood = "none"
+		}
+
+		if hierarchy.Consequence == "" {
+			hierarchy.Consequence = "none"
+		}
+
 		//set response variables
-		rows, err := s.dbAccess.Query("SELECT * FROM public.getnodefunclocrecursefilter2('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "')")
+		rows, err := s.dbAccess.Query("SELECT * FROM public.getnodefunclocrecursefilter2('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "')")
 
 		if err != nil {
 			w.WriteHeader(500)
@@ -1611,8 +1647,20 @@ func (s *Server) handleGetNodeFuncLocSpatialFiltered() http.HandlerFunc {
 			return
 		}
 
+		if hierarchy.AssettypeID == "" {
+			hierarchy.AssettypeID = "00000000-0000-0000-0000-000000000000"
+		}
+
+		if hierarchy.Likelyhood == "" {
+			hierarchy.Likelyhood = "none"
+		}
+
+		if hierarchy.Consequence == "" {
+			hierarchy.Consequence = "none"
+		}
+
 		//set response variables
-		rows, err := s.dbAccess.Query("SELECT * FROM public.getnodefunclocrecursefilter2('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "')")
+		rows, err := s.dbAccess.Query("SELECT * FROM public.getnodefunclocrecursefilter2('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "')")
 
 		if err != nil {
 			w.WriteHeader(500)
