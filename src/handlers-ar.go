@@ -1287,7 +1287,6 @@ func (s *Server) handleGetNodeHierarchyFlattenedFiltered() http.HandlerFunc {
 		}
 
 		if hierarchy.AssettypeID == "" {
-			fmt.Println("Hit")
 			hierarchy.AssettypeID = "00000000-0000-0000-0000-000000000000"
 		}
 
@@ -1301,7 +1300,6 @@ func (s *Server) handleGetNodeHierarchyFlattenedFiltered() http.HandlerFunc {
 
 		//Get filtered child and parent elements for funclocnode
 		rows, err := s.dbAccess.Query("SELECT * FROM public.getallfunclocnodesfiltered2nulls('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "')")
-		fmt.Println(hierarchy.NodeID, hierarchy.AssettypeID, hierarchy.Consequence, hierarchy.Likelyhood)
 		if err != nil {
 			w.WriteHeader(500)
 			fmt.Fprintf(w, "Unable to process DB Function...")
