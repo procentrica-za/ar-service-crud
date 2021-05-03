@@ -1716,3 +1716,109 @@ func (s *Server) handleGetNodeFuncLocSpatialFiltered() http.HandlerFunc {
 		w.Write(js)
 	}
 }
+
+func (s *Server) handleUpdate() http.HandlerFunc {
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		body, err := ioutil.ReadAll(r.Body)
+		update := Update{}
+
+		err = json.Unmarshal(body, &update)
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Bad JSON provided to update asset")
+			return
+		}
+		var success bool
+		var message string
+
+		if update.AssetID != "" {
+			asset := UpdateAsset{}
+
+			err = json.Unmarshal(body, &asset)
+
+			js, jserr := json.Marshal(asset)
+			updateAssetResultList := []toAssetRegisterResult{}
+			updateAssetResult := toAssetRegisterResult{}
+
+			jsonString := string(js)
+			querystring := "SELECT * FROM public.updateasset('[" + jsonString + "]')"
+			//retrieve result message from database set to response JSON object
+			err = s.dbAccess.QueryRow(querystring).Scan(&success, &message)
+			//check for response error of 500
+			if err != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to process DB Function to update an Asset\n")
+				fmt.Println(err.Error() + "\n")
+				fmt.Println("Error in communicating with database to update Asset")
+				return
+			}
+
+			updateAssetResult.Success = success
+			updateAssetResult.Message = message
+			updateAssetResultList = append(updateAssetResultList, updateAssetResult)
+
+			//convert struct back to JSON
+			js, jserr = json.Marshal(updateAssetResultList)
+
+			//error occured when trying to convert struct to a JSON object
+			if jserr != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to create JSON result object from DB result to update Asset.")
+				return
+			}
+
+			//return back to advert service
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(200)
+			w.Write(js)
+
+		}
+
+	}
+}
+
+func (s *Server) handleDelete() http.HandlerFunc {
+
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		fmt.Println("Handle Get Asset Has Been Called...")
+		// retrieving the ID of the asset that is requested.
+		assetid := r.URL.Query().Get("assetid")
+
+		if assetid != "" {
+			var davsuccess bool
+			var davmessage string
+			querystring := "SELECT * FROM public.deleteasset('" + assetid + "')"
+			//retrieve result message from database set to response JSON object
+			err := s.dbAccess.QueryRow(querystring).Scan(&davsuccess, &davmessage)
+			//check for response error of 500
+			if err != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to process DB Function to post an Asset Flex Val\n"+err.Error()+"\n")
+				fmt.Println(err.Error() + "\n")
+				fmt.Println("Error in communicating with database to asset flex val")
+				return
+			}
+
+			assetresponse := DeleteResponse{}
+
+			assetresponse.Assetdeleted = davmessage
+
+			//convert struct back to JSON
+			js, jserr := json.Marshal(assetresponse)
+
+			if jserr != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to create JSON message for deleted object")
+				return
+			}
+
+			//return back to advert service
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(200)
+			w.Write(js)
+
+		}
+	}
+}

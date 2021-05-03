@@ -56,6 +56,7 @@ func (s *Server) routes() {
 	s.router.HandleFunc("/riskcriticalitydetails", s.handleGetRiskCriticalityDetails()).Methods("GET")
 	s.router.HandleFunc("/riskcriticalityfilter", s.handleGetRiskCriticalityFilter()).Methods("GET")
 	s.router.HandleFunc("/portfoliofiltered", s.handleGetPortfolioFilter()).Methods("POST")
+	s.router.HandleFunc("/renewalprofiledetails", s.handleGetRenewalProfileDetails()).Methods("GET")
 
 	//Filtered endpoints
 	s.router.HandleFunc("/nodehierarchyfiltered", s.handleGetNodeHierarchyFlattenedFiltered()).Methods("POST")
@@ -63,4 +64,8 @@ func (s *Server) routes() {
 	s.router.HandleFunc("/funclocassetsfiltered", s.handlegetFuncLocAssetsFiltered()).Methods("POST")
 	s.router.HandleFunc("/nodefunclocsfiltered", s.handleGetNodeFuncLocsFiltered()).Methods("POST")
 	s.router.HandleFunc("/nodefunclocspatialfiltered", s.handleGetNodeFuncLocSpatialFiltered()).Methods("POST")
+
+	//Maintenence endpoints
+	s.router.HandleFunc("/update", s.handleUpdate()).Methods("PUT")
+	s.router.HandleFunc("/delete", s.handleDelete()).Methods("DELETE")
 }
