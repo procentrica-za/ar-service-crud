@@ -585,8 +585,12 @@ func (s *Server) handleGetPortfolioFilter() http.HandlerFunc {
 			hierarchy.Consequence = "none"
 		}
 
+		if hierarchy.Rulyears == "" {
+			hierarchy.Rulyears = "0"
+		}
+
 		//set response variables
-		rows, err := s.dbAccess.Query("SELECT * FROM public.assetportfoliofilter('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "')")
+		rows, err := s.dbAccess.Query("SELECT * FROM public.assetportfoliofilter('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "', '" + hierarchy.Rulyears + "')")
 
 		if err != nil {
 			w.WriteHeader(500)
