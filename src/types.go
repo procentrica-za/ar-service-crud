@@ -601,6 +601,15 @@ type PortfolioListHigher struct {
 	PortfolioHigher []PortfolioList `json:"portfolio"`
 }
 
+type PortfolioListCost struct {
+	Portfolio []PortfolioDD `json:"levels"`
+	Cost      float32       `json:"cost"`
+}
+
+type PortfolioListHigherCost struct {
+	PortfolioHigher []PortfolioListCost `json:"portfolio"`
+}
+
 type Update struct {
 	AssetID string `json:"assetid"`
 }
