@@ -683,11 +683,34 @@ func (s *Server) handleGetRenewalProfileDetails() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		fmt.Println(" Handle Get renewalprofile details has Been Called...")
-		// retrieving the ID of node assets that are requested.
-		nodeid := r.URL.Query().Get("nodeid")
+		body, err := ioutil.ReadAll(r.Body)
+		//Unmarshal for funcloc
+		hierarchy := FlattenedHierarchyFilter{}
+		err = json.Unmarshal(body, &hierarchy)
 
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Bad JSON provided to filter flattened")
+			return
+		}
+
+		if hierarchy.AssettypeID == "" {
+			hierarchy.AssettypeID = "00000000-0000-0000-0000-000000000000"
+		}
+
+		if hierarchy.Likelyhood == "" {
+			hierarchy.Likelyhood = "none"
+		}
+
+		if hierarchy.Consequence == "" {
+			hierarchy.Consequence = "none"
+		}
+
+		if hierarchy.Rulyears == "" {
+			hierarchy.Rulyears = "0"
+		}
 		//set response variables
-		rows, err := s.dbAccess.Query("SELECT * FROM public.renewalprofiledetailsgrouped('" + nodeid + "')")
+		rows, err := s.dbAccess.Query("SELECT * FROM public.renewalprofiledetailsgrouped('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "', '" + hierarchy.Rulyears + "')")
 
 		if err != nil {
 			w.WriteHeader(500)
