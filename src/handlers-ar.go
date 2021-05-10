@@ -584,7 +584,7 @@ func (s *Server) handleGetAssetFlexval() http.HandlerFunc {
 		flexvalList := AssetDetail{}
 		flexvalList.Flexvals = []FlexVals{}
 
-		var category, name, value, displayorder, flddefname, datatype, controltype, unit, lookupvals string
+		var category, name, value, displayorder, flddefname, datatype, controltype, unit, lookupvals, dateadded string
 		var isunique bool
 
 		for rows.Next() {
@@ -595,7 +595,7 @@ func (s *Server) handleGetAssetFlexval() http.HandlerFunc {
 				fmt.Println(err.Error())
 				return
 			}
-			flexvalList.Flexvals = append(flexvalList.Flexvals, FlexVals{category, name, value, displayorder, flddefname, datatype, controltype, isunique, unit, lookupvals})
+			flexvalList.Flexvals = append(flexvalList.Flexvals, FlexVals{category, name, value, displayorder, flddefname, datatype, controltype, isunique, unit, lookupvals, ""})
 		}
 		// get any error encountered during iteration
 		err = rows.Err()
@@ -616,14 +616,14 @@ func (s *Server) handleGetAssetFlexval() http.HandlerFunc {
 		defer rows1.Close()
 
 		for rows1.Next() {
-			err = rows1.Scan(&category, &name, &value, &displayorder, &flddefname, &datatype, &controltype, &isunique, &unit, &lookupvals)
+			err = rows1.Scan(&category, &name, &value, &displayorder, &flddefname, &datatype, &controltype, &isunique, &unit, &lookupvals, &dateadded)
 			if err != nil {
 				w.WriteHeader(500)
 				fmt.Fprintf(w, "Unable to read data from FlexVal List...")
 				fmt.Println(err.Error())
 				return
 			}
-			flexvalList.Flexvals = append(flexvalList.Flexvals, FlexVals{category, name, value, displayorder, flddefname, datatype, controltype, isunique, unit, lookupvals})
+			flexvalList.Flexvals = append(flexvalList.Flexvals, FlexVals{category, name, value, displayorder, flddefname, datatype, controltype, isunique, unit, lookupvals, dateadded})
 		}
 		// get any error encountered during iteration
 		err = rows1.Err()
