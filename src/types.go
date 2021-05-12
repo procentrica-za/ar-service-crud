@@ -482,7 +482,7 @@ type FlattenedHierarchyFilter struct {
 	Likelyhood  string `json:"likelyhood,omitempty"`
 	Consequence string `json:"consequence,omitempty"`
 	AssettypeID string `json:"assettypeid,omitempty"`
-	Rulyears    string `json:"rulyears,omitempty"`
+	Rulyears    int    `json:"rulyears,omitempty"`
 }
 
 type FlattenedHierarchyList struct {

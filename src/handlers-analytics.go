@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 )
 
 func (s *Server) handlePopulate() http.HandlerFunc {
@@ -585,12 +586,15 @@ func (s *Server) handleGetPortfolioFilter() http.HandlerFunc {
 			hierarchy.Consequence = "none"
 		}
 
-		if hierarchy.Rulyears == "" {
-			hierarchy.Rulyears = "0"
+		newRUL := ""
+		if hierarchy.Rulyears == 0 {
+			newRUL = "0"
 		}
 
+		newRUL = strconv.Itoa(hierarchy.Rulyears)
+
 		//set response variables
-		rows, err := s.dbAccess.Query("SELECT * FROM public.assetportfoliofilter('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "', '" + hierarchy.Rulyears + "')")
+		rows, err := s.dbAccess.Query("SELECT * FROM public.assetportfoliofilter('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "', '" + newRUL + "')")
 
 		if err != nil {
 			w.WriteHeader(500)
@@ -706,11 +710,15 @@ func (s *Server) handleGetRenewalProfileDetails() http.HandlerFunc {
 			hierarchy.Consequence = "none"
 		}
 
-		if hierarchy.Rulyears == "" {
-			hierarchy.Rulyears = "0"
+		newRUL := ""
+		if hierarchy.Rulyears == 0 {
+			newRUL = "0"
 		}
+
+		newRUL = strconv.Itoa(hierarchy.Rulyears)
+
 		//set response variables
-		rows, err := s.dbAccess.Query("SELECT * FROM public.renewalprofiledetailsgrouped('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "', '" + hierarchy.Rulyears + "')")
+		rows, err := s.dbAccess.Query("SELECT * FROM public.renewalprofiledetailsgrouped('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "', '" + newRUL + "')")
 
 		if err != nil {
 			w.WriteHeader(500)
@@ -784,12 +792,15 @@ func (s *Server) handleGetPortfolioFilterCost() http.HandlerFunc {
 			hierarchy.Consequence = "none"
 		}
 
-		if hierarchy.Rulyears == "" {
-			hierarchy.Rulyears = "0"
+		newRUL := ""
+		if hierarchy.Rulyears == 0 {
+			newRUL = "0"
 		}
 
+		newRUL = strconv.Itoa(hierarchy.Rulyears)
+
 		//set response variables
-		rows, err := s.dbAccess.Query("SELECT * FROM public.assetportfoliofiltercost('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "', '" + hierarchy.Rulyears + "')")
+		rows, err := s.dbAccess.Query("SELECT * FROM public.assetportfoliofiltercost('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "', '" + newRUL + "')")
 
 		if err != nil {
 			w.WriteHeader(500)
