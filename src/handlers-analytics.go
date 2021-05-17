@@ -437,12 +437,37 @@ func (s *Server) handleGetRiskCriticalityDrillDown() http.HandlerFunc {
 func (s *Server) handleGetRiskCriticalityDetails() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
-		fmt.Println(" Handle Get RiskCriticalityDetails has Been Called...")
-		// retrieving the ID of node assets that are requested.
-		nodeid := r.URL.Query().Get("nodeid")
+		fmt.Println(" Handle Get risk criticality details has Been Called...")
+		body, err := ioutil.ReadAll(r.Body)
+		//Unmarshal for funcloc
+		hierarchy := FlattenedHierarchyFilter{}
+		err = json.Unmarshal(body, &hierarchy)
 
-		//set response variables
-		rows, err := s.dbAccess.Query("SELECT * FROM public.riskcriticalitydetailsgrouped('" + nodeid + "')")
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Bad JSON provided to filter flattened")
+			return
+		}
+
+		if hierarchy.AssettypeID == "" {
+			hierarchy.AssettypeID = "00000000-0000-0000-0000-000000000000"
+		}
+
+		if hierarchy.Likelyhood == "" {
+			hierarchy.Likelyhood = "none"
+		}
+
+		if hierarchy.Consequence == "" {
+			hierarchy.Consequence = "none"
+		}
+
+		newRUL := ""
+		if hierarchy.Rulyears == 0 {
+			newRUL = "0"
+		}
+
+		newRUL = strconv.Itoa(hierarchy.Rulyears)
+		rows, err := s.dbAccess.Query("SELECT * FROM public.riskcriticalitydetailsgrouped('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "', '" + newRUL + "')")
 
 		if err != nil {
 			w.WriteHeader(500)
