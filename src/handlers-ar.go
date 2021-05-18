@@ -584,6 +584,7 @@ func (s *Server) handleGetAssetFlexval() http.HandlerFunc {
 
 		flexvalList := AssetDetail{}
 		flexvalList.Flexvals = []FlexVals{}
+		flexvalList.ObservationFlexvals = []ObFlexVals{}
 
 		var category, name, value, displayorder, flddefname, datatype, controltype, unit, lookupvals, dateadded string
 		var isunique bool
@@ -596,7 +597,7 @@ func (s *Server) handleGetAssetFlexval() http.HandlerFunc {
 				fmt.Println(err.Error())
 				return
 			}
-			flexvalList.Flexvals = append(flexvalList.Flexvals, FlexVals{category, name, value, displayorder, flddefname, datatype, controltype, isunique, unit, lookupvals, ""})
+			flexvalList.Flexvals = append(flexvalList.Flexvals, FlexVals{category, name, value, displayorder, flddefname, datatype, controltype, isunique, unit, lookupvals})
 		}
 		// get any error encountered during iteration
 		err = rows.Err()
@@ -624,7 +625,7 @@ func (s *Server) handleGetAssetFlexval() http.HandlerFunc {
 				fmt.Println(err.Error())
 				return
 			}
-			flexvalList.Flexvals = append(flexvalList.Flexvals, FlexVals{category, name, value, displayorder, flddefname, datatype, controltype, isunique, unit, lookupvals, dateadded})
+			flexvalList.ObservationFlexvals = append(flexvalList.ObservationFlexvals, ObFlexVals{category, name, value, displayorder, flddefname, datatype, controltype, isunique, unit, lookupvals, dateadded})
 		}
 		// get any error encountered during iteration
 		err = rows1.Err()

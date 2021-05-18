@@ -386,11 +386,25 @@ type FlexVals struct {
 	Isunique     bool   `json:"isunique,omitempty"`
 	Unit         string `json:"unit,omitempty"`
 	Lookupvals   string `json:"lookupvals,omitempty"`
+}
+
+type ObFlexVals struct {
+	Category     string `json:"category,omitempty"`
+	Name         string `json:"name,omitempty"`
+	Value        string `json:"value,omitempty"`
+	DisplayOrder string `json:"displayorder,omitempty"`
+	Flddefname   string `json:"flddefname,omitempty"`
+	Datatype     string `json:"datatype,omitempty"`
+	Controltype  string `json:"controltype,omitempty"`
+	Isunique     bool   `json:"isunique,omitempty"`
+	Unit         string `json:"unit,omitempty"`
+	Lookupvals   string `json:"lookupvals,omitempty"`
 	DateAdded    string `json:"timestamp,omitempty"`
 }
 
 type AssetDetail struct {
-	Flexvals []FlexVals `json:"flexvalues"`
+	Flexvals            []FlexVals   `json:"flexvalues,omitempty"`
+	ObservationFlexvals []ObFlexVals `json:"observationvalues,omitempty"`
 }
 
 type Levels struct {
