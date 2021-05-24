@@ -675,3 +675,8 @@ type UpdateAsset struct {
 type DeleteResponse struct {
 	Assetdeleted string `json:"message,omitempty"`
 }
+
+type YearReplacementDetails struct {
+	Rul float32 `json:"rulyears"`
+	CRC float32 `json:"replacementcost"`
+}

@@ -1693,6 +1693,8 @@ func (s *Server) handleGetNodeFuncLocSpatialFiltered() http.HandlerFunc {
 			newRUL = "0"
 		}
 
+		newRUL = strconv.Itoa(hierarchy.Rulyears)
+
 		//set response variables
 		rows, err := s.dbAccess.Query("SELECT * FROM public.getnodefunclocrecursefilter2('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "', '" + newRUL + "')")
 
