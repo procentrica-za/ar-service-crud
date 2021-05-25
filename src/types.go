@@ -603,6 +603,12 @@ type ReplacementByCondition struct {
 	CRC       string `json:"replacementcost"`
 }
 
+type ReplacementByConditionDetails struct {
+	RULYears  float32 `json:"rulyears"`
+	Condition string  `json:"condition"`
+	CRC       float32 `json:"replacementcost"`
+}
+
 type PortfolioDD struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
