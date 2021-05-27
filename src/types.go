@@ -498,6 +498,7 @@ type FlattenedHierarchyFilter struct {
 	Consequence string `json:"consequence,omitempty"`
 	AssettypeID string `json:"assettypeid,omitempty"`
 	Rulyears    int    `json:"rulyears,omitempty"`
+	Condition   string `json:"condition,omitempty"`
 }
 
 type FlattenedHierarchyList struct {
@@ -685,4 +686,11 @@ type DeleteResponse struct {
 type YearReplacementDetails struct {
 	Rul float32 `json:"rulyears"`
 	CRC float32 `json:"replacementcost"`
+}
+
+type AFVConditionDetails struct {
+	Crc                  float32 `json:"crc"`
+	Drc                  float32 `json:"drc"`
+	Assetflexvaluesorted string  `json:"assetflexvaluesorted"`
+	Recordcount          float32 `json:"recordcount"`
 }

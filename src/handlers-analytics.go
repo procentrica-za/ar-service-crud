@@ -467,7 +467,11 @@ func (s *Server) handleGetRiskCriticalityDetails() http.HandlerFunc {
 		}
 
 		newRUL = strconv.Itoa(hierarchy.Rulyears)
-		rows, err := s.dbAccess.Query("SELECT * FROM public.riskcriticalitydetailsgrouped('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "', '" + newRUL + "')")
+
+		if hierarchy.Condition == "" {
+			hierarchy.Condition = "none"
+		}
+		rows, err := s.dbAccess.Query("SELECT * FROM public.riskcriticalitydetailsgrouped('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "', '" + newRUL + "', '" + hierarchy.Consequence + "')")
 
 		if err != nil {
 			w.WriteHeader(500)
@@ -618,8 +622,12 @@ func (s *Server) handleGetPortfolioFilter() http.HandlerFunc {
 
 		newRUL = strconv.Itoa(hierarchy.Rulyears)
 
+		if hierarchy.Condition == "" {
+			hierarchy.Condition = "none"
+		}
+
 		//set response variables
-		rows, err := s.dbAccess.Query("SELECT * FROM public.assetportfoliofilter('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "', '" + newRUL + "')")
+		rows, err := s.dbAccess.Query("SELECT * FROM public.assetportfoliofilter('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "', '" + newRUL + "', '" + hierarchy.Consequence + "')")
 
 		if err != nil {
 			w.WriteHeader(500)
@@ -742,8 +750,12 @@ func (s *Server) handleGetRenewalProfileDetails() http.HandlerFunc {
 
 		newRUL = strconv.Itoa(hierarchy.Rulyears)
 
+		if hierarchy.Condition == "" {
+			hierarchy.Condition = "none"
+		}
+
 		//set response variables
-		rows, err := s.dbAccess.Query("SELECT * FROM public.renewalprofiledetailsgrouped('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "', '" + newRUL + "')")
+		rows, err := s.dbAccess.Query("SELECT * FROM public.renewalprofiledetailsgrouped('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "', '" + newRUL + "', '" + hierarchy.Consequence + "')")
 
 		if err != nil {
 			w.WriteHeader(500)
@@ -824,8 +836,12 @@ func (s *Server) handleGetPortfolioFilterCost() http.HandlerFunc {
 
 		newRUL = strconv.Itoa(hierarchy.Rulyears)
 
+		if hierarchy.Condition == "" {
+			hierarchy.Condition = "none"
+		}
+
 		//set response variables
-		rows, err := s.dbAccess.Query("SELECT * FROM public.assetportfoliofiltercost('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "', '" + newRUL + "')")
+		rows, err := s.dbAccess.Query("SELECT * FROM public.assetportfoliofiltercost('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "', '" + newRUL + "', '" + hierarchy.Consequence + "')")
 
 		if err != nil {
 			w.WriteHeader(500)
@@ -948,8 +964,12 @@ func (s *Server) handleGetYearReplacementDetails() http.HandlerFunc {
 		}
 
 		newRUL = strconv.Itoa(hierarchy.Rulyears)
+
+		if hierarchy.Condition == "" {
+			hierarchy.Condition = "none"
+		}
 		//set response variables
-		rows, err := s.dbAccess.Query("SELECT * FROM public.yearreplacementdetailsgrouped('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "', '" + newRUL + "')")
+		rows, err := s.dbAccess.Query("SELECT * FROM public.yearreplacementdetailsgrouped('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "', '" + newRUL + "', '" + hierarchy.Consequence + "')")
 
 		if err != nil {
 			w.WriteHeader(500)
@@ -996,7 +1016,7 @@ func (s *Server) handleGetYearReplacementDetails() http.HandlerFunc {
 	}
 }
 
-// The function handling the request to get funcloc assets
+// The function handling the request to get replacementbycondition
 func (s *Server) handleGetReplacementByConditionDetails() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(" Handle Get replacement by condition Has Been Called...")
@@ -1030,8 +1050,12 @@ func (s *Server) handleGetReplacementByConditionDetails() http.HandlerFunc {
 		}
 
 		newRUL = strconv.Itoa(hierarchy.Rulyears)
+
+		if hierarchy.Condition == "" {
+			hierarchy.Condition = "none"
+		}
 		//set response variables
-		rows, err := s.dbAccess.Query("SELECT * FROM public.replacementbyconditiondetailsgrouped('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "', '" + newRUL + "')")
+		rows, err := s.dbAccess.Query("SELECT * FROM public.replacementbyconditiondetailsgrouped('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "', '" + newRUL + "', '" + hierarchy.Consequence + "')")
 
 		if err != nil {
 			w.WriteHeader(500)
@@ -1070,6 +1094,95 @@ func (s *Server) handleGetReplacementByConditionDetails() http.HandlerFunc {
 		if jserr != nil {
 			w.WriteHeader(500)
 			fmt.Fprintf(w, "Unable to create JSON from DB renewalprofile result...")
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(200)
+		w.Write(js)
+	}
+}
+
+// The function handling the request to get replacementbycondition
+func (s *Server) handleGetAssetFlexValConditionDetails() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println(" Handle Get flexval by condition details Has Been Called...")
+
+		body, err := ioutil.ReadAll(r.Body)
+		//Unmarshal for funcloc
+		hierarchy := FlattenedHierarchyFilter{}
+		err = json.Unmarshal(body, &hierarchy)
+
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Bad JSON provided to Get flexval by condition details")
+			return
+		}
+
+		if hierarchy.AssettypeID == "" {
+			hierarchy.AssettypeID = "00000000-0000-0000-0000-000000000000"
+		}
+
+		if hierarchy.Likelyhood == "" {
+			hierarchy.Likelyhood = "none"
+		}
+
+		if hierarchy.Consequence == "" {
+			hierarchy.Consequence = "none"
+		}
+
+		newRUL := ""
+		if hierarchy.Rulyears == 0 {
+			newRUL = "0"
+		}
+
+		newRUL = strconv.Itoa(hierarchy.Rulyears)
+
+		if hierarchy.Condition == "" {
+			hierarchy.Condition = "none"
+		}
+		//set response variables
+		rows, err := s.dbAccess.Query("SELECT * FROM public.assetflexvalconditiondetails('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "', '" + newRUL + "', '" + hierarchy.Consequence + "')")
+
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to process DB Function...")
+			return
+		}
+		defer rows.Close()
+
+		assetsList := []AFVConditionDetails{}
+
+		var Assetflexvaluesorted string
+
+		var Crc,
+			Drc, Recordcount float32
+
+		for rows.Next() {
+			err = rows.Scan(&Assetflexvaluesorted, &Crc, &Drc, &Recordcount)
+			if err != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "Unable to read data from assets List...")
+				fmt.Println(err.Error())
+				return
+			}
+			assetsList = append(assetsList, AFVConditionDetails{Crc, Drc, Assetflexvaluesorted, Recordcount})
+		}
+
+		// get any error encountered during iteration
+		err = rows.Err()
+		if err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to read data from assets List...")
+			return
+		}
+
+		js, jserr := json.Marshal(assetsList)
+
+		//If Queryrow returns error, provide error to caller and exit
+		if jserr != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(w, "Unable to create JSON from Get flexval by condition details result...")
 			return
 		}
 

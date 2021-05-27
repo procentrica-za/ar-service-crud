@@ -1307,8 +1307,12 @@ func (s *Server) handleGetNodeHierarchyFlattenedFiltered() http.HandlerFunc {
 
 		newRUL = strconv.Itoa(hierarchy.Rulyears)
 
+		if hierarchy.Condition == "" {
+			hierarchy.Condition = "none"
+		}
+
 		//Get filtered child and parent elements for funclocnode
-		rows, err := s.dbAccess.Query("SELECT * FROM public.getallfunclocnodesfiltered2nulls('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "', '" + newRUL + "')")
+		rows, err := s.dbAccess.Query("SELECT * FROM public.getallfunclocnodesfiltered2nulls('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "', '" + newRUL + "', '" + hierarchy.Consequence + "')")
 		if err != nil {
 			w.WriteHeader(500)
 			fmt.Fprintf(w, "Unable to process DB Function...")
@@ -1402,8 +1406,12 @@ func (s *Server) handleGetNodeAssetsFiltered() http.HandlerFunc {
 
 		newRUL = strconv.Itoa(hierarchy.Rulyears)
 
+		if hierarchy.Condition == "" {
+			hierarchy.Condition = "none"
+		}
+
 		//set response variables
-		rows, err := s.dbAccess.Query("SELECT * FROM public.getnodeassetsrecursefiltered2('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "', '" + newRUL + "')")
+		rows, err := s.dbAccess.Query("SELECT * FROM public.getnodeassetsrecursefiltered2('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "', '" + newRUL + "', '" + hierarchy.Consequence + "')")
 
 		if err != nil {
 			w.WriteHeader(500)
@@ -1503,8 +1511,12 @@ func (s *Server) handlegetFuncLocAssetsFiltered() http.HandlerFunc {
 
 		newRUL = strconv.Itoa(hierarchy.Rulyears)
 
+		if hierarchy.Condition == "" {
+			hierarchy.Condition = "none"
+		}
+
 		//set response variables
-		rows, err := s.dbAccess.Query("SELECT * FROM public.getfunclocassetsfiltered2('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "', '" + newRUL + "')")
+		rows, err := s.dbAccess.Query("SELECT * FROM public.getfunclocassetsfiltered2('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "', '" + newRUL + "', '" + hierarchy.Consequence + "')")
 
 		if err != nil {
 			w.WriteHeader(500)
@@ -1603,8 +1615,12 @@ func (s *Server) handleGetNodeFuncLocsFiltered() http.HandlerFunc {
 
 		newRUL = strconv.Itoa(hierarchy.Rulyears)
 
+		if hierarchy.Condition == "" {
+			hierarchy.Condition = "none"
+		}
+
 		//set response variables
-		rows, err := s.dbAccess.Query("SELECT * FROM public.getnodefunclocrecursefilter2('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "', '" + newRUL + "')")
+		rows, err := s.dbAccess.Query("SELECT * FROM public.getnodefunclocrecursefilter2('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "', '" + newRUL + "', '" + hierarchy.Consequence + "')")
 
 		if err != nil {
 			w.WriteHeader(500)
@@ -1695,8 +1711,12 @@ func (s *Server) handleGetNodeFuncLocSpatialFiltered() http.HandlerFunc {
 
 		newRUL = strconv.Itoa(hierarchy.Rulyears)
 
+		if hierarchy.Condition == "" {
+			hierarchy.Condition = "none"
+		}
+
 		//set response variables
-		rows, err := s.dbAccess.Query("SELECT * FROM public.getnodefunclocrecursefilter2('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "', '" + newRUL + "')")
+		rows, err := s.dbAccess.Query("SELECT * FROM public.getnodefunclocrecursefilter2('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "', '" + newRUL + "', '" + hierarchy.Consequence + "')")
 
 		if err != nil {
 			w.WriteHeader(500)
