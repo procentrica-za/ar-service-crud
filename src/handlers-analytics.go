@@ -471,7 +471,14 @@ func (s *Server) handleGetRiskCriticalityDetails() http.HandlerFunc {
 		if hierarchy.Condition == "" {
 			hierarchy.Condition = "none"
 		}
-		rows, err := s.dbAccess.Query("SELECT * FROM public.riskcriticalitydetailsgrouped('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "', '" + newRUL + "', '" + hierarchy.Consequence + "')")
+
+		newRULrange := ""
+		if hierarchy.Rulrange == 0 {
+			newRUL = "0"
+		}
+
+		newRULrange = strconv.Itoa(hierarchy.Rulrange)
+		rows, err := s.dbAccess.Query("SELECT * FROM public.riskcriticalitydetailsgrouped('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "', '" + newRUL + "', '" + hierarchy.Consequence + "', '" + newRULrange + "')")
 
 		if err != nil {
 			w.WriteHeader(500)
@@ -626,8 +633,15 @@ func (s *Server) handleGetPortfolioFilter() http.HandlerFunc {
 			hierarchy.Condition = "none"
 		}
 
+		newRULrange := ""
+		if hierarchy.Rulrange == 0 {
+			newRUL = "0"
+		}
+
+		newRULrange = strconv.Itoa(hierarchy.Rulrange)
+
 		//set response variables
-		rows, err := s.dbAccess.Query("SELECT * FROM public.assetportfoliofilter('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "', '" + newRUL + "', '" + hierarchy.Consequence + "')")
+		rows, err := s.dbAccess.Query("SELECT * FROM public.assetportfoliofilter('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "', '" + newRUL + "', '" + hierarchy.Consequence + "', '" + newRULrange + "')")
 
 		if err != nil {
 			w.WriteHeader(500)
@@ -754,8 +768,15 @@ func (s *Server) handleGetRenewalProfileDetails() http.HandlerFunc {
 			hierarchy.Condition = "none"
 		}
 
+		newRULrange := ""
+		if hierarchy.Rulrange == 0 {
+			newRUL = "0"
+		}
+
+		newRULrange = strconv.Itoa(hierarchy.Rulrange)
+
 		//set response variables
-		rows, err := s.dbAccess.Query("SELECT * FROM public.renewalprofiledetailsgrouped('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "', '" + newRUL + "', '" + hierarchy.Consequence + "')")
+		rows, err := s.dbAccess.Query("SELECT * FROM public.renewalprofiledetailsgrouped('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "', '" + newRUL + "', '" + hierarchy.Consequence + "', '" + newRULrange + "')")
 
 		if err != nil {
 			w.WriteHeader(500)
@@ -840,8 +861,15 @@ func (s *Server) handleGetPortfolioFilterCost() http.HandlerFunc {
 			hierarchy.Condition = "none"
 		}
 
+		newRULrange := ""
+		if hierarchy.Rulrange == 0 {
+			newRUL = "0"
+		}
+
+		newRULrange = strconv.Itoa(hierarchy.Rulrange)
+
 		//set response variables
-		rows, err := s.dbAccess.Query("SELECT * FROM public.assetportfoliofiltercost('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "', '" + newRUL + "', '" + hierarchy.Consequence + "')")
+		rows, err := s.dbAccess.Query("SELECT * FROM public.assetportfoliofiltercost('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "', '" + newRUL + "', '" + hierarchy.Consequence + "', '" + newRULrange + "')")
 
 		if err != nil {
 			w.WriteHeader(500)
@@ -968,8 +996,15 @@ func (s *Server) handleGetYearReplacementDetails() http.HandlerFunc {
 		if hierarchy.Condition == "" {
 			hierarchy.Condition = "none"
 		}
+
+		newRULrange := ""
+		if hierarchy.Rulrange == 0 {
+			newRUL = "0"
+		}
+
+		newRULrange = strconv.Itoa(hierarchy.Rulrange)
 		//set response variables
-		rows, err := s.dbAccess.Query("SELECT * FROM public.yearreplacementdetailsgrouped('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "', '" + newRUL + "', '" + hierarchy.Consequence + "')")
+		rows, err := s.dbAccess.Query("SELECT * FROM public.yearreplacementdetailsgrouped('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "', '" + newRUL + "', '" + hierarchy.Consequence + "', '" + newRULrange + "')")
 
 		if err != nil {
 			w.WriteHeader(500)
@@ -1054,8 +1089,15 @@ func (s *Server) handleGetReplacementByConditionDetails() http.HandlerFunc {
 		if hierarchy.Condition == "" {
 			hierarchy.Condition = "none"
 		}
+
+		newRULrange := ""
+		if hierarchy.Rulrange == 0 {
+			newRUL = "0"
+		}
+
+		newRULrange = strconv.Itoa(hierarchy.Rulrange)
 		//set response variables
-		rows, err := s.dbAccess.Query("SELECT * FROM public.replacementbyconditiondetailsgrouped('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "', '" + newRUL + "', '" + hierarchy.Consequence + "')")
+		rows, err := s.dbAccess.Query("SELECT * FROM public.replacementbyconditiondetailsgrouped('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "', '" + newRUL + "', '" + hierarchy.Consequence + "', '" + newRULrange + "')")
 
 		if err != nil {
 			w.WriteHeader(500)
@@ -1141,8 +1183,15 @@ func (s *Server) handleGetAssetFlexValConditionDetails() http.HandlerFunc {
 		if hierarchy.Condition == "" {
 			hierarchy.Condition = "none"
 		}
+
+		newRULrange := ""
+		if hierarchy.Rulrange == 0 {
+			newRUL = "0"
+		}
+
+		newRULrange = strconv.Itoa(hierarchy.Rulrange)
 		//set response variables
-		rows, err := s.dbAccess.Query("SELECT * FROM public.assetflexvalconditiondetails('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "', '" + newRUL + "', '" + hierarchy.Consequence + "')")
+		rows, err := s.dbAccess.Query("SELECT * FROM public.assetflexvalconditiondetails('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "', '" + newRUL + "', '" + hierarchy.Consequence + "', '" + newRULrange + "')")
 
 		if err != nil {
 			w.WriteHeader(500)
