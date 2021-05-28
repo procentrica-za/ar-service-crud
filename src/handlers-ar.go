@@ -1318,8 +1318,6 @@ func (s *Server) handleGetNodeHierarchyFlattenedFiltered() http.HandlerFunc {
 
 		newRULrange = strconv.Itoa(hierarchy.Rulrange)
 
-		fmt.Println(hierarchy.NodeID, hierarchy.Likelyhood, hierarchy.Consequence, hierarchy.AssettypeID, newRUL, hierarchy.Consequence, newRULrange)
-
 		//Get filtered child and parent elements for funclocnode
 		rows, err := s.dbAccess.Query("SELECT * FROM public.getallfunclocnodesfiltered2nulls('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "', '" + newRUL + "', '" + hierarchy.Condition + "', '" + newRULrange + "')")
 		if err != nil {
