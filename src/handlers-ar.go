@@ -1313,7 +1313,7 @@ func (s *Server) handleGetNodeHierarchyFlattenedFiltered() http.HandlerFunc {
 
 		newRULrange := ""
 		if hierarchy.Rulrange == 0 {
-			newRUL = "0"
+			newRULrange = "0"
 		}
 
 		newRULrange = strconv.Itoa(hierarchy.Rulrange)
@@ -1419,7 +1419,7 @@ func (s *Server) handleGetNodeAssetsFiltered() http.HandlerFunc {
 
 		newRULrange := ""
 		if hierarchy.Rulrange == 0 {
-			newRUL = "0"
+			newRULrange = "0"
 		}
 
 		newRULrange = strconv.Itoa(hierarchy.Rulrange)
@@ -1531,7 +1531,7 @@ func (s *Server) handlegetFuncLocAssetsFiltered() http.HandlerFunc {
 
 		newRULrange := ""
 		if hierarchy.Rulrange == 0 {
-			newRUL = "0"
+			newRULrange = "0"
 		}
 
 		newRULrange = strconv.Itoa(hierarchy.Rulrange)
@@ -1642,7 +1642,7 @@ func (s *Server) handleGetNodeFuncLocsFiltered() http.HandlerFunc {
 
 		newRULrange := ""
 		if hierarchy.Rulrange == 0 {
-			newRUL = "0"
+			newRULrange = "0"
 		}
 
 		newRULrange = strconv.Itoa(hierarchy.Rulrange)
@@ -1745,7 +1745,7 @@ func (s *Server) handleGetNodeFuncLocSpatialFiltered() http.HandlerFunc {
 
 		newRULrange := ""
 		if hierarchy.Rulrange == 0 {
-			newRUL = "0"
+			newRULrange = "0"
 		}
 
 		newRULrange = strconv.Itoa(hierarchy.Rulrange)

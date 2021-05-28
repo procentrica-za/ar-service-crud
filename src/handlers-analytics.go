@@ -474,7 +474,7 @@ func (s *Server) handleGetRiskCriticalityDetails() http.HandlerFunc {
 
 		newRULrange := ""
 		if hierarchy.Rulrange == 0 {
-			newRUL = "0"
+			newRULrange = "0"
 		}
 
 		newRULrange = strconv.Itoa(hierarchy.Rulrange)
@@ -635,7 +635,7 @@ func (s *Server) handleGetPortfolioFilter() http.HandlerFunc {
 
 		newRULrange := ""
 		if hierarchy.Rulrange == 0 {
-			newRUL = "0"
+			newRULrange = "0"
 		}
 
 		newRULrange = strconv.Itoa(hierarchy.Rulrange)
@@ -770,7 +770,7 @@ func (s *Server) handleGetRenewalProfileDetails() http.HandlerFunc {
 
 		newRULrange := ""
 		if hierarchy.Rulrange == 0 {
-			newRUL = "0"
+			newRULrange = "0"
 		}
 
 		newRULrange = strconv.Itoa(hierarchy.Rulrange)
@@ -863,7 +863,7 @@ func (s *Server) handleGetPortfolioFilterCost() http.HandlerFunc {
 
 		newRULrange := ""
 		if hierarchy.Rulrange == 0 {
-			newRUL = "0"
+			newRULrange = "0"
 		}
 
 		newRULrange = strconv.Itoa(hierarchy.Rulrange)
@@ -999,7 +999,7 @@ func (s *Server) handleGetYearReplacementDetails() http.HandlerFunc {
 
 		newRULrange := ""
 		if hierarchy.Rulrange == 0 {
-			newRUL = "0"
+			newRULrange = "0"
 		}
 
 		newRULrange = strconv.Itoa(hierarchy.Rulrange)
@@ -1092,7 +1092,7 @@ func (s *Server) handleGetReplacementByConditionDetails() http.HandlerFunc {
 
 		newRULrange := ""
 		if hierarchy.Rulrange == 0 {
-			newRUL = "0"
+			newRULrange = "0"
 		}
 
 		newRULrange = strconv.Itoa(hierarchy.Rulrange)
@@ -1186,10 +1186,11 @@ func (s *Server) handleGetAssetFlexValConditionDetails() http.HandlerFunc {
 
 		newRULrange := ""
 		if hierarchy.Rulrange == 0 {
-			newRUL = "0"
+			newRULrange = "0"
 		}
 
 		newRULrange = strconv.Itoa(hierarchy.Rulrange)
+
 		//set response variables
 		rows, err := s.dbAccess.Query("SELECT * FROM public.assetflexvalconditiondetails('" + hierarchy.NodeID + "', '" + hierarchy.Likelyhood + "', '" + hierarchy.Consequence + "', '" + hierarchy.AssettypeID + "', '" + newRUL + "', '" + hierarchy.Consequence + "', '" + newRULrange + "')")
 
