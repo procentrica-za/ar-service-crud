@@ -1811,6 +1811,7 @@ func (s *Server) handleGetNodeFuncLocSpatialFiltered() http.HandlerFunc {
 func (s *Server) handleUpdate() http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println(" Handle  Update Has Been Called...")
 		body, err := ioutil.ReadAll(r.Body)
 		update := Update{}
 
