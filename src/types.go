@@ -376,6 +376,7 @@ type Assetdetails struct {
 }
 
 type FlexVals struct {
+	ID           string `json:"flexid,omitempty"`
 	Category     string `json:"category,omitempty"`
 	Name         string `json:"name,omitempty"`
 	Value        string `json:"value,omitempty"`
@@ -389,6 +390,7 @@ type FlexVals struct {
 }
 
 type ObFlexVals struct {
+	ID             string `json:"observationid,omitempty"`
 	Category       string `json:"category,omitempty"`
 	Name           string `json:"name,omitempty"`
 	Value          string `json:"value,omitempty"`
@@ -638,46 +640,63 @@ type Update struct {
 	AssetID string `json:"assetid"`
 }
 
+type UpdateAssetFlexVal struct {
+	ID    string `json:"flexid,omitempty"`
+	Value string `json:"value,omitempty"`
+}
+
+type UpdateObservationFlexVal struct {
+	ID        string `json:"observationid,omitempty"`
+	Value     string `json:"value,omitempty"`
+	DateAdded string `json:"timestamp,omitempty"`
+}
+
 type UpdateAsset struct {
-	AssetID                     string  `json:"assetid"`
-	Name                        string  `json:"name"`
-	AssetType                   string  `json:"assettype"`
-	CompatibleUnitID            string  `json:"compatibleunitid"`
-	DerecognitionDate           string  `json:"derecognitiondate,omitempty"`
-	DerecognitionValue          string  `json:"derecognitionvalue,omitempty"`
-	Description                 string  `json:"description,omitempty"`
-	Dimension1Value             float32 `json:"dimension1value,omitempty"`
-	Dimension2Value             float32 `json:"dimension2value,omitempty"`
-	Dimension3Value             float32 `json:"dimension3value,omitempty"`
-	Dimension4Value             float32 `json:"dimension4value,omitempty"`
-	Dimension5Value             float32 `json:"dimension5value,omitempty"`
-	Extent                      float32 `json:"extent,omitempty"`
-	ExtentConfidence            string  `json:"extentconfidence,omitempty"`
-	ManufactureDate             string  `json:"manufacturedate,omitempty"`
-	ManufactureDateConfidence   string  `json:"manufacturedateconfidence,omitempty"`
-	TakeOnDate                  string  `json:"takeondate,omitempty"`
-	SerialNo                    string  `json:"serialno,omitempty"`
-	Latitude                    string  `json:"lat"`
-	Longitude                   string  `json:"lon"`
-	Geom                        string  `json:"geom"`
-	FunclocID                   string  `json:"funclocid"`
-	InstallDate                 string  `json:"installdate"`
-	Status                      string  `json:"status,omitempty"`
-	Age                         string  `json:"age,omitempty"`
-	CarryingValueClosingBalance float32 `json:"carryingvalue,omitempty"`
-	CarryingValueOpeningBalance string  `json:"carryingvalueopeningbalance,omitempty"`
-	CostClosingBalance          float32 `json:"cost,omitempty"`
-	CostOpeningBalance          string  `json:"costopeningbalance,omitempty"`
-	Crc                         float32 `json:"crc,omitempty"`
-	DepreciationClosingBalance  string  `json:"depreciationclosingbalance,omitempty"`
-	DepreciationOpeningBalance  string  `json:"depreciationopeningbalance,omitempty"`
-	ImpairmentClosingBalance    string  `json:"impairmentclosingbalance,omitempty"`
-	ImpairmentOpeningBalance    string  `json:"impairmentopeningbalance,omitempty"`
-	ResidualValue               string  `json:"residualvalue,omitempty"`
-	RulYears                    float32 `json:"rulyears,omitempty"`
-	Drc                         float32 `json:"drc,omitempty"`
-	Fy                          string  `json:"fy,omitempty"`
-	AssetValID                  string  `json:"assetvalid"`
+	AssetID                     string                     `json:"assetid"`
+	Name                        string                     `json:"name"`
+	AssetType                   string                     `json:"assettype"`
+	CompatibleUnitID            string                     `json:"compatibleunitid"`
+	DerecognitionDate           string                     `json:"derecognitiondate,omitempty"`
+	DerecognitionValue          string                     `json:"derecognitionvalue,omitempty"`
+	Description                 string                     `json:"description,omitempty"`
+	Dimension1Value             float32                    `json:"dimension1value,omitempty"`
+	Dimension2Value             float32                    `json:"dimension2value,omitempty"`
+	Dimension3Value             float32                    `json:"dimension3value,omitempty"`
+	Dimension4Value             float32                    `json:"dimension4value,omitempty"`
+	Dimension5Value             float32                    `json:"dimension5value,omitempty"`
+	Extent                      float32                    `json:"extent,omitempty"`
+	ExtentConfidence            string                     `json:"extentconfidence,omitempty"`
+	ManufactureDate             string                     `json:"manufacturedate,omitempty"`
+	ManufactureDateConfidence   string                     `json:"manufacturedateconfidence,omitempty"`
+	TakeOnDate                  string                     `json:"takeondate,omitempty"`
+	SerialNo                    string                     `json:"serialno,omitempty"`
+	Latitude                    string                     `json:"lat"`
+	Longitude                   string                     `json:"lon"`
+	Geom                        string                     `json:"geom"`
+	FunclocID                   string                     `json:"funclocid"`
+	InstallDate                 string                     `json:"installdate"`
+	Status                      string                     `json:"status,omitempty"`
+	Age                         string                     `json:"age,omitempty"`
+	CarryingValueClosingBalance float32                    `json:"carryingvalue,omitempty"`
+	CarryingValueOpeningBalance string                     `json:"carryingvalueopeningbalance,omitempty"`
+	CostClosingBalance          float32                    `json:"cost,omitempty"`
+	CostOpeningBalance          string                     `json:"costopeningbalance,omitempty"`
+	Crc                         float32                    `json:"crc,omitempty"`
+	DepreciationClosingBalance  string                     `json:"depreciationclosingbalance,omitempty"`
+	DepreciationOpeningBalance  string                     `json:"depreciationopeningbalance,omitempty"`
+	ImpairmentClosingBalance    string                     `json:"impairmentclosingbalance,omitempty"`
+	ImpairmentOpeningBalance    string                     `json:"impairmentopeningbalance,omitempty"`
+	ResidualValue               string                     `json:"residualvalue,omitempty"`
+	RulYears                    float32                    `json:"rulyears,omitempty"`
+	Drc                         float32                    `json:"drc,omitempty"`
+	Fy                          string                     `json:"fy,omitempty"`
+	AssetValID                  string                     `json:"assetvalid"`
+	FlvList                     []UpdateAssetFlexVal       `json:"flexvalues"`
+	OFlvList                    []UpdateObservationFlexVal `json:"observationvalues"`
+}
+
+type ListFlexvals struct {
+	FlvList []UpdateAssetFlexVal `json:"flexvalues"`
 }
 
 type DeleteResponse struct {

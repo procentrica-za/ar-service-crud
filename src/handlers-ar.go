@@ -586,18 +586,18 @@ func (s *Server) handleGetAssetFlexval() http.HandlerFunc {
 		flexvalList.Flexvals = []FlexVals{}
 		flexvalList.ObservationFlexvals = []ObFlexVals{}
 
-		var category, name, value, displayorder, flddefname, datatype, controltype, unit, lookupvals, inspectionname, dateadded string
+		var flexid, category, name, value, displayorder, flddefname, datatype, controltype, unit, lookupvals, inspectionname, dateadded string
 		var isunique bool
 
 		for rows.Next() {
-			err = rows.Scan(&category, &name, &value, &displayorder, &flddefname, &datatype, &controltype, &isunique, &unit, &lookupvals)
+			err = rows.Scan(&flexid, &category, &name, &value, &displayorder, &flddefname, &datatype, &controltype, &isunique, &unit, &lookupvals)
 			if err != nil {
 				w.WriteHeader(500)
 				fmt.Fprintf(w, "Unable to read data from FlexVal List...")
 				fmt.Println(err.Error())
 				return
 			}
-			flexvalList.Flexvals = append(flexvalList.Flexvals, FlexVals{category, name, value, displayorder, flddefname, datatype, controltype, isunique, unit, lookupvals})
+			flexvalList.Flexvals = append(flexvalList.Flexvals, FlexVals{flexid, category, name, value, displayorder, flddefname, datatype, controltype, isunique, unit, lookupvals})
 		}
 		// get any error encountered during iteration
 		err = rows.Err()
@@ -618,14 +618,14 @@ func (s *Server) handleGetAssetFlexval() http.HandlerFunc {
 		defer rows1.Close()
 
 		for rows1.Next() {
-			err = rows1.Scan(&category, &name, &value, &displayorder, &flddefname, &datatype, &controltype, &isunique, &unit, &lookupvals, &inspectionname, &dateadded)
+			err = rows1.Scan(&flexid, &category, &name, &value, &displayorder, &flddefname, &datatype, &controltype, &isunique, &unit, &lookupvals, &inspectionname, &dateadded)
 			if err != nil {
 				w.WriteHeader(500)
 				fmt.Fprintf(w, "Unable to read data from FlexVal List...")
 				fmt.Println(err.Error())
 				return
 			}
-			flexvalList.ObservationFlexvals = append(flexvalList.ObservationFlexvals, ObFlexVals{category, name, value, displayorder, flddefname, datatype, controltype, isunique, unit, lookupvals, inspectionname, dateadded})
+			flexvalList.ObservationFlexvals = append(flexvalList.ObservationFlexvals, ObFlexVals{flexid, category, name, value, displayorder, flddefname, datatype, controltype, isunique, unit, lookupvals, inspectionname, dateadded})
 		}
 		// get any error encountered during iteration
 		err = rows1.Err()
@@ -1830,10 +1830,12 @@ func (s *Server) handleUpdate() http.HandlerFunc {
 			err = json.Unmarshal(body, &asset)
 
 			js, jserr := json.Marshal(asset)
+
 			updateAssetResultList := []toAssetRegisterResult{}
 			updateAssetResult := toAssetRegisterResult{}
 
 			jsonString := string(js)
+
 			querystring := "SELECT * FROM public.updateasset('[" + jsonString + "]')"
 			//retrieve result message from database set to response JSON object
 			err = s.dbAccess.QueryRow(querystring).Scan(&success, &message)
@@ -1844,6 +1846,40 @@ func (s *Server) handleUpdate() http.HandlerFunc {
 				fmt.Println(err.Error() + "\n")
 				fmt.Println("Error in communicating with database to update Asset")
 				return
+			}
+
+			for _, element := range asset.FlvList {
+
+				var success1 bool
+				var message1 string
+				querystring = "SELECT * FROM public.updateassetflexval('" + element.ID + "', '" + element.Value + "')"
+				//retrieve result message from database set to response JSON object
+				err = s.dbAccess.QueryRow(querystring).Scan(&success1, &message1)
+				//check for response error of 500
+				if err != nil {
+					w.WriteHeader(500)
+					fmt.Fprintf(w, "Unable to process DB Function to update an Asset\n")
+					fmt.Println(err.Error() + "\n")
+					fmt.Println("Error in communicating with database to update Asset")
+					return
+				}
+			}
+
+			for _, element := range asset.OFlvList {
+
+				var success1 bool
+				var message1 string
+				querystring = "SELECT * FROM public.updateassetobservationflexval('" + element.ID + "', '" + element.Value + "', '" + element.DateAdded + "')"
+				//retrieve result message from database set to response JSON object
+				err = s.dbAccess.QueryRow(querystring).Scan(&success1, &message1)
+				//check for response error of 500
+				if err != nil {
+					w.WriteHeader(500)
+					fmt.Fprintf(w, "Unable to process DB Function to update an Asset\n")
+					fmt.Println(err.Error() + "\n")
+					fmt.Println("Error in communicating with database to update Asset")
+					return
+				}
 			}
 
 			updateAssetResult.Success = success
